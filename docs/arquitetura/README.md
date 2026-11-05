@@ -107,9 +107,11 @@ As setas são as dependências do mapa de contexto do modelo (`DEPENDE_DE`).
 flowchart TB
     subgraph nucleo[originacao: núcleo]
         P[Proposta e jornada<br/>regras comuns]
-        PORTA{{porta: categoria de bem}}
-        P --> PORTA
     end
+    subgraph bem[bem: microkernel]
+        PORTA{{porta CategoriaDeBem<br/>e BemFacade}}
+    end
+    P --> PORTA
     PORTA --> VEI[plug-in veiculo<br/>carro e moto, novo e usado]
     PORTA --> IMO[plug-in imovel<br/>residencial e comercial, pronto e na planta;<br/>terreno urbano e rural]
     NOVO[plug-in novo<br/>ex.: máquina agrícola]:::futuro -.-> PORTA
@@ -125,6 +127,32 @@ Cada plug-in responde, para a sua categoria:
 - a forma de liberação: única ou por medição.
 
 Os valores vêm das regras parametrizadas pela dimensão **"Tipo de bem"** do modelo (DIM-0001). Terreno é subtipo de imóvel, como no modelo.
+
+**No código**, a porta e os plug-ins ficam no pacote `bem`:
+- a raiz tem a porta `CategoriaDeBem`, os objetos de valor (`TipoDeBem`, `ParametrosDoTipo`, ...) e a `BemFacade`, que acha o plug-in pelo CDI;
+- `bem/veiculo` e `bem/imovel` são os plug-ins, package-private.
+
+Assim, a regra "outro módulo só pela raiz" já impede o núcleo e os outros módulos de conhecerem um plug-in. É o desenho do [ADR 0003](adr/0003-monolito-modular-com-microkernel.md), com a porta num pacote próprio para que garantia, desembolso e contratação a consultem sem depender da originação.
+
+### Núcleo implementado: originação
+
+Primeiro passo do código: o agregado Proposta, o ciclo de vida e o enquadramento, com os dois plug-ins.
+
+| Modelo de negócio | Código |
+|---|---|
+| AGR-0001 Proposta e invariantes | `originacao/dominio/Proposta` |
+| CV-0001 Ciclo de vida da proposta | `originacao/dominio/EstadoProposta`, conferido contra o diagrama do modelo |
+| RN-0001 a RN-0009, RN-0015, RN-0018 e RN-0033 | `originacao/dominio/RegrasDeEnquadramento` |
+| RN-0010, RN-0016, RN-0017 e RN-0020 por tipo | `bem/veiculo/Veiculo` e `bem/imovel/Imovel`, conferidos contra a tabela RN-0010 do modelo |
+| RN-0011 | plug-in `veiculo` |
+| RN-0012 e RN-0014 | plug-in `imovel` |
+| UC-0001 a UC-0005 e UC-0010 | `originacao/aplicacao/*Service` e API web `/web/propostas` |
+| EVT-0001, EVT-0002 e EVT-0007 | gravados no outbox (`shared.outbox`) na transação do caso de uso |
+
+**Próximos passos:**
+- decisão, contraproposta, pendência e expiração (UC-0006 a UC-0009), que dependem de Crédito e Avaliação;
+- RN-0013 e a elegibilidade do FGTS, que dependem de sistemas externos;
+- o relay do outbox para a fila.
 
 ## 4. Dados e comunicação
 
@@ -156,11 +184,14 @@ Os 6 sistemas externos do modelo têm cada um uma camada anticorrupção no mód
 
 ## 5. Stack e governança
 
-- **Java 25 + Quarkus 3.33** ([ADR 0007](adr/0007-java-25-e-quarkus-3-33.md)).
-- **Fitness functions** ([ADR 0008](adr/0008-fitness-functions.md)), rodando nos testes:
-  - fronteiras de módulo (ArchUnit);
-  - cobertura dos plug-ins contra a dimensão "Tipo de bem";
-  - nenhum acesso a tabela de outro esquema.
+- **Java 25 + Quarkus 3.33** ([ADR 0007](adr/0007-java-25-e-quarkus-3-33.md)): a versão usada é a 3.33.3, porque não houve 3.33.0 publicada.
+- **Fitness functions** ([ADR 0008](adr/0008-fitness-functions.md)), rodando em todo `./mvnw verify`, em `src/test/java/br/com/financiamento/arquitetura/`:
+  - `ArquiteturaTest`, as fronteiras de módulo com as regras da skill `arquitetura-modular`;
+  - `PluginsDeTipoDeBemTest`:
+    - ninguém fora de um plug-in depende dele;
+    - cada tipo de bem final de DIM-0001, lido de `docs/dominio/especificacao.md`, tem exatamente um plug-in;
+    - os parâmetros conferem com a tabela RN-0010;
+  - `EsquemaPorModuloTest`: entidades, migrações e consultas só no esquema do próprio módulo.
 
 ## ADRs
 
