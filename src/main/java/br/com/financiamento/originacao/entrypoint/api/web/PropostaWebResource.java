@@ -6,6 +6,8 @@ import br.com.financiamento.originacao.aplicacao.InformarBemService;
 import br.com.financiamento.originacao.aplicacao.InformarParticipantesService;
 import br.com.financiamento.originacao.aplicacao.IniciarPropostaService;
 import br.com.financiamento.originacao.aplicacao.RegistrarDocumentoService;
+import br.com.financiamento.originacao.aplicacao.ResolverPendenciaService;
+import br.com.financiamento.originacao.aplicacao.ResponderContrapropostaService;
 import br.com.financiamento.originacao.aplicacao.SimularCondicoesService;
 import br.com.financiamento.originacao.aplicacao.SubmeterPropostaService;
 import jakarta.inject.Inject;
@@ -30,6 +32,8 @@ public class PropostaWebResource {
     @Inject SubmeterPropostaService submeter;
     @Inject CancelarPropostaService cancelar;
     @Inject ConsultarPropostaService consultar;
+    @Inject ResponderContrapropostaService responderContraproposta;
+    @Inject ResolverPendenciaService resolverPendencia;
 
     @POST
     public Response iniciar(IniciarPropostaRequest request) {
@@ -77,5 +81,23 @@ public class PropostaWebResource {
     @Path("/{id}/cancelamento")
     public DetalhePropostaWebResponse cancelar(@PathParam("id") Long id) {
         return DetalhePropostaWebResponse.de(cancelar.executar(id));
+    }
+
+    @POST
+    @Path("/{id}/contraproposta/aceite")
+    public DetalhePropostaWebResponse aceitarContraproposta(@PathParam("id") Long id) {
+        return DetalhePropostaWebResponse.de(responderContraproposta.aceitar(id));
+    }
+
+    @POST
+    @Path("/{id}/contraproposta/recusa")
+    public DetalhePropostaWebResponse recusarContraproposta(@PathParam("id") Long id) {
+        return DetalhePropostaWebResponse.de(responderContraproposta.recusar(id));
+    }
+
+    @POST
+    @Path("/{id}/pendencia/resolucao")
+    public DetalhePropostaWebResponse resolverPendencia(@PathParam("id") Long id) {
+        return DetalhePropostaWebResponse.de(resolverPendencia.executar(id));
     }
 }

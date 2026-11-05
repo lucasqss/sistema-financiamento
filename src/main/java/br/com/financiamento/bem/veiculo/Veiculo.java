@@ -8,7 +8,9 @@ import br.com.financiamento.bem.TipoDeBem;
 import br.com.financiamento.shared.dominio.Violacao;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -82,6 +84,18 @@ class Veiculo implements CategoriaDeBem {
                     + anoFinal + "); o máximo é " + idadeMaxima + "."));
         }
         return List.of();
+    }
+
+    /** RN-0023: veículo novo pela nota fiscal ou preço de fábrica; usado pela tabela de referência. */
+    @Override
+    public String fonteDaAvaliacao(TipoDeBem tipo) {
+        return NOVOS.contains(tipo) ? "nota fiscal ou preço de fábrica" : "tabela de referência";
+    }
+
+    /** RN-0023: novo vale 30 dias; usado vale até o fim do mês da consulta. */
+    @Override
+    public LocalDate validadeDaAvaliacao(TipoDeBem tipo, LocalDate avaliadaEm) {
+        return NOVOS.contains(tipo) ? avaliadaEm.plusDays(30) : avaliadaEm.with(TemporalAdjusters.lastDayOfMonth());
     }
 
     @Override

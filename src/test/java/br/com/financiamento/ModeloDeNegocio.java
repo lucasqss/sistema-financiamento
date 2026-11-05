@@ -59,6 +59,31 @@ public final class ModeloDeNegocio {
         return folhas;
     }
 
+    /** As folhas da dimensão abaixo de um valor (ele mesmo, se for folha), como "Veículo novo" ou "Terreno". */
+    public static List<String> folhasAbaixoDe(String codigo, String valor) {
+        var itens = new ArrayList<String[]>();
+        for (var linha : secao(codigo)) {
+            var m = java.util.regex.Pattern.compile("^(\\s*)[-*+]\\s+(.+?)\\s*$").matcher(linha);
+            if (m.matches()) itens.add(new String[]{String.valueOf(m.group(1).length()), m.group(2)});
+        }
+        var folhas = folhasDaDimensao(codigo);
+        var saida = new ArrayList<String>();
+        for (int i = 0; i < itens.size(); i++) {
+            if (!itens.get(i)[1].equalsIgnoreCase(valor)) continue;
+            int recuo = Integer.parseInt(itens.get(i)[0]);
+            if (folhas.contains(itens.get(i)[1])) saida.add(itens.get(i)[1]);
+            for (int j = i + 1; j < itens.size() && Integer.parseInt(itens.get(j)[0]) > recuo; j++) {
+                if (folhas.contains(itens.get(j)[1])) saida.add(itens.get(j)[1]);
+            }
+        }
+        return saida;
+    }
+
+    /** Texto de uma célula sem a marcação de link: "[laudo](#glo-0017) de x" -> "laudo de x". */
+    public static String semLinks(String texto) {
+        return texto.replaceAll("\\[([^\\]]+)]\\([^)]*\\)", "$1").replaceAll("\\s*\\([^)]*\\)", "").trim();
+    }
+
     /** A primeira tabela da seção: linha (1ª coluna) -> coluna (cabeçalho) -> valor. */
     public static Map<String, Map<String, String>> tabela(String codigo) {
         var linhas = secao(codigo).stream().filter(l -> l.trim().startsWith("|")).toList();

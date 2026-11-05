@@ -134,23 +134,32 @@ Os valores vêm das regras parametrizadas pela dimensão **"Tipo de bem"** do mo
 
 Assim, a regra "outro módulo só pela raiz" já impede o núcleo e os outros módulos de conhecerem um plug-in. É o desenho do [ADR 0003](adr/0003-monolito-modular-com-microkernel.md), com a porta num pacote próprio para que garantia, desembolso e contratação a consultem sem depender da originação.
 
-### Núcleo implementado: originação
+### Código implementado
 
-Primeiro passo do código: o agregado Proposta, o ciclo de vida e o enquadramento, com os dois plug-ins.
+**Passo 1, núcleo da originação:** o agregado Proposta, o ciclo de vida e o enquadramento, com os dois plug-ins.
+**Passo 2, decisão da proposta:** os módulos Crédito e Avaliação, e a decisão, contraproposta, pendência e prazos na Originação.
 
 | Modelo de negócio | Código |
 |---|---|
 | AGR-0001 Proposta e invariantes | `originacao/dominio/Proposta` |
 | CV-0001 Ciclo de vida da proposta | `originacao/dominio/EstadoProposta`, conferido contra o diagrama do modelo |
 | RN-0001 a RN-0009, RN-0015, RN-0018 e RN-0033 | `originacao/dominio/RegrasDeEnquadramento` |
-| RN-0010, RN-0016, RN-0017 e RN-0020 por tipo | `bem/veiculo/Veiculo` e `bem/imovel/Imovel`, conferidos contra a tabela RN-0010 do modelo |
+| RN-0010, RN-0016, RN-0017, RN-0020 e RN-0023 por tipo | `bem/veiculo/Veiculo` e `bem/imovel/Imovel`, conferidos contra as tabelas RN-0010 e RN-0023 do modelo |
 | RN-0011 | plug-in `veiculo` |
 | RN-0012 e RN-0014 | plug-in `imovel` |
 | UC-0001 a UC-0005 e UC-0010 | `originacao/aplicacao/*Service` e API web `/web/propostas` |
-| EVT-0001, EVT-0002 e EVT-0007 | gravados no outbox (`shared.outbox`) na transação do caso de uso |
+| UC-0006 Decidir proposta, RN-0019 | `Proposta.decidir` e `DecidirPropostaService`, chamados pelos ouvintes do crédito e da avaliação ([ADR 0009](adr/0009-retorno-entre-modulos-por-porta-de-ouvinte.md)) |
+| UC-0008 Resolver pendência | `ResolverPendenciaService`: reenquadra e pede de novo só o que ficou velho (crédito de outra versão, avaliação vencida) |
+| UC-0009 Responder contraproposta, RN-0020 | `ResponderContrapropostaService`: aceita, as condições viram a nova versão já aprovada |
+| UC-0007, RN-0021, RN-0022 e contraproposta vencida | `VerificarPrazosService`, agendado todo dia (`entrypoint/agenda`) |
+| UC-0011 Analisar crédito | módulo `credito`: `AnaliseDeCredito`, retorno do bureau em `/retornos/bureau-de-credito` e decisão do analista em `/web/analises-de-credito` |
+| UC-0012 Avaliar bem | módulo `avaliacao`: `Avaliacao`, laudo do avaliador em `/retornos/avaliador` |
+| EVT-0001 a EVT-0019 do caminho até a aprovação | gravados no outbox (`shared.outbox`) na transação do caso de uso |
+
+Os retornos externos chegam hoje por REST. Em produção, chegam pela fila ([ADR 0006](adr/0006-mensageria-por-fila-gerenciada.md)) para o mesmo serviço, que é idempotente: o mesmo retorno repetido não tem novo efeito, e um retorno diferente do já registrado é recusado.
 
 **Próximos passos:**
-- decisão, contraproposta, pendência e expiração (UC-0006 a UC-0009), que dependem de Crédito e Avaliação;
+- Contratação: emitir contrato (UC-0014), com a avaliação válida na emissão (RN-0022);
 - RN-0013 e a elegibilidade do FGTS, que dependem de sistemas externos;
 - o relay do outbox para a fila.
 
@@ -190,7 +199,7 @@ Os 6 sistemas externos do modelo têm cada um uma camada anticorrupção no mód
   - `PluginsDeTipoDeBemTest`:
     - ninguém fora de um plug-in depende dele;
     - cada tipo de bem final de DIM-0001, lido de `docs/dominio/especificacao.md`, tem exatamente um plug-in;
-    - os parâmetros conferem com a tabela RN-0010;
+    - os parâmetros conferem com a tabela RN-0010, e a fonte e a validade da avaliação com a RN-0023;
   - `EsquemaPorModuloTest`: entidades, migrações e consultas só no esquema do próprio módulo.
 
 ## ADRs
@@ -205,3 +214,4 @@ Os 6 sistemas externos do modelo têm cada um uma camada anticorrupção no mód
 | [0006](adr/0006-mensageria-por-fila-gerenciada.md) | Fila gerenciada atrás de uma porta: RabbitMQ padrão, SQS alternativa | confiabilidade, evolutividade |
 | [0007](adr/0007-java-25-e-quarkus-3-33.md) | Java 25 e Quarkus 3.33 | evolutividade |
 | [0008](adr/0008-fitness-functions.md) | Fitness functions para as decisões estruturais | as três |
+| [0009](adr/0009-retorno-entre-modulos-por-porta-de-ouvinte.md) | Retorno entre módulos por porta de ouvinte, sem ciclo | evolutividade, confiabilidade |

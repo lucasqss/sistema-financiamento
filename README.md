@@ -6,7 +6,10 @@ outros projetos.
 Etapa atual:
 - **definições de negócio aprovadas**, com o modelo mantido no episteme;
 - **arquitetura definida**;
-- **código iniciado**: o esqueleto dos 8 módulos, as fitness functions e o núcleo da originação (proposta e plug-ins de veículo e imóvel).
+- **código iniciado**:
+  - o esqueleto dos 8 módulos e as fitness functions;
+  - a originação, da proposta à aprovação, com os plug-ins de veículo e imóvel;
+  - os módulos Crédito e Avaliação, cujos resultados decidem a proposta.
 
 - [`docs/dominio`](docs/dominio/README.md): o modelo (documento compilado, base do episteme e script de carga);
 - [`docs/arquitetura`](docs/arquitetura/README.md): a arquitetura (características, estilo, módulos e ADRs);

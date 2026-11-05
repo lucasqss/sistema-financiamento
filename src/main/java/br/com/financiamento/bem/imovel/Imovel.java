@@ -8,6 +8,7 @@ import br.com.financiamento.bem.TipoDeBem;
 import br.com.financiamento.shared.dominio.Violacao;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +117,18 @@ class Imovel implements CategoriaDeBem {
         } else if (dados.construcaoAverbada()) {
             violacoes.add(new Violacao("RN-0014", "Terreno com construção averbada não é financiado como terreno."));
         }
+    }
+
+    /** RN-0023: imóvel e terreno pelo laudo de avaliador credenciado. */
+    @Override
+    public String fonteDaAvaliacao(TipoDeBem tipo) {
+        return "laudo de avaliador credenciado";
+    }
+
+    /** RN-0023: o laudo vale 180 dias. */
+    @Override
+    public LocalDate validadeDaAvaliacao(TipoDeBem tipo, LocalDate avaliadaEm) {
+        return avaliadaEm.plusDays(180);
     }
 
     @Override

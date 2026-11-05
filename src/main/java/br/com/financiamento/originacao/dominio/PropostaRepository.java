@@ -12,6 +12,11 @@ public class PropostaRepository implements PanacheRepositoryBase<Proposta, Long>
     private static final List<EstadoProposta> ATIVOS =
             Arrays.stream(EstadoProposta.values()).filter(EstadoProposta::ativa).toList();
 
+    /** Propostas com prazo correndo: aprovadas (RN-0021, RN-0022) e em contraproposta (RN-0020). */
+    public List<Proposta> comPrazoCorrendo() {
+        return list("estado in ?1", List.of(EstadoProposta.APROVADA, EstadoProposta.EM_CONTRAPROPOSTA));
+    }
+
     /** RN-0004: o bem já está em outra proposta ativa? */
     public boolean bemEmOutraPropostaAtiva(String identificacao, Long exceto) {
         if (identificacao == null || identificacao.isBlank()) return false;

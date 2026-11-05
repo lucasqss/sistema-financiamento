@@ -16,7 +16,23 @@ public record DetalhePropostaWebResponse(
         Condicoes condicoes,
         List<Documento> documentos,
         boolean enquadrada,
-        List<Violacao> pendenciasDeEnquadramento) {
+        List<Violacao> pendenciasDeEnquadramento,
+        Credito credito,
+        Avaliacao avaliacao,
+        Contraproposta contraproposta,
+        String pendencia,
+        LocalDate aprovacaoValidaAte) {
+
+    public record Credito(String resultado, int condicoesVersao, String ressalva) {
+    }
+
+    public record Avaliacao(boolean aceitoComoGarantia, BigDecimal valor, String fonte, LocalDate avaliadaEm,
+                            LocalDate validaAte) {
+    }
+
+    public record Contraproposta(BigDecimal entradaPropria, BigDecimal entradaFgts, int prazoMeses, BigDecimal parcela,
+                                 String ressalva, LocalDate validaAte) {
+    }
 
     public record Participante(String papel, String forma, String documento, String nome,
                                LocalDate nascimento, BigDecimal rendaComprovada) {
@@ -48,6 +64,15 @@ public record DetalhePropostaWebResponse(
                         c.parcela(), d.valorFinanciado()),
                 d.documentos().stream().map(x -> new Documento(x.titular(), x.tipo())).toList(),
                 d.enquadramento().isEmpty(),
-                d.enquadramento());
+                d.enquadramento(),
+                d.credito() == null ? null : new Credito(d.credito().resultado().name(), d.credito().condicoesVersao(),
+                        d.credito().ressalva()),
+                d.avaliacao() == null ? null : new Avaliacao(d.avaliacao().aceitoComoGarantia(), d.avaliacao().valor(),
+                        d.avaliacao().fonte(), d.avaliacao().avaliadaEm(), d.avaliacao().validaAte()),
+                d.contraproposta() == null ? null : new Contraproposta(d.contraproposta().entradaPropria(),
+                        d.contraproposta().entradaFgts(), d.contraproposta().prazoMeses(), d.contraproposta().parcela(),
+                        d.contraproposta().ressalva(), d.contraproposta().validaAte()),
+                d.pendencia(),
+                d.aprovacaoValidaAte());
     }
 }

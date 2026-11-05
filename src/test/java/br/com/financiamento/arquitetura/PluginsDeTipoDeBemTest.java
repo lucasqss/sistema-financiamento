@@ -133,6 +133,36 @@ class PluginsDeTipoDeBemTest {
         assertTrue(problemas.isEmpty(), String.join("\n", problemas));
     }
 
+    @Test
+    void fonteEValidadeDaAvaliacaoConferemComARegraRN0023() {
+        var tabela = ModeloDeNegocio.tabela("RN-0023");
+        var dia = java.time.LocalDate.of(2026, 2, 10);
+        var problemas = new ArrayList<String>();
+        var cobertos = new java.util.HashSet<TipoDeBem>();
+        for (var linha : tabela.entrySet()) {
+            var fonte = ModeloDeNegocio.semLinks(linha.getValue().get("Fonte"));
+            var validade = linha.getValue().entrySet().stream().filter(e -> e.getKey().startsWith("Validade"))
+                    .findFirst().orElseThrow().getValue();
+            var folhas = new ArrayList<String>();
+            for (var parte : linha.getKey().split("\\s+/\\s+")) {
+                folhas.addAll(ModeloDeNegocio.folhasAbaixoDe("DIM-0001", parte.trim()));
+            }
+            if (folhas.isEmpty()) problemas.add("linha da RN-0023 sem tipo de bem: " + linha.getKey());
+            for (var folha : folhas) {
+                var tipo = TipoDeBem.doNome(folha);
+                cobertos.add(tipo);
+                var plugin = plugins.stream().filter(p -> p.tipos().contains(tipo)).findFirst().orElseThrow();
+                confere(problemas, tipo, "fonte da avaliação", fonte, plugin.fonteDaAvaliacao(tipo));
+                var esperada = validade.equals("mês da consulta")
+                        ? dia.with(java.time.temporal.TemporalAdjusters.lastDayOfMonth())
+                        : dia.plusDays(Integer.parseInt(validade.replaceAll("\\D", "")));
+                confere(problemas, tipo, "validade da avaliação", esperada, plugin.validadeDaAvaliacao(tipo, dia));
+            }
+        }
+        assertEquals(10, cobertos.size(), "tipos cobertos pela RN-0023: " + cobertos);
+        assertTrue(problemas.isEmpty(), String.join("\n", problemas));
+    }
+
     private static boolean simNao(String valor) {
         return switch (valor) {
             case "sim" -> true;

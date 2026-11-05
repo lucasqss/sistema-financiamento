@@ -51,4 +51,12 @@ class VeiculoTest {
     void rn0020_contrapropostaVale5Dias() {
         assertEquals(5, veiculo.validadeDaContraproposta().getDays());
     }
+
+    @Test
+    void rn0023_novoVale30DiasEUsadoAteOFimDoMes() {
+        var dia = LocalDate.of(2026, 2, 10);
+        assertEquals(LocalDate.of(2026, 3, 12), veiculo.validadeDaAvaliacao(Veiculo.CARRO_NOVO, dia));
+        assertEquals(LocalDate.of(2026, 2, 28), veiculo.validadeDaAvaliacao(Veiculo.MOTO_USADA, dia));
+        assertEquals("tabela de referência", veiculo.fonteDaAvaliacao(Veiculo.CARRO_USADO));
+    }
 }

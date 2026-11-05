@@ -48,4 +48,10 @@ class ImovelTest {
     void rn0020_contrapropostaVale15Dias() {
         assertEquals(15, imovel.validadeDaContraproposta().getDays());
     }
+
+    @Test
+    void rn0023_laudoVale180Dias() {
+        assertEquals(HOJE.plusDays(180), imovel.validadeDaAvaliacao(Imovel.TERRENO_URBANO, HOJE));
+        assertEquals("laudo de avaliador credenciado", imovel.fonteDaAvaliacao(Imovel.COMERCIAL_NA_PLANTA));
+    }
 }

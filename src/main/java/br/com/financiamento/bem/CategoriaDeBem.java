@@ -2,6 +2,7 @@ package br.com.financiamento.bem;
 
 import br.com.financiamento.shared.dominio.Violacao;
 
+import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,12 @@ public interface CategoriaDeBem {
 
     /** Regras próprias da categoria (ex.: RN-0011, RN-0012, RN-0014). Vazio quando enquadra. */
     List<Violacao> verificarRegrasProprias(DadosDoEnquadramento dados);
+
+    /** RN-0023: de onde vem o valor de avaliação. */
+    String fonteDaAvaliacao(TipoDeBem tipo);
+
+    /** RN-0023 e DEC-0016: até quando vale uma avaliação feita na data informada. */
+    LocalDate validadeDaAvaliacao(TipoDeBem tipo, LocalDate avaliadaEm);
 
     /** RN-0020: validade da contraproposta. */
     Period validadeDaContraproposta();
