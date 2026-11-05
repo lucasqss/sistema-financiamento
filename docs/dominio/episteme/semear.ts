@@ -304,6 +304,13 @@ flowchart LR
 \`\`\`
 
 Avaliação e análise de crédito correm em paralelo; a proposta só é aprovada quando as duas concluíram.
+
+## Jornada em eventos
+
+Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que disparam.
+
+\`\`\`event-storming
+\`\`\`
 `;
 
 it('ori.agr.proposta', 'ori', 'AGREGADO', 'Proposta', `
@@ -333,7 +340,7 @@ documentos e os resultados da avaliação e do crédito **como chegaram à propo
 7. Só é aprovada com avaliação válida ([[USA:@rn.validade-avaliacao]]) e crédito aprovado, ambos posteriores à última versão das condições.
 8. Uma proposta gera no máximo um contrato.
 
-**Emite:** [[EMITE:@evt.iniciada]], [[EMITE:@evt.submetida]], [[EMITE:@evt.pendencia]], [[EMITE:@evt.pendencia-resolvida]], [[EMITE:@evt.aprovada]], [[EMITE:@evt.reprovada]], [[EMITE:@evt.cancelada]], [[EMITE:@evt.expirada]], [[EMITE:@evt.contraproposta-emitida]], [[EMITE:@evt.contraproposta-aceita]], [[EMITE:@evt.contraproposta-recusada]].
+**Emite:** [[EMITE:@evt.iniciada]], [[EMITE:@evt.submetida]], [[EMITE:@evt.pendencia]], [[EMITE:@evt.pendencia-resolvida]], [[EMITE:@evt.avaliacao-vencida]], [[EMITE:@evt.aprovada]], [[EMITE:@evt.reprovada]], [[EMITE:@evt.cancelada]], [[EMITE:@evt.expirada]], [[EMITE:@evt.contraproposta-emitida]], [[EMITE:@evt.contraproposta-aceita]], [[EMITE:@evt.contraproposta-recusada]].
 
 Decisões que moldam o agregado: [[@d2]], [[@d9]], [[@d10]].
 
@@ -559,6 +566,13 @@ A decisão volta para a Originação como fato.
 **Depende de:** [[DEPENDE_DE:@a.bureau]].
 
 **Atores:** [[@a.bureau]], [[@a.analista]]. **Eventos:** [[@evt.analise-solicitada]], [[@evt.credito-aprovado]], [[@evt.credito-ressalva]], [[@evt.credito-reprovado]].
+
+## Jornada em eventos
+
+Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que disparam.
+
+\`\`\`event-storming
+\`\`\`
 `;
 it('cre.eventos', 'cre', 'SECAO', 'Eventos', 'Fatos do domínio de crédito.');
 evt('analise-solicitada', 'cre.eventos', 'AnaliseCreditoSolicitada', 'A análise dos participantes foi pedida após a submissão.');
@@ -589,6 +603,13 @@ da avaliação. No imóvel na planta, faz as [[@t.medicao|medições]] que liber
 **Depende de:** [[DEPENDE_DE:@a.avaliador]].
 
 **Atores:** [[@a.avaliador]], [[@a.engenheiro]].
+
+## Jornada em eventos
+
+Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que disparam.
+
+\`\`\`event-storming
+\`\`\`
 `;
 it('ava.eventos', 'ava', 'SECAO', 'Eventos', 'Fatos do domínio de avaliação.');
 evt('avaliacao-solicitada', 'ava.eventos', 'AvaliacaoSolicitada', 'A avaliação do bem foi pedida após a submissão.');
@@ -637,6 +658,13 @@ e entrega o contrato assinado à Garantia.
 **Depende de:** [[DEPENDE_DE:@ori|Originação]] e [[DEPENDE_DE:@a.seguradora]].
 
 **Guarda:** o agregado [[@con.agr.contrato]] e o seu [[@con.cv.contrato]]. **Atores:** [[@a.proponente]], [[@a.coobrigado]], [[@a.vendedor]], [[@a.seguradora]].
+
+## Jornada em eventos
+
+Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que disparam.
+
+\`\`\`event-storming
+\`\`\`
 `;
 it('con.agr.contrato', 'con', 'AGREGADO', 'Contrato', `
 Fronteira de consistência da formalização e da garantia: condições finais (cópia congelada da proposta), seguros,
@@ -754,6 +782,13 @@ Registra a [[@t.alienacao|alienação fiduciária]]: averbação na matrícula o
 [[@t.exigencia|exigências]] e retornos assíncronos, que podem chegar repetidos ou fora de ordem.
 
 **Depende de:** [[DEPENDE_DE:@con|Contratação]], [[DEPENDE_DE:@a.cartorio]] e [[DEPENDE_DE:@a.transito]]. **Atores:** [[@a.cartorio]], [[@a.transito]], [[@a.analista]].
+
+## Jornada em eventos
+
+Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que disparam.
+
+\`\`\`event-storming
+\`\`\`
 `;
 it('gar.eventos', 'gar', 'SECAO', 'Eventos', 'Fatos do domínio de garantia.');
 evt('registro-solicitado', 'gar.eventos', 'RegistroSolicitado', 'O contrato assinado foi enviado ao órgão de registro com um protocolo nosso.');
@@ -774,7 +809,7 @@ uc('registrar', 'gar.ucs', 'Registrar garantia', `
 1. O sistema envia o contrato ao órgão da categoria ([[USA:@rn.orgao]]). Emite [[EMITE:@evt.registro-solicitado]].
 2. O órgão devolve o resultado; o sistema classifica ([[USA:@rn.retorno-registro]]). Emite [[EMITE:@evt.garantia-registrada]].
 
-**Fluxos alternativos:** exigência → [[INCLUI:@uc.exigencia]]; recusa → emite [[EMITE:@evt.registro-recusado]].
+**Fluxos alternativos:** exigência → emite [[EMITE:@evt.exigencia]] e segue em [[INCLUI:@uc.exigencia]]; recusa → emite [[EMITE:@evt.registro-recusado]].
 `);
 uc('exigencia', 'gar.ucs', 'Cumprir exigência', `
 **Ator:** [[@a.analista]].
@@ -792,6 +827,13 @@ Paga o [[@a.vendedor]] quando a garantia está constituída: [[@t.liberacao|libe
 [[@t.medicao|medição]] no imóvel na planta. Pede ao [[@a.fgts]] a liberação do FGTS da entrada.
 
 **Depende de:** [[DEPENDE_DE:@gar|Garantia]], [[DEPENDE_DE:@ava|Avaliação]] (medições) e [[DEPENDE_DE:@a.fgts]].
+
+## Jornada em eventos
+
+Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que disparam.
+
+\`\`\`event-storming
+\`\`\`
 `;
 it('des.eventos', 'des', 'SECAO', 'Eventos', 'Fatos do domínio de desembolso.');
 evt('liberacao-solicitada', 'des.eventos', 'LiberacaoSolicitada', 'A liberação do valor financiado (ou de uma parcela da obra) foi pedida.');
@@ -815,7 +857,7 @@ uc('liberar', 'des.ucs', 'Liberar recurso', `
 
 **Fluxo principal**
 1. O sistema pede a liberação. Emite [[EMITE:@evt.liberacao-solicitada]].
-2. Se a entrada usa FGTS, o sistema pede ao sistema do FGTS ([[USA:@rn.fgts]]). Emite [[EMITE:@evt.fgts-solicitado]].
+2. Se a entrada usa FGTS, o sistema pede ao sistema do FGTS ([[USA:@rn.fgts]]). Emite [[EMITE:@evt.fgts-solicitado]] e, com a liberação confirmada, [[EMITE:@evt.fgts-liberado]].
 3. O sistema paga o vendedor ([[USA:@rn.liberacao-acumulada]]). Emite [[EMITE:@evt.recurso-liberado]].
 
 **Fluxo alternativo:** FGTS negado → emite [[EMITE:@evt.fgts-negado]] e a liberação espera a entrada recomposta.

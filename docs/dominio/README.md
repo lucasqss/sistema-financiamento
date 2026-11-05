@@ -21,7 +21,7 @@ com código próprio e rastreia as ligações entre eles.
 | Domínio (com visão) | `DOM` / `VIS` | 8 | subdomínios e mapa de contexto: Originação (principal); Crédito, Avaliação, Contratação, Garantia e Desembolso (suporte); Cadastro de pessoas e Documentos (genéricos) |
 | Agregado | `AGR` | 2 | Proposta e Contrato, com composição e invariantes |
 | Ciclo de vida | `CV` | 2 | estados e transições da proposta e do contrato |
-| Evento de domínio | `EVT` | 35 | o que acontece na jornada, quem provoca e o que dispara |
+| Evento de domínio | `EVT` | 37 | o que acontece na jornada, quem provoca e o que dispara |
 | Dimensão de variação | `DIM` | 1 | "Tipo de bem": a hierarquia veículo/imóvel até os 10 tipos finais |
 | Regra de negócio | `RN` | 31 | regras comuns, parâmetros por tipo de bem, regras da jornada |
 | Caso de uso | `UC` | 17 | comandos da jornada, com os eventos que emitem |
@@ -31,6 +31,9 @@ com código próprio e rastreia as ligações entre eles.
 As ligações também são dados: o caso de uso `EMITE` evento, o evento `DISPARA` caso de uso (a política), o agregado
 `USA` regra (invariante) e `EMITE` evento, a decisão `RESPONDE` questão e a visão `DEPENDE_DE` outro domínio ou um
 sistema externo. O **mapa de contexto** do documento é gerado dessas dependências: não é desenhado à mão.
+Da mesma forma, cada domínio traz a sua **jornada em eventos** (event storming) gerada do grafo: eventos em ordem,
+o caso de uso e o ator que provocam cada um, o agregado que o emite e as políticas (`DISPARA`). Os **ciclos de vida**
+são conferidos pelo episteme: todo estado alcançável e com saída, toda transição com evento existente.
 
 As regras que mudam por tipo de bem (parâmetros, documentos, fonte da avaliação, seguros e validade da contraproposta) `VARIA_POR` a dimensão
 "Tipo de bem". O episteme confere a tabela de cada uma: todo tipo de bem coberto exatamente uma vez, diretamente ou

@@ -819,6 +819,80 @@ flowchart LR
 
 Avaliação e análise de crédito correm em paralelo; a proposta só é aprovada quando as duas concluíram.
 
+#### Jornada em eventos
+
+Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que disparam.
+
+```mermaid
+flowchart LR
+    subgraph DOM_0001_es["Originação"]
+        direction LR
+        EVT_0001["PropostaIniciada"]:::evento
+        AGR_0001{{"Proposta"}}:::agregado
+        UC_0001["Iniciar proposta"]:::comando
+        ATR_0001(["Proponente"]):::ator
+        ATR_0003(["Vendedor"]):::ator
+        ATR_0004(["Correspondente"]):::ator
+        EVT_0002["PropostaSubmetida"]:::evento
+        UC_0005["Submeter proposta"]:::comando
+        UC_0008["Analisar crédito"]:::comando
+        UC_0009["Avaliar bem"]:::comando
+        EVT_0003["PropostaComPendencia"]:::evento
+        EVT_0004["PendenciaResolvida"]:::evento
+        EVT_0005["PropostaAprovada"]:::evento
+        UC_0011["Emitir contrato"]:::comando
+        EVT_0006["PropostaReprovada"]:::evento
+        EVT_0007["PropostaCancelada"]:::evento
+        UC_0007["Cancelar proposta"]:::comando
+        EVT_0008["PropostaExpirada"]:::evento
+        EVT_0009["ContrapropostaEmitida"]:::evento
+        EVT_0010["ContrapropostaAceita"]:::evento
+        UC_0006["Responder contraproposta"]:::comando
+        EVT_0011["ContrapropostaRecusada"]:::evento
+    end
+    AGR_0001 -.- EVT_0001
+    UC_0001 --> EVT_0001
+    ATR_0001 --- UC_0001
+    ATR_0003 --- UC_0001
+    ATR_0004 --- UC_0001
+    EVT_0001 ~~~ EVT_0002
+    AGR_0001 -.- EVT_0002
+    UC_0005 --> EVT_0002
+    ATR_0001 --- UC_0005
+    ATR_0004 --- UC_0005
+    EVT_0002 ~~~ EVT_0003
+    AGR_0001 -.- EVT_0003
+    EVT_0003 ~~~ EVT_0004
+    AGR_0001 -.- EVT_0004
+    EVT_0004 ~~~ EVT_0005
+    AGR_0001 -.- EVT_0005
+    EVT_0005 ~~~ EVT_0006
+    AGR_0001 -.- EVT_0006
+    EVT_0006 ~~~ EVT_0007
+    AGR_0001 -.- EVT_0007
+    UC_0007 --> EVT_0007
+    ATR_0001 --- UC_0007
+    EVT_0007 ~~~ EVT_0008
+    AGR_0001 -.- EVT_0008
+    EVT_0008 ~~~ EVT_0009
+    AGR_0001 -.- EVT_0009
+    EVT_0009 ~~~ EVT_0010
+    AGR_0001 -.- EVT_0010
+    UC_0006 --> EVT_0010
+    ATR_0001 --- UC_0006
+    EVT_0010 ~~~ EVT_0011
+    AGR_0001 -.- EVT_0011
+    UC_0006 --> EVT_0011
+    EVT_0002 -.->|sempre que| UC_0008
+    EVT_0002 -.->|sempre que| UC_0009
+    EVT_0005 -.->|sempre que| UC_0011
+    classDef evento fill:#fdba74,stroke:#c2410c,color:#1c1917
+    classDef comando fill:#93c5fd,stroke:#1d4ed8,color:#0c0a09
+    classDef ator fill:#fde047,stroke:#a16207,color:#1c1917
+    classDef agregado fill:#fef3c7,stroke:#b45309,color:#1c1917
+    classDef semOrigem stroke-dasharray:5 4,stroke-width:2px
+```
+
 ### <a id="agr-0001"></a>1.6.2 AGR-0001 - Proposta
 
 Fronteira de consistência da originação: [participantes](#glo-0001), [bem](#glo-0006), [condições](#glo-0028),
@@ -847,7 +921,7 @@ documentos e os resultados da avaliação e do crédito **como chegaram à propo
 7. Só é aprovada com avaliação válida ([RN-0021](#rn-0021)) e crédito aprovado, ambos posteriores à última versão das condições.
 8. Uma proposta gera no máximo um contrato.
 
-**Emite:** [EVT-0001](#evt-0001), [EVT-0002](#evt-0002), [EVT-0003](#evt-0003), [EVT-0004](#evt-0004), [EVT-0005](#evt-0005), [EVT-0006](#evt-0006), [EVT-0007](#evt-0007), [EVT-0008](#evt-0008), [EVT-0009](#evt-0009), [EVT-0010](#evt-0010), [EVT-0011](#evt-0011).
+**Emite:** [EVT-0001](#evt-0001), [EVT-0002](#evt-0002), [EVT-0003](#evt-0003), [EVT-0004](#evt-0004), [EVT-0019](#evt-0019), [EVT-0005](#evt-0005), [EVT-0006](#evt-0006), [EVT-0007](#evt-0007), [EVT-0008](#evt-0008), [EVT-0009](#evt-0009), [EVT-0010](#evt-0010), [EVT-0011](#evt-0011).
 
 Decisões que moldam o agregado: [DEC-0002](#dec-0002), [DEC-0009](#dec-0009), [DEC-0010](#dec-0010).
 
@@ -1166,6 +1240,40 @@ A decisão volta para a Originação como fato.
 
 **Atores:** [ATR-0008](#atr-0008), [ATR-0005](#atr-0005). **Eventos:** [EVT-0012](#evt-0012), [EVT-0013](#evt-0013), [EVT-0014](#evt-0014), [EVT-0015](#evt-0015).
 
+#### Jornada em eventos
+
+Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que disparam.
+
+```mermaid
+flowchart LR
+    subgraph DOM_0002_es["Crédito"]
+        direction LR
+        EVT_0012["AnaliseCreditoSolicitada"]:::evento
+        UC_0008["Analisar crédito"]:::comando
+        ATR_0005(["Analista"]):::ator
+        ATR_0008(["Bureau de crédito"]):::ator
+        EVT_0013["CreditoAprovado"]:::evento
+        EVT_0014["CreditoAprovadoComRessalva"]:::evento
+        UC_0006["Responder contraproposta"]:::comando
+        EVT_0015["CreditoReprovado"]:::evento
+    end
+    UC_0008 --> EVT_0012
+    ATR_0005 --- UC_0008
+    ATR_0008 --- UC_0008
+    EVT_0012 ~~~ EVT_0013
+    UC_0008 --> EVT_0013
+    EVT_0013 ~~~ EVT_0014
+    UC_0008 --> EVT_0014
+    EVT_0014 ~~~ EVT_0015
+    UC_0008 --> EVT_0015
+    EVT_0014 -.->|sempre que| UC_0006
+    classDef evento fill:#fdba74,stroke:#c2410c,color:#1c1917
+    classDef comando fill:#93c5fd,stroke:#1d4ed8,color:#0c0a09
+    classDef ator fill:#fde047,stroke:#a16207,color:#1c1917
+    classDef agregado fill:#fef3c7,stroke:#b45309,color:#1c1917
+    classDef semOrigem stroke-dasharray:5 4,stroke-width:2px
+```
+
 ### <a id="s-0010"></a>1.7.2 S-0010 - Eventos
 
 Fatos do domínio de crédito.
@@ -1217,6 +1325,46 @@ da avaliação. No imóvel na planta, faz as [medições](#glo-0019) que liberam
 **Depende de:** [ATR-0007](#atr-0007).
 
 **Atores:** [ATR-0007](#atr-0007), [ATR-0006](#atr-0006).
+
+#### Jornada em eventos
+
+Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que disparam.
+
+```mermaid
+flowchart LR
+    subgraph DOM_0003_es["Avaliação"]
+        direction LR
+        EVT_0016["AvaliacaoSolicitada"]:::evento
+        UC_0009["Avaliar bem"]:::comando
+        ATR_0007(["Avaliador"]):::ator
+        EVT_0017["BemAvaliado"]:::evento
+        EVT_0018["BemRecusadoComoGarantia"]:::evento
+        EVT_0019["AvaliacaoVencida"]:::evento
+        AGR_0001{{"Proposta"}}:::agregado
+        EVT_0020["MedicaoRealizada"]:::evento
+        UC_0010["Medir obra"]:::comando
+        ATR_0006(["Engenheiro de medição"]):::ator
+        UC_0017["Liberar parcela da obra"]:::comando
+    end
+    UC_0009 --> EVT_0016
+    ATR_0007 --- UC_0009
+    EVT_0016 ~~~ EVT_0017
+    UC_0009 --> EVT_0017
+    EVT_0017 ~~~ EVT_0018
+    UC_0009 --> EVT_0018
+    EVT_0018 ~~~ EVT_0019
+    AGR_0001 -.- EVT_0019
+    EVT_0019 ~~~ EVT_0020
+    UC_0010 --> EVT_0020
+    ATR_0006 --- UC_0010
+    EVT_0019 -.->|sempre que| UC_0009
+    EVT_0020 -.->|sempre que| UC_0017
+    classDef evento fill:#fdba74,stroke:#c2410c,color:#1c1917
+    classDef comando fill:#93c5fd,stroke:#1d4ed8,color:#0c0a09
+    classDef ator fill:#fde047,stroke:#a16207,color:#1c1917
+    classDef agregado fill:#fef3c7,stroke:#b45309,color:#1c1917
+    classDef semOrigem stroke-dasharray:5 4,stroke-width:2px
+```
 
 ### <a id="s-0012"></a>1.8.2 S-0012 - Eventos
 
@@ -1297,6 +1445,62 @@ e entrega o contrato assinado à Garantia.
 **Depende de:** [Originação](#dom-0001) e [ATR-0011](#atr-0011).
 
 **Guarda:** o agregado [AGR-0002](#agr-0002) e o seu [CV-0002](#cv-0002). **Atores:** [ATR-0001](#atr-0001), [ATR-0002](#atr-0002), [ATR-0003](#atr-0003), [ATR-0011](#atr-0011).
+
+#### Jornada em eventos
+
+Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que disparam.
+
+```mermaid
+flowchart LR
+    subgraph DOM_0004_es["Contratação"]
+        direction LR
+        EVT_0021["CondicoesAceitas"]:::evento
+        AGR_0002{{"Contrato"}}:::agregado
+        UC_0011["Emitir contrato"]:::comando
+        ATR_0001(["Proponente"]):::ator
+        ATR_0011(["Seguradora"]):::ator
+        EVT_0022["SegurosContratados"]:::evento
+        EVT_0023["ContratoEmitido"]:::evento
+        EVT_0024["ContratoAssinado"]:::evento
+        UC_0012["Assinar contrato"]:::comando
+        ATR_0002(["Coobrigado"]):::ator
+        ATR_0003(["Vendedor"]):::ator
+        UC_0014["Registrar garantia"]:::comando
+        EVT_0025["ContratoCancelado"]:::evento
+        EVT_0026["PrazoDaObraProrrogado"]:::evento
+        UC_0013["Prorrogar prazo da obra"]:::comando
+        ATR_0005(["Analista"]):::ator
+    end
+    AGR_0002 -.- EVT_0021
+    UC_0011 --> EVT_0021
+    ATR_0001 --- UC_0011
+    ATR_0011 --- UC_0011
+    EVT_0021 ~~~ EVT_0022
+    AGR_0002 -.- EVT_0022
+    UC_0011 --> EVT_0022
+    EVT_0022 ~~~ EVT_0023
+    AGR_0002 -.- EVT_0023
+    UC_0011 --> EVT_0023
+    EVT_0023 ~~~ EVT_0024
+    AGR_0002 -.- EVT_0024
+    UC_0012 --> EVT_0024
+    ATR_0001 --- UC_0012
+    ATR_0002 --- UC_0012
+    ATR_0003 --- UC_0012
+    EVT_0024 ~~~ EVT_0025
+    AGR_0002 -.- EVT_0025
+    EVT_0025 ~~~ EVT_0026
+    AGR_0002 -.- EVT_0026
+    UC_0013 --> EVT_0026
+    ATR_0003 --- UC_0013
+    ATR_0005 --- UC_0013
+    EVT_0024 -.->|sempre que| UC_0014
+    classDef evento fill:#fdba74,stroke:#c2410c,color:#1c1917
+    classDef comando fill:#93c5fd,stroke:#1d4ed8,color:#0c0a09
+    classDef ator fill:#fde047,stroke:#a16207,color:#1c1917
+    classDef agregado fill:#fef3c7,stroke:#b45309,color:#1c1917
+    classDef semOrigem stroke-dasharray:5 4,stroke-width:2px
+```
 
 ### <a id="agr-0002"></a>1.9.2 AGR-0002 - Contrato
 
@@ -1457,6 +1661,46 @@ Registra a [alienação fiduciária](#glo-0041): averbação na matrícula ou [g
 
 **Depende de:** [Contratação](#dom-0004), [ATR-0009](#atr-0009) e [ATR-0010](#atr-0010). **Atores:** [ATR-0009](#atr-0009), [ATR-0010](#atr-0010), [ATR-0005](#atr-0005).
 
+#### Jornada em eventos
+
+Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que disparam.
+
+```mermaid
+flowchart LR
+    subgraph DOM_0005_es["Garantia"]
+        direction LR
+        EVT_0027["RegistroSolicitado"]:::evento
+        UC_0014["Registrar garantia"]:::comando
+        ATR_0009(["Cartório de Registro de Imóveis"]):::ator
+        ATR_0010(["Órgão de trânsito"]):::ator
+        EVT_0028["GarantiaRegistrada"]:::evento
+        UC_0016["Liberar recurso"]:::comando
+        EVT_0029["ExigenciaEmitida"]:::evento
+        EVT_0030["ExigenciaCumprida"]:::evento
+        UC_0015["Cumprir exigência"]:::comando
+        ATR_0005(["Analista"]):::ator
+        EVT_0031["RegistroRecusado"]:::evento
+    end
+    UC_0014 --> EVT_0027
+    ATR_0009 --- UC_0014
+    ATR_0010 --- UC_0014
+    EVT_0027 ~~~ EVT_0028
+    UC_0014 --> EVT_0028
+    EVT_0028 ~~~ EVT_0029
+    UC_0014 --> EVT_0029
+    EVT_0029 ~~~ EVT_0030
+    UC_0015 --> EVT_0030
+    ATR_0005 --- UC_0015
+    EVT_0030 ~~~ EVT_0031
+    UC_0014 --> EVT_0031
+    EVT_0028 -.->|sempre que| UC_0016
+    classDef evento fill:#fdba74,stroke:#c2410c,color:#1c1917
+    classDef comando fill:#93c5fd,stroke:#1d4ed8,color:#0c0a09
+    classDef ator fill:#fde047,stroke:#a16207,color:#1c1917
+    classDef agregado fill:#fef3c7,stroke:#b45309,color:#1c1917
+    classDef semOrigem stroke-dasharray:5 4,stroke-width:2px
+```
+
 ### <a id="s-0016"></a>1.10.2 S-0016 - Eventos
 
 Fatos do domínio de garantia.
@@ -1505,7 +1749,7 @@ Casos de uso da garantia.
 1. O sistema envia o contrato ao órgão da categoria ([RN-0027](#rn-0027)). Emite [EVT-0027](#evt-0027).
 2. O órgão devolve o resultado; o sistema classifica ([RN-0028](#rn-0028)). Emite [EVT-0028](#evt-0028).
 
-**Fluxos alternativos:** exigência → [UC-0015](#uc-0015); recusa → emite [EVT-0031](#evt-0031).
+**Fluxos alternativos:** exigência → emite [EVT-0029](#evt-0029) e segue em [UC-0015](#uc-0015); recusa → emite [EVT-0031](#evt-0031).
 
 #### <a id="uc-0015"></a>1.10.4.2 UC-0015 - Cumprir exigência
 
@@ -1527,6 +1771,44 @@ Paga o [ATR-0003](#atr-0003) quando a garantia está constituída: [liberação]
 [medição](#glo-0019) no imóvel na planta. Pede ao [ATR-0012](#atr-0012) a liberação do FGTS da entrada.
 
 **Depende de:** [Garantia](#dom-0005), [Avaliação](#dom-0003) (medições) e [ATR-0012](#atr-0012).
+
+#### Jornada em eventos
+
+Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que disparam.
+
+```mermaid
+flowchart LR
+    subgraph DOM_0006_es["Desembolso"]
+        direction LR
+        EVT_0032["LiberacaoSolicitada"]:::evento
+        UC_0016["Liberar recurso"]:::comando
+        ATR_0003(["Vendedor"]):::ator
+        EVT_0033["RecursoLiberado"]:::evento
+        EVT_0034["ParcelaDaObraLiberada"]:::evento
+        UC_0017["Liberar parcela da obra"]:::comando
+        EVT_0035["FgtsSolicitado"]:::evento
+        EVT_0036["FgtsLiberado"]:::evento
+        EVT_0037["FgtsNegado"]:::evento
+    end
+    UC_0016 --> EVT_0032
+    ATR_0003 --- UC_0016
+    EVT_0032 ~~~ EVT_0033
+    UC_0016 --> EVT_0033
+    EVT_0033 ~~~ EVT_0034
+    UC_0017 --> EVT_0034
+    ATR_0003 --- UC_0017
+    EVT_0034 ~~~ EVT_0035
+    UC_0016 --> EVT_0035
+    EVT_0035 ~~~ EVT_0036
+    UC_0016 --> EVT_0036
+    EVT_0036 ~~~ EVT_0037
+    UC_0016 --> EVT_0037
+    classDef evento fill:#fdba74,stroke:#c2410c,color:#1c1917
+    classDef comando fill:#93c5fd,stroke:#1d4ed8,color:#0c0a09
+    classDef ator fill:#fde047,stroke:#a16207,color:#1c1917
+    classDef agregado fill:#fef3c7,stroke:#b45309,color:#1c1917
+    classDef semOrigem stroke-dasharray:5 4,stroke-width:2px
+```
 
 ### <a id="s-0018"></a>1.11.2 S-0018 - Eventos
 
@@ -1584,7 +1866,7 @@ Casos de uso do desembolso.
 
 **Fluxo principal**
 1. O sistema pede a liberação. Emite [EVT-0032](#evt-0032).
-2. Se a entrada usa FGTS, o sistema pede ao sistema do FGTS ([RN-0015](#rn-0015)). Emite [EVT-0035](#evt-0035).
+2. Se a entrada usa FGTS, o sistema pede ao sistema do FGTS ([RN-0015](#rn-0015)). Emite [EVT-0035](#evt-0035) e, com a liberação confirmada, [EVT-0036](#evt-0036).
 3. O sistema paga o vendedor ([RN-0030](#rn-0030)). Emite [EVT-0033](#evt-0033).
 
 **Fluxo alternativo:** FGTS negado → emite [EVT-0037](#evt-0037) e a liberação espera a entrada recomposta.
