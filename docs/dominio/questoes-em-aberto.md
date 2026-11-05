@@ -1,5 +1,7 @@
 # Questões em aberto
 
+> **Respondidas** em 2026-11-05: ver [`../definicoes/entrevista-questoes-em-aberto.md`](../definicoes/entrevista-questoes-em-aberto.md).
+
 Decisões de negócio necessárias antes de ir ao espaço da solução. Cada uma muda o modelo.
 
 | # | Questão | Impacto no modelo | Sugestão inicial |
