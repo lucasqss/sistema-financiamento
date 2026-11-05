@@ -111,13 +111,14 @@
     - 1.6.4.1 [EVT-0001 - PropostaIniciada](#evt-0001)
     - 1.6.4.2 [EVT-0002 - PropostaSubmetida](#evt-0002)
     - 1.6.4.3 [EVT-0003 - PropostaComPendencia](#evt-0003)
-    - 1.6.4.4 [EVT-0004 - PropostaAprovada](#evt-0004)
-    - 1.6.4.5 [EVT-0005 - PropostaReprovada](#evt-0005)
-    - 1.6.4.6 [EVT-0006 - PropostaCancelada](#evt-0006)
-    - 1.6.4.7 [EVT-0007 - PropostaExpirada](#evt-0007)
-    - 1.6.4.8 [EVT-0008 - ContrapropostaEmitida](#evt-0008)
-    - 1.6.4.9 [EVT-0009 - ContrapropostaAceita](#evt-0009)
-    - 1.6.4.10 [EVT-0010 - ContrapropostaRecusada](#evt-0010)
+    - 1.6.4.4 [EVT-0004 - PendenciaResolvida](#evt-0004)
+    - 1.6.4.5 [EVT-0005 - PropostaAprovada](#evt-0005)
+    - 1.6.4.6 [EVT-0006 - PropostaReprovada](#evt-0006)
+    - 1.6.4.7 [EVT-0007 - PropostaCancelada](#evt-0007)
+    - 1.6.4.8 [EVT-0008 - PropostaExpirada](#evt-0008)
+    - 1.6.4.9 [EVT-0009 - ContrapropostaEmitida](#evt-0009)
+    - 1.6.4.10 [EVT-0010 - ContrapropostaAceita](#evt-0010)
+    - 1.6.4.11 [EVT-0011 - ContrapropostaRecusada](#evt-0011)
   - 1.6.5 [DOC-0006 - Regras de Negócio](#doc-0006)
     - 1.6.5.1 [S-0006 - Regras comuns](#s-0006)
       - 1.6.5.1.1 [RN-0001 - Participantes da proposta](#rn-0001)
@@ -154,20 +155,20 @@
 - 1.7 [DOM-0002 - Crédito](#dom-0002)
   - 1.7.1 [VIS-0002 - Visão do Domínio](#vis-0002)
   - 1.7.2 [S-0010 - Eventos](#s-0010)
-    - 1.7.2.1 [EVT-0011 - AnaliseCreditoSolicitada](#evt-0011)
-    - 1.7.2.2 [EVT-0012 - CreditoAprovado](#evt-0012)
-    - 1.7.2.3 [EVT-0013 - CreditoAprovadoComRessalva](#evt-0013)
-    - 1.7.2.4 [EVT-0014 - CreditoReprovado](#evt-0014)
+    - 1.7.2.1 [EVT-0012 - AnaliseCreditoSolicitada](#evt-0012)
+    - 1.7.2.2 [EVT-0013 - CreditoAprovado](#evt-0013)
+    - 1.7.2.3 [EVT-0014 - CreditoAprovadoComRessalva](#evt-0014)
+    - 1.7.2.4 [EVT-0015 - CreditoReprovado](#evt-0015)
   - 1.7.3 [S-0011 - Casos de uso](#s-0011)
     - 1.7.3.1 [UC-0008 - Analisar crédito](#uc-0008)
 - 1.8 [DOM-0003 - Avaliação](#dom-0003)
   - 1.8.1 [VIS-0003 - Visão do Domínio](#vis-0003)
   - 1.8.2 [S-0012 - Eventos](#s-0012)
-    - 1.8.2.1 [EVT-0015 - AvaliacaoSolicitada](#evt-0015)
-    - 1.8.2.2 [EVT-0016 - BemAvaliado](#evt-0016)
-    - 1.8.2.3 [EVT-0017 - BemRecusadoComoGarantia](#evt-0017)
-    - 1.8.2.4 [EVT-0018 - AvaliacaoVencida](#evt-0018)
-    - 1.8.2.5 [EVT-0019 - MedicaoRealizada](#evt-0019)
+    - 1.8.2.1 [EVT-0016 - AvaliacaoSolicitada](#evt-0016)
+    - 1.8.2.2 [EVT-0017 - BemAvaliado](#evt-0017)
+    - 1.8.2.3 [EVT-0018 - BemRecusadoComoGarantia](#evt-0018)
+    - 1.8.2.4 [EVT-0019 - AvaliacaoVencida](#evt-0019)
+    - 1.8.2.5 [EVT-0020 - MedicaoRealizada](#evt-0020)
   - 1.8.3 [DOC-0007 - Regras de Negócio](#doc-0007)
     - 1.8.3.1 [RN-0022 - Fonte da avaliação por tipo de bem](#rn-0022)
     - 1.8.3.2 [RN-0023 - Medição da obra](#rn-0023)
@@ -179,11 +180,12 @@
   - 1.9.2 [AGR-0002 - Contrato](#agr-0002)
   - 1.9.3 [CV-0002 - Ciclo de vida do contrato](#cv-0002)
   - 1.9.4 [S-0014 - Eventos](#s-0014)
-    - 1.9.4.1 [EVT-0020 - CondicoesAceitas](#evt-0020)
-    - 1.9.4.2 [EVT-0021 - SegurosContratados](#evt-0021)
-    - 1.9.4.3 [EVT-0022 - ContratoEmitido](#evt-0022)
-    - 1.9.4.4 [EVT-0023 - ContratoAssinado](#evt-0023)
-    - 1.9.4.5 [EVT-0024 - PrazoDaObraProrrogado](#evt-0024)
+    - 1.9.4.1 [EVT-0021 - CondicoesAceitas](#evt-0021)
+    - 1.9.4.2 [EVT-0022 - SegurosContratados](#evt-0022)
+    - 1.9.4.3 [EVT-0023 - ContratoEmitido](#evt-0023)
+    - 1.9.4.4 [EVT-0024 - ContratoAssinado](#evt-0024)
+    - 1.9.4.5 [EVT-0025 - ContratoCancelado](#evt-0025)
+    - 1.9.4.6 [EVT-0026 - PrazoDaObraProrrogado](#evt-0026)
   - 1.9.5 [DOC-0008 - Regras de Negócio](#doc-0008)
     - 1.9.5.1 [RN-0024 - Seguros exigidos por tipo de bem](#rn-0024)
     - 1.9.5.2 [RN-0025 - Assinaturas exigidas](#rn-0025)
@@ -195,11 +197,11 @@
 - 1.10 [DOM-0005 - Garantia](#dom-0005)
   - 1.10.1 [VIS-0005 - Visão do Domínio](#vis-0005)
   - 1.10.2 [S-0016 - Eventos](#s-0016)
-    - 1.10.2.1 [EVT-0025 - RegistroSolicitado](#evt-0025)
-    - 1.10.2.2 [EVT-0026 - GarantiaRegistrada](#evt-0026)
-    - 1.10.2.3 [EVT-0027 - ExigenciaEmitida](#evt-0027)
-    - 1.10.2.4 [EVT-0028 - ExigenciaCumprida](#evt-0028)
-    - 1.10.2.5 [EVT-0029 - RegistroRecusado](#evt-0029)
+    - 1.10.2.1 [EVT-0027 - RegistroSolicitado](#evt-0027)
+    - 1.10.2.2 [EVT-0028 - GarantiaRegistrada](#evt-0028)
+    - 1.10.2.3 [EVT-0029 - ExigenciaEmitida](#evt-0029)
+    - 1.10.2.4 [EVT-0030 - ExigenciaCumprida](#evt-0030)
+    - 1.10.2.5 [EVT-0031 - RegistroRecusado](#evt-0031)
   - 1.10.3 [DOC-0009 - Regras de Negócio](#doc-0009)
     - 1.10.3.1 [RN-0027 - Órgão de registro por categoria](#rn-0027)
     - 1.10.3.2 [RN-0028 - Retorno de registro é fato, não pedido](#rn-0028)
@@ -209,12 +211,12 @@
 - 1.11 [DOM-0006 - Desembolso](#dom-0006)
   - 1.11.1 [VIS-0006 - Visão do Domínio](#vis-0006)
   - 1.11.2 [S-0018 - Eventos](#s-0018)
-    - 1.11.2.1 [EVT-0030 - LiberacaoSolicitada](#evt-0030)
-    - 1.11.2.2 [EVT-0031 - RecursoLiberado](#evt-0031)
-    - 1.11.2.3 [EVT-0032 - ParcelaDaObraLiberada](#evt-0032)
-    - 1.11.2.4 [EVT-0033 - FgtsSolicitado](#evt-0033)
-    - 1.11.2.5 [EVT-0034 - FgtsLiberado](#evt-0034)
-    - 1.11.2.6 [EVT-0035 - FgtsNegado](#evt-0035)
+    - 1.11.2.1 [EVT-0032 - LiberacaoSolicitada](#evt-0032)
+    - 1.11.2.2 [EVT-0033 - RecursoLiberado](#evt-0033)
+    - 1.11.2.3 [EVT-0034 - ParcelaDaObraLiberada](#evt-0034)
+    - 1.11.2.4 [EVT-0035 - FgtsSolicitado](#evt-0035)
+    - 1.11.2.5 [EVT-0036 - FgtsLiberado](#evt-0036)
+    - 1.11.2.6 [EVT-0037 - FgtsNegado](#evt-0037)
   - 1.11.3 [DOC-0010 - Regras de Negócio](#doc-0010)
     - 1.11.3.1 [RN-0029 - Nenhuma liberação sem garantia confirmada](#rn-0029)
     - 1.11.3.2 [RN-0030 - Soma das liberações](#rn-0030)
@@ -845,7 +847,7 @@ documentos e os resultados da avaliação e do crédito **como chegaram à propo
 7. Só é aprovada com avaliação válida ([RN-0021](#rn-0021)) e crédito aprovado, ambos posteriores à última versão das condições.
 8. Uma proposta gera no máximo um contrato.
 
-**Emite:** [EVT-0001](#evt-0001), [EVT-0002](#evt-0002), [EVT-0003](#evt-0003), [EVT-0004](#evt-0004), [EVT-0005](#evt-0005), [EVT-0006](#evt-0006), [EVT-0007](#evt-0007), [EVT-0008](#evt-0008), [EVT-0009](#evt-0009).
+**Emite:** [EVT-0001](#evt-0001), [EVT-0002](#evt-0002), [EVT-0003](#evt-0003), [EVT-0004](#evt-0004), [EVT-0005](#evt-0005), [EVT-0006](#evt-0006), [EVT-0007](#evt-0007), [EVT-0008](#evt-0008), [EVT-0009](#evt-0009), [EVT-0010](#evt-0010), [EVT-0011](#evt-0011).
 
 Decisões que moldam o agregado: [DEC-0002](#dec-0002), [DEC-0009](#dec-0009), [DEC-0010](#dec-0010).
 
@@ -865,10 +867,10 @@ stateDiagram-v2
     Rascunho --> EmAnalise: PropostaSubmetida
     Rascunho --> Cancelada: PropostaCancelada
     EmAnalise --> ComPendencia: PropostaComPendencia
-    ComPendencia --> EmAnalise: pendência resolvida
+    ComPendencia --> EmAnalise: PendenciaResolvida
     EmAnalise --> EmContraproposta: ContrapropostaEmitida
     EmContraproposta --> EmAnalise: ContrapropostaAceita
-    EmContraproposta --> Reprovada: recusada ou vencida
+    EmContraproposta --> Reprovada: ContrapropostaRecusada (recusada ou vencida)
     EmAnalise --> Aprovada: PropostaAprovada
     EmAnalise --> Reprovada: PropostaReprovada
     ComPendencia --> Cancelada: PropostaCancelada
@@ -886,10 +888,12 @@ stateDiagram-v2
 |---|---|---|---|
 | Rascunho | Em análise | [EVT-0002](#evt-0002) | [RN-0017](#rn-0017) |
 | Em análise | Com pendência | [EVT-0003](#evt-0003) | [RN-0006](#rn-0006), [RN-0021](#rn-0021) |
-| Em análise | Em contraproposta | [EVT-0008](#evt-0008) | [RN-0019](#rn-0019) |
-| Em análise | Aprovada | [EVT-0004](#evt-0004) | [RN-0018](#rn-0018) |
-| Em análise | Reprovada | [EVT-0005](#evt-0005) | [RN-0018](#rn-0018) |
-| Aprovada | Expirada | [EVT-0007](#evt-0007) | [RN-0020](#rn-0020) |
+| Com pendência | Em análise | [EVT-0004](#evt-0004) | [RN-0017](#rn-0017) |
+| Em contraproposta | Reprovada | [EVT-0011](#evt-0011) | [RN-0019](#rn-0019) |
+| Em análise | Em contraproposta | [EVT-0009](#evt-0009) | [RN-0019](#rn-0019) |
+| Em análise | Aprovada | [EVT-0005](#evt-0005) | [RN-0018](#rn-0018) |
+| Em análise | Reprovada | [EVT-0006](#evt-0006) | [RN-0018](#rn-0018) |
+| Aprovada | Expirada | [EVT-0008](#evt-0008) | [RN-0020](#rn-0020) |
 
 ### <a id="s-0005"></a>1.6.4 S-0005 - Eventos
 
@@ -907,31 +911,35 @@ A proposta completa e enquadrada foi submetida. Dispara [UC-0009](#uc-0009) e [U
 
 A proposta não pode seguir até alguém agir: cota estourada após a avaliação, avaliação vencida, documento recusado. Ver [RN-0006](#rn-0006).
 
-#### <a id="evt-0004"></a>1.6.4.4 EVT-0004 - PropostaAprovada
+#### <a id="evt-0004"></a>1.6.4.4 EVT-0004 - PendenciaResolvida
+
+Quem agiu resolveu a pendência (documento reenviado, entrada recomposta, bem reavaliado) e a proposta volta à análise, reenquadrada.
+
+#### <a id="evt-0005"></a>1.6.4.5 EVT-0005 - PropostaAprovada
 
 Bem avaliado e crédito aprovado, com enquadramento válido. Começa a contar a validade ([RN-0020](#rn-0020)). Dispara [UC-0011](#uc-0011).
 
-#### <a id="evt-0005"></a>1.6.4.5 EVT-0005 - PropostaReprovada
+#### <a id="evt-0006"></a>1.6.4.6 EVT-0006 - PropostaReprovada
 
 Crédito reprovado, bem recusado como garantia ou contraproposta recusada ou vencida.
 
-#### <a id="evt-0006"></a>1.6.4.6 EVT-0006 - PropostaCancelada
+#### <a id="evt-0007"></a>1.6.4.7 EVT-0007 - PropostaCancelada
 
 O [ATR-0001](#atr-0001) desistiu antes do contrato.
 
-#### <a id="evt-0007"></a>1.6.4.7 EVT-0007 - PropostaExpirada
+#### <a id="evt-0008"></a>1.6.4.8 EVT-0008 - PropostaExpirada
 
 A proposta aprovada não foi contratada dentro da validade.
 
-#### <a id="evt-0008"></a>1.6.4.8 EVT-0008 - ContrapropostaEmitida
+#### <a id="evt-0009"></a>1.6.4.9 EVT-0009 - ContrapropostaEmitida
 
 O crédito aprovou com ressalva e o credor emitiu nova versão das condições, com validade ([RN-0019](#rn-0019)).
 
-#### <a id="evt-0009"></a>1.6.4.9 EVT-0009 - ContrapropostaAceita
+#### <a id="evt-0010"></a>1.6.4.10 EVT-0010 - ContrapropostaAceita
 
 O [ATR-0001](#atr-0001) aceitou a contraproposta; a proposta segue com as novas condições.
 
-#### <a id="evt-0010"></a>1.6.4.10 EVT-0010 - ContrapropostaRecusada
+#### <a id="evt-0011"></a>1.6.4.11 EVT-0011 - ContrapropostaRecusada
 
 O proponente recusou a contraproposta, ou ela venceu. A proposta é reprovada.
 
@@ -1129,9 +1137,9 @@ Casos de uso da originação.
 
 **Fluxo principal**
 1. O proponente vê as condições da contraproposta e a validade ([RN-0019](#rn-0019)).
-2. O proponente aceita; o sistema reenquadra. Emite [EVT-0009](#evt-0009).
+2. O proponente aceita; o sistema reenquadra. Emite [EVT-0010](#evt-0010).
 
-**Fluxo alternativo:** recusa ou vencimento → a proposta é reprovada. Emite [EVT-0010](#evt-0010).
+**Fluxo alternativo:** recusa ou vencimento → a proposta é reprovada. Emite [EVT-0011](#evt-0011).
 
 #### <a id="uc-0007"></a>1.6.6.7 UC-0007 - Cancelar proposta
 
@@ -1139,7 +1147,7 @@ Casos de uso da originação.
 
 **Pré-condição:** proposta ainda sem contrato.
 
-**Fluxo principal:** o proponente desiste; o sistema encerra a proposta. Emite [EVT-0006](#evt-0006).
+**Fluxo principal:** o proponente desiste; o sistema encerra a proposta. Emite [EVT-0007](#evt-0007).
 
 ## <a id="dom-0002"></a>1.7 DOM-0002 - Crédito
 
@@ -1156,25 +1164,25 @@ A decisão volta para a Originação como fato.
 
 **Depende de:** [ATR-0008](#atr-0008).
 
-**Atores:** [ATR-0008](#atr-0008), [ATR-0005](#atr-0005). **Eventos:** [EVT-0011](#evt-0011), [EVT-0012](#evt-0012), [EVT-0013](#evt-0013), [EVT-0014](#evt-0014).
+**Atores:** [ATR-0008](#atr-0008), [ATR-0005](#atr-0005). **Eventos:** [EVT-0012](#evt-0012), [EVT-0013](#evt-0013), [EVT-0014](#evt-0014), [EVT-0015](#evt-0015).
 
 ### <a id="s-0010"></a>1.7.2 S-0010 - Eventos
 
 Fatos do domínio de crédito.
 
-#### <a id="evt-0011"></a>1.7.2.1 EVT-0011 - AnaliseCreditoSolicitada
+#### <a id="evt-0012"></a>1.7.2.1 EVT-0012 - AnaliseCreditoSolicitada
 
 A análise dos participantes foi pedida após a submissão.
 
-#### <a id="evt-0012"></a>1.7.2.2 EVT-0012 - CreditoAprovado
+#### <a id="evt-0013"></a>1.7.2.2 EVT-0013 - CreditoAprovado
 
 Os participantes têm capacidade e histórico para as condições pedidas.
 
-#### <a id="evt-0013"></a>1.7.2.3 EVT-0013 - CreditoAprovadoComRessalva
+#### <a id="evt-0014"></a>1.7.2.3 EVT-0014 - CreditoAprovadoComRessalva
 
 Aprovação condicionada a outras condições. Dispara [UC-0006](#uc-0006) por meio da contraproposta ([RN-0019](#rn-0019)).
 
-#### <a id="evt-0014"></a>1.7.2.4 EVT-0014 - CreditoReprovado
+#### <a id="evt-0015"></a>1.7.2.4 EVT-0015 - CreditoReprovado
 
 Os participantes não têm capacidade ou histórico. A proposta é reprovada.
 
@@ -1187,9 +1195,9 @@ Casos de uso do crédito.
 **Atores:** [ATR-0008](#atr-0008), [ATR-0005](#atr-0005).
 
 **Fluxo principal**
-1. O sistema consulta o bureau para cada participante. Emite [EVT-0011](#evt-0011).
+1. O sistema consulta o bureau para cada participante. Emite [EVT-0012](#evt-0012).
 2. O sistema confere [RN-0008](#rn-0008) com a renda comprovada.
-3. O sistema registra a decisão. Emite [EVT-0012](#evt-0012), [EVT-0013](#evt-0013) ou [EVT-0014](#evt-0014).
+3. O sistema registra a decisão. Emite [EVT-0013](#evt-0013), [EVT-0014](#evt-0014) ou [EVT-0015](#evt-0015).
 
 **Fluxo alternativo:** fora da alçada automática → o analista decide.
 
@@ -1214,23 +1222,23 @@ da avaliação. No imóvel na planta, faz as [medições](#glo-0019) que liberam
 
 Fatos do domínio de avaliação.
 
-#### <a id="evt-0015"></a>1.8.2.1 EVT-0015 - AvaliacaoSolicitada
+#### <a id="evt-0016"></a>1.8.2.1 EVT-0016 - AvaliacaoSolicitada
 
 A avaliação do bem foi pedida após a submissão.
 
-#### <a id="evt-0016"></a>1.8.2.2 EVT-0016 - BemAvaliado
+#### <a id="evt-0017"></a>1.8.2.2 EVT-0017 - BemAvaliado
 
 O bem recebeu valor de avaliação e foi aceito como garantia. A Originação recalcula o valor de referência e o enquadramento ([RN-0006](#rn-0006)).
 
-#### <a id="evt-0017"></a>1.8.2.3 EVT-0017 - BemRecusadoComoGarantia
+#### <a id="evt-0018"></a>1.8.2.3 EVT-0018 - BemRecusadoComoGarantia
 
 O avaliador não aceitou o bem como garantia. A proposta é reprovada.
 
-#### <a id="evt-0018"></a>1.8.2.4 EVT-0018 - AvaliacaoVencida
+#### <a id="evt-0019"></a>1.8.2.4 EVT-0019 - AvaliacaoVencida
 
 A avaliação passou da validade antes da contratação ([RN-0021](#rn-0021)). Dispara [UC-0009](#uc-0009).
 
-#### <a id="evt-0019"></a>1.8.2.5 EVT-0019 - MedicaoRealizada
+#### <a id="evt-0020"></a>1.8.2.5 EVT-0020 - MedicaoRealizada
 
 O [ATR-0006](#atr-0006) apurou o percentual executado da obra. Dispara [UC-0017](#uc-0017).
 
@@ -1262,8 +1270,8 @@ Casos de uso da avaliação.
 **Ator:** [ATR-0007](#atr-0007).
 
 **Fluxo principal**
-1. O sistema pede a avaliação na fonte do tipo de bem ([RN-0022](#rn-0022)). Emite [EVT-0015](#evt-0015).
-2. O avaliador devolve valor e aceitação. Emite [EVT-0016](#evt-0016) ou [EVT-0017](#evt-0017).
+1. O sistema pede a avaliação na fonte do tipo de bem ([RN-0022](#rn-0022)). Emite [EVT-0016](#evt-0016).
+2. O avaliador devolve valor e aceitação. Emite [EVT-0017](#evt-0017) ou [EVT-0018](#evt-0018).
 
 #### <a id="uc-0010"></a>1.8.4.2 UC-0010 - Medir obra
 
@@ -1271,7 +1279,7 @@ Casos de uso da avaliação.
 
 **Pré-condição:** contrato de imóvel na planta com garantia constituída.
 
-**Fluxo principal:** o engenheiro vistoria a obra e informa o percentual acumulado ([RN-0023](#rn-0023)). Emite [EVT-0019](#evt-0019).
+**Fluxo principal:** o engenheiro vistoria a obra e informa o percentual acumulado ([RN-0023](#rn-0023)). Emite [EVT-0020](#evt-0020).
 
 ## <a id="dom-0004"></a>1.9 DOM-0004 - Contratação
 
@@ -1316,7 +1324,7 @@ pelo identificador, sem alterá-la.
 5. Nenhuma liberação sem garantia constituída ([RN-0029](#rn-0029)); soma liberada ≤ valor financiado ([RN-0030](#rn-0030)).
 6. Prorrogações da obra até o limite ([RN-0026](#rn-0026)).
 
-**Emite:** [EVT-0020](#evt-0020), [EVT-0021](#evt-0021), [EVT-0022](#evt-0022), [EVT-0023](#evt-0023), [EVT-0024](#evt-0024).
+**Emite:** [EVT-0021](#evt-0021), [EVT-0022](#evt-0022), [EVT-0023](#evt-0023), [EVT-0024](#evt-0024), [EVT-0026](#evt-0026), [EVT-0025](#evt-0025).
 
 ### <a id="cv-0002"></a>1.9.3 CV-0002 - Ciclo de vida do contrato
 
@@ -1326,51 +1334,56 @@ Estados do [contrato](#agr-0002). O estado "Em obra" só existe no imóvel na pl
 stateDiagram-v2
     [*] --> AguardandoAssinatura: ContratoEmitido
     AguardandoAssinatura --> Assinado: ContratoAssinado
-    AguardandoAssinatura --> Cancelado: desistência
+    AguardandoAssinatura --> Cancelado: ContratoCancelado (desistência)
     Assinado --> EmRegistro: RegistroSolicitado
     EmRegistro --> EmExigencia: ExigenciaEmitida
     EmExigencia --> EmRegistro: ExigenciaCumprida
     EmRegistro --> RegistroRecusado: RegistroRecusado
-    RegistroRecusado --> EmRegistro: reenvio
-    RegistroRecusado --> Cancelado: desfazer negócio
+    RegistroRecusado --> EmRegistro: RegistroSolicitado (reenvio)
+    RegistroRecusado --> Cancelado: ContratoCancelado (negócio desfeito)
     EmRegistro --> GarantiaConstituida: GarantiaRegistrada
     GarantiaConstituida --> Formalizado: RecursoLiberado (bem pronto)
     GarantiaConstituida --> EmObra: ParcelaDaObraLiberada (na planta)
     EmObra --> EmObra: MedicaoRealizada / PrazoDaObraProrrogado
-    EmObra --> Formalizado: última parcela liberada
+    EmObra --> Formalizado: ParcelaDaObraLiberada (última)
     Formalizado --> [*]
     Cancelado --> [*]
 ```
 
 | Transição | Evento | Regra |
 |---|---|---|
-| Emissão | [EVT-0022](#evt-0022) | [RN-0024](#rn-0024), [RN-0021](#rn-0021) |
-| Assinatura | [EVT-0023](#evt-0023) | [RN-0025](#rn-0025) |
-| Garantia constituída | [EVT-0026](#evt-0026) | [RN-0028](#rn-0028) |
-| Liberação | [EVT-0031](#evt-0031), [EVT-0032](#evt-0032) | [RN-0029](#rn-0029) |
-| Prorrogação | [EVT-0024](#evt-0024) | [RN-0026](#rn-0026) |
+| Emissão | [EVT-0023](#evt-0023) | [RN-0024](#rn-0024), [RN-0021](#rn-0021) |
+| Assinatura | [EVT-0024](#evt-0024) | [RN-0025](#rn-0025) |
+| Garantia constituída | [EVT-0028](#evt-0028) | [RN-0028](#rn-0028) |
+| Liberação | [EVT-0033](#evt-0033), [EVT-0034](#evt-0034) | [RN-0029](#rn-0029) |
+| Prorrogação | [EVT-0026](#evt-0026) | [RN-0026](#rn-0026) |
+| Cancelamento | [EVT-0025](#evt-0025) | — |
 
 ### <a id="s-0014"></a>1.9.4 S-0014 - Eventos
 
 Fatos do domínio de contratação.
 
-#### <a id="evt-0020"></a>1.9.4.1 EVT-0020 - CondicoesAceitas
+#### <a id="evt-0021"></a>1.9.4.1 EVT-0021 - CondicoesAceitas
 
 O [ATR-0001](#atr-0001) aceitou as condições finais da proposta aprovada.
 
-#### <a id="evt-0021"></a>1.9.4.2 EVT-0021 - SegurosContratados
+#### <a id="evt-0022"></a>1.9.4.2 EVT-0022 - SegurosContratados
 
 Os seguros exigidos pelo tipo de bem foram emitidos pela [ATR-0011](#atr-0011) ([RN-0024](#rn-0024)).
 
-#### <a id="evt-0022"></a>1.9.4.3 EVT-0022 - ContratoEmitido
+#### <a id="evt-0023"></a>1.9.4.3 EVT-0023 - ContratoEmitido
 
 O contrato foi emitido com as condições finais.
 
-#### <a id="evt-0023"></a>1.9.4.4 EVT-0023 - ContratoAssinado
+#### <a id="evt-0024"></a>1.9.4.4 EVT-0024 - ContratoAssinado
 
 Todas as assinaturas exigidas foram colhidas. Dispara [UC-0014](#uc-0014).
 
-#### <a id="evt-0024"></a>1.9.4.5 EVT-0024 - PrazoDaObraProrrogado
+#### <a id="evt-0025"></a>1.9.4.5 EVT-0025 - ContratoCancelado
+
+O contrato foi desfeito antes de formalizado: desistência antes de assinar ou registro recusado sem solução. A garantia, se houver, é baixada.
+
+#### <a id="evt-0026"></a>1.9.4.6 EVT-0026 - PrazoDaObraProrrogado
 
 O prazo previsto da obra foi estendido dentro do limite ([RN-0026](#rn-0026)).
 
@@ -1411,21 +1424,21 @@ Casos de uso da contratação.
 **Pré-condição:** proposta aprovada, dentro da validade.
 
 **Fluxo principal**
-1. O proponente aceita as condições finais. Emite [EVT-0020](#evt-0020).
-2. O sistema exige os seguros ([RN-0024](#rn-0024)) e confere a avaliação ([RN-0021](#rn-0021)). Emite [EVT-0021](#evt-0021).
-3. O sistema emite o contrato. Emite [EVT-0022](#evt-0022).
+1. O proponente aceita as condições finais. Emite [EVT-0021](#evt-0021).
+2. O sistema exige os seguros ([RN-0024](#rn-0024)) e confere a avaliação ([RN-0021](#rn-0021)). Emite [EVT-0022](#evt-0022).
+3. O sistema emite o contrato. Emite [EVT-0023](#evt-0023).
 
 #### <a id="uc-0012"></a>1.9.6.2 UC-0012 - Assinar contrato
 
 **Atores:** [ATR-0001](#atr-0001), [ATR-0002](#atr-0002), [ATR-0003](#atr-0003).
 
-**Fluxo principal:** cada signatário exigido ([RN-0025](#rn-0025)) assina; com a última assinatura, emite [EVT-0023](#evt-0023).
+**Fluxo principal:** cada signatário exigido ([RN-0025](#rn-0025)) assina; com a última assinatura, emite [EVT-0024](#evt-0024).
 
 #### <a id="uc-0013"></a>1.9.6.3 UC-0013 - Prorrogar prazo da obra
 
 **Atores:** [ATR-0003](#atr-0003) (incorporadora), [ATR-0005](#atr-0005).
 
-**Fluxo principal:** a incorporadora pede nova data; o sistema aplica [RN-0026](#rn-0026) e registra. Emite [EVT-0024](#evt-0024).
+**Fluxo principal:** a incorporadora pede nova data; o sistema aplica [RN-0026](#rn-0026) e registra. Emite [EVT-0026](#evt-0026).
 
 **Fluxo alternativo:** acima do limite → pendência para o analista decidir.
 
@@ -1448,23 +1461,23 @@ Registra a [alienação fiduciária](#glo-0041): averbação na matrícula ou [g
 
 Fatos do domínio de garantia.
 
-#### <a id="evt-0025"></a>1.10.2.1 EVT-0025 - RegistroSolicitado
+#### <a id="evt-0027"></a>1.10.2.1 EVT-0027 - RegistroSolicitado
 
 O contrato assinado foi enviado ao órgão de registro com um protocolo nosso.
 
-#### <a id="evt-0026"></a>1.10.2.2 EVT-0026 - GarantiaRegistrada
+#### <a id="evt-0028"></a>1.10.2.2 EVT-0028 - GarantiaRegistrada
 
 O órgão confirmou o registro do bem do contrato ([RN-0028](#rn-0028)). Dispara [UC-0016](#uc-0016).
 
-#### <a id="evt-0027"></a>1.10.2.3 EVT-0027 - ExigenciaEmitida
+#### <a id="evt-0029"></a>1.10.2.3 EVT-0029 - ExigenciaEmitida
 
 O [ATR-0009](#atr-0009) emitiu exigência para registrar.
 
-#### <a id="evt-0028"></a>1.10.2.4 EVT-0028 - ExigenciaCumprida
+#### <a id="evt-0030"></a>1.10.2.4 EVT-0030 - ExigenciaCumprida
 
 O [ATR-0005](#atr-0005) cumpriu a exigência e reenviou.
 
-#### <a id="evt-0029"></a>1.10.2.5 EVT-0029 - RegistroRecusado
+#### <a id="evt-0031"></a>1.10.2.5 EVT-0031 - RegistroRecusado
 
 O órgão recusou o registro.
 
@@ -1489,16 +1502,16 @@ Casos de uso da garantia.
 **Atores:** [ATR-0009](#atr-0009) ou [ATR-0010](#atr-0010).
 
 **Fluxo principal**
-1. O sistema envia o contrato ao órgão da categoria ([RN-0027](#rn-0027)). Emite [EVT-0025](#evt-0025).
-2. O órgão devolve o resultado; o sistema classifica ([RN-0028](#rn-0028)). Emite [EVT-0026](#evt-0026).
+1. O sistema envia o contrato ao órgão da categoria ([RN-0027](#rn-0027)). Emite [EVT-0027](#evt-0027).
+2. O órgão devolve o resultado; o sistema classifica ([RN-0028](#rn-0028)). Emite [EVT-0028](#evt-0028).
 
-**Fluxos alternativos:** exigência → [UC-0015](#uc-0015); recusa → emite [EVT-0029](#evt-0029).
+**Fluxos alternativos:** exigência → [UC-0015](#uc-0015); recusa → emite [EVT-0031](#evt-0031).
 
 #### <a id="uc-0015"></a>1.10.4.2 UC-0015 - Cumprir exigência
 
 **Ator:** [ATR-0005](#atr-0005).
 
-**Fluxo principal:** o analista providencia o que o cartório pediu e reenvia. Emite [EVT-0028](#evt-0028).
+**Fluxo principal:** o analista providencia o que o cartório pediu e reenvia. Emite [EVT-0030](#evt-0030).
 
 ## <a id="dom-0006"></a>1.11 DOM-0006 - Desembolso
 
@@ -1519,27 +1532,27 @@ Paga o [ATR-0003](#atr-0003) quando a garantia está constituída: [liberação]
 
 Fatos do domínio de desembolso.
 
-#### <a id="evt-0030"></a>1.11.2.1 EVT-0030 - LiberacaoSolicitada
+#### <a id="evt-0032"></a>1.11.2.1 EVT-0032 - LiberacaoSolicitada
 
 A liberação do valor financiado (ou de uma parcela da obra) foi pedida.
 
-#### <a id="evt-0031"></a>1.11.2.2 EVT-0031 - RecursoLiberado
+#### <a id="evt-0033"></a>1.11.2.2 EVT-0033 - RecursoLiberado
 
 O vendedor recebeu o valor financiado. O contrato está formalizado.
 
-#### <a id="evt-0032"></a>1.11.2.3 EVT-0032 - ParcelaDaObraLiberada
+#### <a id="evt-0034"></a>1.11.2.3 EVT-0034 - ParcelaDaObraLiberada
 
 A incorporadora recebeu a parcela correspondente à última medição.
 
-#### <a id="evt-0033"></a>1.11.2.4 EVT-0033 - FgtsSolicitado
+#### <a id="evt-0035"></a>1.11.2.4 EVT-0035 - FgtsSolicitado
 
 O uso do FGTS na entrada foi pedido ao [ATR-0012](#atr-0012).
 
-#### <a id="evt-0034"></a>1.11.2.5 EVT-0034 - FgtsLiberado
+#### <a id="evt-0036"></a>1.11.2.5 EVT-0036 - FgtsLiberado
 
 O FGTS da entrada foi liberado ao vendedor.
 
-#### <a id="evt-0035"></a>1.11.2.6 EVT-0035 - FgtsNegado
+#### <a id="evt-0037"></a>1.11.2.6 EVT-0037 - FgtsNegado
 
 O sistema do FGTS negou o uso. A entrada precisa ser recomposta com recurso próprio.
 
@@ -1570,11 +1583,11 @@ Casos de uso do desembolso.
 **Pré-condição:** garantia constituída ([RN-0029](#rn-0029)).
 
 **Fluxo principal**
-1. O sistema pede a liberação. Emite [EVT-0030](#evt-0030).
-2. Se a entrada usa FGTS, o sistema pede ao sistema do FGTS ([RN-0015](#rn-0015)). Emite [EVT-0033](#evt-0033).
-3. O sistema paga o vendedor ([RN-0030](#rn-0030)). Emite [EVT-0031](#evt-0031).
+1. O sistema pede a liberação. Emite [EVT-0032](#evt-0032).
+2. Se a entrada usa FGTS, o sistema pede ao sistema do FGTS ([RN-0015](#rn-0015)). Emite [EVT-0035](#evt-0035).
+3. O sistema paga o vendedor ([RN-0030](#rn-0030)). Emite [EVT-0033](#evt-0033).
 
-**Fluxo alternativo:** FGTS negado → emite [EVT-0035](#evt-0035) e a liberação espera a entrada recomposta.
+**Fluxo alternativo:** FGTS negado → emite [EVT-0037](#evt-0037) e a liberação espera a entrada recomposta.
 
 #### <a id="uc-0017"></a>1.11.4.2 UC-0017 - Liberar parcela da obra
 
@@ -1582,7 +1595,7 @@ Casos de uso do desembolso.
 
 **Pré-condição:** imóvel na planta com garantia constituída e nova medição.
 
-**Fluxo principal:** o sistema calcula a parcela ([RN-0031](#rn-0031), [RN-0030](#rn-0030)) e paga a incorporadora. Emite [EVT-0032](#evt-0032).
+**Fluxo principal:** o sistema calcula a parcela ([RN-0031](#rn-0031), [RN-0030](#rn-0030)) e paga a incorporadora. Emite [EVT-0034](#evt-0034).
 
 ## <a id="dom-0007"></a>1.12 DOM-0007 - Cadastro de pessoas
 

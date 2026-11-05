@@ -333,7 +333,7 @@ documentos e os resultados da avaliação e do crédito **como chegaram à propo
 7. Só é aprovada com avaliação válida ([[USA:@rn.validade-avaliacao]]) e crédito aprovado, ambos posteriores à última versão das condições.
 8. Uma proposta gera no máximo um contrato.
 
-**Emite:** [[EMITE:@evt.iniciada]], [[EMITE:@evt.submetida]], [[EMITE:@evt.pendencia]], [[EMITE:@evt.aprovada]], [[EMITE:@evt.reprovada]], [[EMITE:@evt.cancelada]], [[EMITE:@evt.expirada]], [[EMITE:@evt.contraproposta-emitida]], [[EMITE:@evt.contraproposta-aceita]].
+**Emite:** [[EMITE:@evt.iniciada]], [[EMITE:@evt.submetida]], [[EMITE:@evt.pendencia]], [[EMITE:@evt.pendencia-resolvida]], [[EMITE:@evt.aprovada]], [[EMITE:@evt.reprovada]], [[EMITE:@evt.cancelada]], [[EMITE:@evt.expirada]], [[EMITE:@evt.contraproposta-emitida]], [[EMITE:@evt.contraproposta-aceita]], [[EMITE:@evt.contraproposta-recusada]].
 
 Decisões que moldam o agregado: [[@d2]], [[@d9]], [[@d10]].
 
@@ -353,10 +353,10 @@ stateDiagram-v2
     Rascunho --> EmAnalise: PropostaSubmetida
     Rascunho --> Cancelada: PropostaCancelada
     EmAnalise --> ComPendencia: PropostaComPendencia
-    ComPendencia --> EmAnalise: pendência resolvida
+    ComPendencia --> EmAnalise: PendenciaResolvida
     EmAnalise --> EmContraproposta: ContrapropostaEmitida
     EmContraproposta --> EmAnalise: ContrapropostaAceita
-    EmContraproposta --> Reprovada: recusada ou vencida
+    EmContraproposta --> Reprovada: ContrapropostaRecusada (recusada ou vencida)
     EmAnalise --> Aprovada: PropostaAprovada
     EmAnalise --> Reprovada: PropostaReprovada
     ComPendencia --> Cancelada: PropostaCancelada
@@ -374,6 +374,8 @@ stateDiagram-v2
 |---|---|---|---|
 | Rascunho | Em análise | [[@evt.submetida]] | [[@rn.enquadramento]] |
 | Em análise | Com pendência | [[@evt.pendencia]] | [[@rn.ltv]], [[@rn.validade-avaliacao]] |
+| Com pendência | Em análise | [[@evt.pendencia-resolvida]] | [[@rn.enquadramento]] |
+| Em contraproposta | Reprovada | [[@evt.contraproposta-recusada]] | [[@rn.contraproposta]] |
 | Em análise | Em contraproposta | [[@evt.contraproposta-emitida]] | [[@rn.contraproposta]] |
 | Em análise | Aprovada | [[@evt.aprovada]] | [[@rn.aprovacao]] |
 | Em análise | Reprovada | [[@evt.reprovada]] | [[@rn.aprovacao]] |
@@ -386,6 +388,7 @@ const evt = (chave: string, pai: string, titulo: string, texto: string) => it(`e
 evt('iniciada', 'ori.eventos', 'PropostaIniciada', 'Uma [[@t.proposta|proposta]] foi aberta para um bem de categoria, subtipo e condição definidos. Provocado por [[@a.proponente]], [[@a.vendedor]] ou [[@a.correspondente]].');
 evt('submetida', 'ori.eventos', 'PropostaSubmetida', 'A proposta completa e enquadrada foi submetida. Dispara [[DISPARA:@uc.avaliar]] e [[DISPARA:@uc.analisar]].');
 evt('pendencia', 'ori.eventos', 'PropostaComPendencia', 'A proposta não pode seguir até alguém agir: cota estourada após a avaliação, avaliação vencida, documento recusado. Ver [[@rn.ltv]].');
+evt('pendencia-resolvida', 'ori.eventos', 'PendenciaResolvida', 'Quem agiu resolveu a pendência (documento reenviado, entrada recomposta, bem reavaliado) e a proposta volta à análise, reenquadrada.');
 evt('aprovada', 'ori.eventos', 'PropostaAprovada', 'Bem avaliado e crédito aprovado, com enquadramento válido. Começa a contar a validade ([[@rn.validade-proposta]]). Dispara [[DISPARA:@uc.emitir-contrato]].');
 evt('reprovada', 'ori.eventos', 'PropostaReprovada', 'Crédito reprovado, bem recusado como garantia ou contraproposta recusada ou vencida.');
 evt('cancelada', 'ori.eventos', 'PropostaCancelada', 'O [[@a.proponente]] desistiu antes do contrato.');
@@ -660,7 +663,7 @@ pelo identificador, sem alterá-la.
 5. Nenhuma liberação sem garantia constituída ([[USA:@rn.sem-garantia-sem-dinheiro]]); soma liberada ≤ valor financiado ([[USA:@rn.liberacao-acumulada]]).
 6. Prorrogações da obra até o limite ([[USA:@rn.prorrogacao]]).
 
-**Emite:** [[EMITE:@evt.condicoes-aceitas]], [[EMITE:@evt.seguros]], [[EMITE:@evt.contrato-emitido]], [[EMITE:@evt.contrato-assinado]], [[EMITE:@evt.prorrogado]].
+**Emite:** [[EMITE:@evt.condicoes-aceitas]], [[EMITE:@evt.seguros]], [[EMITE:@evt.contrato-emitido]], [[EMITE:@evt.contrato-assinado]], [[EMITE:@evt.prorrogado]], [[EMITE:@evt.contrato-cancelado]].
 `);
 it('con.cv.contrato', 'con', 'CICLO_DE_VIDA', 'Ciclo de vida do contrato', `
 Estados do [[@con.agr.contrato|contrato]]. O estado "Em obra" só existe no imóvel na planta.
@@ -669,18 +672,18 @@ Estados do [[@con.agr.contrato|contrato]]. O estado "Em obra" só existe no imó
 stateDiagram-v2
     [*] --> AguardandoAssinatura: ContratoEmitido
     AguardandoAssinatura --> Assinado: ContratoAssinado
-    AguardandoAssinatura --> Cancelado: desistência
+    AguardandoAssinatura --> Cancelado: ContratoCancelado (desistência)
     Assinado --> EmRegistro: RegistroSolicitado
     EmRegistro --> EmExigencia: ExigenciaEmitida
     EmExigencia --> EmRegistro: ExigenciaCumprida
     EmRegistro --> RegistroRecusado: RegistroRecusado
-    RegistroRecusado --> EmRegistro: reenvio
-    RegistroRecusado --> Cancelado: desfazer negócio
+    RegistroRecusado --> EmRegistro: RegistroSolicitado (reenvio)
+    RegistroRecusado --> Cancelado: ContratoCancelado (negócio desfeito)
     EmRegistro --> GarantiaConstituida: GarantiaRegistrada
     GarantiaConstituida --> Formalizado: RecursoLiberado (bem pronto)
     GarantiaConstituida --> EmObra: ParcelaDaObraLiberada (na planta)
     EmObra --> EmObra: MedicaoRealizada / PrazoDaObraProrrogado
-    EmObra --> Formalizado: última parcela liberada
+    EmObra --> Formalizado: ParcelaDaObraLiberada (última)
     Formalizado --> [*]
     Cancelado --> [*]
 \`\`\`
@@ -692,12 +695,14 @@ stateDiagram-v2
 | Garantia constituída | [[@evt.garantia-registrada]] | [[@rn.retorno-registro]] |
 | Liberação | [[@evt.recurso-liberado]], [[@evt.parcela-obra]] | [[@rn.sem-garantia-sem-dinheiro]] |
 | Prorrogação | [[@evt.prorrogado]] | [[@rn.prorrogacao]] |
+| Cancelamento | [[@evt.contrato-cancelado]] | — |
 `);
 it('con.eventos', 'con', 'SECAO', 'Eventos', 'Fatos do domínio de contratação.');
 evt('condicoes-aceitas', 'con.eventos', 'CondicoesAceitas', 'O [[@a.proponente]] aceitou as condições finais da proposta aprovada.');
 evt('seguros', 'con.eventos', 'SegurosContratados', 'Os seguros exigidos pelo tipo de bem foram emitidos pela [[@a.seguradora]] ([[@rn.seguros]]).');
 evt('contrato-emitido', 'con.eventos', 'ContratoEmitido', 'O contrato foi emitido com as condições finais.');
 evt('contrato-assinado', 'con.eventos', 'ContratoAssinado', 'Todas as assinaturas exigidas foram colhidas. Dispara [[DISPARA:@uc.registrar]].');
+evt('contrato-cancelado', 'con.eventos', 'ContratoCancelado', 'O contrato foi desfeito antes de formalizado: desistência antes de assinar ou registro recusado sem solução. A garantia, se houver, é baixada.');
 evt('prorrogado', 'con.eventos', 'PrazoDaObraProrrogado', 'O prazo previsto da obra foi estendido dentro do limite ([[@rn.prorrogacao]]).');
 it('con.regras', 'con', 'DOCUMENTO', 'Regras de Negócio', 'Regras da contratação.');
 rn('seguros', 'con.regras', 'Seguros exigidos por tipo de bem', `
