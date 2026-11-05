@@ -26,7 +26,7 @@ type Ref = { id: number; codigo: string };
 type Tipo =
   | 'PASTA' | 'DOMINIO' | 'VISAO' | 'CASO_DE_USO' | 'REGRA' | 'RNF_DOMINIO' | 'DOCUMENTO'
   | 'RNF_SISTEMA' | 'TERMO' | 'FONTE' | 'SECAO'
-  | 'ATOR' | 'EVENTO' | 'AGREGADO' | 'CICLO_DE_VIDA' | 'DECISAO' | 'QUESTAO';
+  | 'ATOR' | 'EVENTO' | 'AGREGADO' | 'CICLO_DE_VIDA' | 'DECISAO' | 'QUESTAO' | 'DIMENSAO';
 type Situacao = 'RASCUNHO' | 'EM_REVISAO' | 'APROVADO';
 
 interface Item {
@@ -206,6 +206,31 @@ termo('gravame', 'jornada', 'Gravame', 'Registro da alienação fiduciária do v
 termo('registro', 'jornada', 'Registro da garantia', 'Averbação da alienação fiduciária na matrícula (imóvel e terreno) ou inclusão do gravame (veículo).');
 termo('liberacao', 'jornada', 'Liberação do recurso', 'Pagamento do valor financiado ao vendedor. Única no bem pronto; por medição no imóvel na planta.');
 termo('prorrogacao', 'jornada', 'Prorrogação da obra', 'Extensão do prazo previsto da obra do imóvel na planta, registrada no contrato até um limite.');
+
+// ===== Dimensões de variação ===============================================
+
+it('dimensoes', 'raiz', 'DOCUMENTO', 'Dimensões de variação', 'O que faz as regras variarem. Uma regra que varia por uma dimensão traz uma tabela com um valor para cada item dela, conferida pelo episteme.');
+it('dim.tipo', 'dimensoes', 'DIMENSAO', 'Tipo de bem', `
+Combinação de [[@t.categoria|categoria]], [[@t.subtipo|subtipo]] e [[@t.condicao|condição]] do bem. Uma regra pode dar
+um valor para um nível intermediário ("Veículo usado") quando ele vale para todos os tipos abaixo.
+
+- Veículo
+  - Veículo novo
+    - Carro novo
+    - Moto nova
+  - Veículo usado
+    - Carro usado
+    - Moto usada
+- Imóvel
+  - Residencial ou comercial
+    - Residencial pronto
+    - Residencial na planta
+    - Comercial pronto
+    - Comercial na planta
+  - Terreno
+    - Terreno urbano
+    - Terreno rural
+`);
 
 // ===== Atores ==============================================================
 
@@ -428,7 +453,7 @@ rn('documentos', 'ori.regras.comuns', 'Documentos obrigatórios',
   'Os documentos exigidos pela categoria, pelo subtipo e pela forma de cada participante (PF ou PJ) estão presentes, sem documento repetido. Lista por tipo em [[INCLUI:@rn.documentos-tipo]].');
 
 rn('matriz', 'ori.regras.tipo', 'Parâmetros por tipo de bem', `
-Valores **hipotéticos e parametrizáveis**.
+Varia por [[VARIA_POR:@dim.tipo]]. Valores **hipotéticos e parametrizáveis**.
 
 | Parâmetro | Carro novo | Carro usado | Moto nova | Moto usada | Residencial pronto | Residencial na planta | Comercial pronto | Comercial na planta | Terreno urbano | Terreno rural |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -454,12 +479,14 @@ rn('terreno', 'ori.regras.tipo', 'Terreno sem construção',
 rn('fgts', 'ori.regras.tipo', 'Uso do FGTS na entrada',
   'Só o imóvel residencial (pronto ou na planta) de proponente [[@t.pf|pessoa física]] aceita [[@t.fgts|recurso do FGTS]] na entrada. A elegibilidade e o saldo são decididos pelo [[@a.fgts]]. Decisão: [[@d13]].');
 rn('documentos-tipo', 'ori.regras.tipo', 'Documentos por tipo de bem', `
+Varia por [[VARIA_POR:@dim.tipo]].
+
 | Tipo | Documentos do bem | Documentos dos participantes |
 |---|---|---|
 | Veículo novo | nota fiscal ou pedido da concessionária | PF: identidade, renda, residência · PJ: ver [[@q17]] |
 | Veículo usado | CRLV; laudo de vistoria se vendido por particular | PF: identidade, renda, residência |
-| Imóvel pronto | matrícula atualizada, habite-se (comercial), certidões do vendedor | PF: identidade, renda, residência, estado civil · PJ (comercial): ver [[@q17]] |
-| Imóvel na planta | contrato com a incorporadora, memorial de incorporação, cronograma da obra | idem imóvel pronto |
+| Residencial pronto / Comercial pronto | matrícula atualizada, habite-se (comercial), certidões do vendedor | PF: identidade, renda, residência, estado civil · PJ (comercial): ver [[@q17]] |
+| Residencial na planta / Comercial na planta | contrato com a incorporadora, memorial de incorporação, cronograma da obra | idem imóvel pronto |
 | Terreno urbano | matrícula, IPTU, certidões do vendedor | PF: identidade, renda, residência, estado civil |
 | Terreno rural | matrícula, CCIR, ITR, CAR, certidões do vendedor | idem terreno urbano |
 `);
@@ -585,11 +612,13 @@ evt('avaliacao-vencida', 'ava.eventos', 'AvaliacaoVencida', 'A avaliação passo
 evt('medicao', 'ava.eventos', 'MedicaoRealizada', 'O [[@a.engenheiro]] apurou o percentual executado da obra. Dispara [[DISPARA:@uc.liberar-parcela]].');
 it('ava.regras', 'ava', 'DOCUMENTO', 'Regras de Negócio', 'Regras da avaliação.');
 rn('fonte-avaliacao', 'ava.regras', 'Fonte da avaliação por tipo de bem', `
+Varia por [[VARIA_POR:@dim.tipo]].
+
 | Tipo | Fonte | Validade (ver [[@q16]]) |
 |---|---|---|
 | Veículo novo | nota fiscal ou preço de fábrica | 30 dias |
 | Veículo usado | tabela de referência | mês da consulta |
-| Imóvel pronto ou na planta | [[@t.laudo|laudo]] de avaliador credenciado | 180 dias |
+| Residencial ou comercial | [[@t.laudo|laudo]] de avaliador credenciado | 180 dias |
 | Terreno | laudo de avaliador credenciado | 180 dias |
 `);
 rn('medicao', 'ava.regras', 'Medição da obra',
@@ -689,11 +718,12 @@ evt('contrato-assinado', 'con.eventos', 'ContratoAssinado', 'Todas as assinatura
 evt('prorrogado', 'con.eventos', 'PrazoDaObraProrrogado', 'O prazo previsto da obra foi estendido dentro do limite ([[@rn.prorrogacao]]).');
 it('con.regras', 'con', 'DOCUMENTO', 'Regras de Negócio', 'Regras da contratação.');
 rn('seguros', 'con.regras', 'Seguros exigidos por tipo de bem', `
-O contrato só é emitido com os [[@t.seguro-exigido|seguros exigidos]] contratados. Decisão: [[@d12]].
+O contrato só é emitido com os [[@t.seguro-exigido|seguros exigidos]] contratados. Varia por [[VARIA_POR:@dim.tipo]].
+Decisão: [[@d12]].
 
 | Tipo | Obrigatórios | Opcional |
 |---|---|---|
-| Imóvel pronto ou na planta | [[@t.mip|MIP]] e [[@t.dfi|DFI]] | prestamista |
+| Residencial ou comercial | [[@t.mip|MIP]] e [[@t.dfi|DFI]] | prestamista |
 | Terreno | MIP | prestamista |
 | Veículo | seguro do bem | prestamista |
 `);

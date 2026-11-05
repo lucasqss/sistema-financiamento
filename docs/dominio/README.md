@@ -22,6 +22,7 @@ com código próprio e rastreia as ligações entre eles.
 | Agregado | `AGR` | 2 | Proposta e Contrato, com composição e invariantes |
 | Ciclo de vida | `CV` | 2 | estados e transições da proposta e do contrato |
 | Evento de domínio | `EVT` | 35 | o que acontece na jornada, quem provoca e o que dispara |
+| Dimensão de variação | `DIM` | 1 | "Tipo de bem": a hierarquia veículo/imóvel até os 10 tipos finais |
 | Regra de negócio | `RN` | 31 | regras comuns, parâmetros por tipo de bem, regras da jornada |
 | Caso de uso | `UC` | 17 | comandos da jornada, com os eventos que emitem |
 | Questão em aberto | `Q` | 17 | 13 respondidas e 4 ainda abertas (Q-0014 a Q-0017) |
@@ -29,6 +30,11 @@ com código próprio e rastreia as ligações entre eles.
 
 As ligações também são dados: o caso de uso `EMITE` evento, o evento `DISPARA` caso de uso (a política), o agregado
 `USA` regra (invariante) e `EMITE` evento, a decisão `RESPONDE` questão e a visão `DEPENDE_DE` outro domínio.
+
+As regras que mudam por tipo de bem (parâmetros, documentos, fonte da avaliação e seguros) `VARIA_POR` a dimensão
+"Tipo de bem". O episteme confere a tabela de cada uma: todo tipo de bem coberto exatamente uma vez, diretamente ou
+por um nível acima ("Veículo usado" vale para carro e moto usados), e nenhum tipo desconhecido. Se um tipo de bem
+novo entrar na dimensão, cada regra que não o cobrir passa a ser apontada.
 
 ## Como alterar
 
