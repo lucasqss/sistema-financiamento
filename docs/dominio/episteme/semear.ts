@@ -199,6 +199,14 @@ um valor para um nível intermediário ("Veículo usado") quando ele vale para t
     - Terreno rural
 `);
 
+it('dim.forma', 'dimensoes', 'DIMENSAO', 'Forma do participante', `
+Se o [[@t.participante|participante]] é pessoa física ou jurídica. Muda os documentos exigidos e em quais tipos de bem
+ele pode ser proponente.
+
+- Pessoa física
+- Pessoa jurídica
+`);
+
 // ===== Atores ==============================================================
 
 it('atores', 'raiz', 'DOCUMENTO', 'Atores', 'Pessoas e sistemas que agem na jornada do financiamento.');
@@ -431,7 +439,7 @@ rn('prazo', 'ori.regras.comuns', 'Prazo dentro da faixa do tipo',
 rn('comprometimento', 'ori.regras.comuns', 'Comprometimento de renda',
   '[[@t.parcela|Parcela]] ≤ 30% da [[@t.renda|renda comprovada]] somada dos participantes.');
 rn('documentos', 'ori.regras.comuns', 'Documentos obrigatórios',
-  'Os documentos exigidos pela categoria, pelo subtipo e pela forma de cada participante (PF ou PJ) estão presentes, sem documento repetido. Lista por tipo em [[INCLUI:@rn.documentos-tipo]].');
+  'Os documentos exigidos pela categoria, pelo subtipo e pela forma de cada participante (PF ou PJ) estão presentes, sem documento repetido. Listas em [[INCLUI:@rn.documentos-tipo]] e [[INCLUI:@rn.documentos-participantes]].');
 
 rn('matriz', 'ori.regras.tipo', 'Parâmetros por tipo de bem', `
 Varia por [[VARIA_POR:@dim.tipo]]. Valores **hipotéticos e parametrizáveis**.
@@ -459,17 +467,29 @@ rn('terreno', 'ori.regras.tipo', 'Terreno sem construção',
   'O terreno não tem construção averbada na matrícula. O [[@t.terreno-rural|terreno rural]] apresenta CCIR, ITR e CAR. Decisão: [[@d7]].');
 rn('fgts', 'ori.regras.tipo', 'Uso do FGTS na entrada',
   'Só o imóvel residencial (pronto ou na planta) de proponente [[@t.pf|pessoa física]] aceita [[@t.fgts|recurso do FGTS]] na entrada. A elegibilidade e o saldo são decididos pelo [[@a.fgts]]. Decisão: [[@d13]].');
-rn('documentos-tipo', 'ori.regras.tipo', 'Documentos por tipo de bem', `
+rn('documentos-tipo', 'ori.regras.tipo', 'Documentos do bem por tipo', `
 Varia por [[VARIA_POR:@dim.tipo]].
 
-| Tipo | Documentos do bem | Documentos dos participantes |
+| Tipo | Documentos do bem |
+|---|---|
+| Veículo novo | nota fiscal ou pedido da concessionária |
+| Veículo usado | CRLV; laudo de vistoria se vendido por particular |
+| Residencial pronto / Comercial pronto | matrícula atualizada, habite-se (comercial), certidões do vendedor |
+| Residencial na planta / Comercial na planta | contrato com a incorporadora, memorial de incorporação, cronograma da obra |
+| Terreno urbano | matrícula, IPTU, certidões do vendedor |
+| Terreno rural | matrícula, CCIR, ITR, CAR, certidões do vendedor |
+`);
+rn('documentos-participantes', 'ori.regras.tipo', 'Documentos dos participantes', `
+Varia por [[VARIA_POR:@dim.tipo]] e por [[VARIA_POR:@dim.forma]]: cada cruzamento diz o que o participante entrega.
+"—" é onde a [[@t.pj|pessoa jurídica]] não pode ser proponente ([[@rn.pj]], [[@d1]]). Documentos da PJ: [[@d17]].
+
+| Tipo | Pessoa física | Pessoa jurídica |
 |---|---|---|
-| Veículo novo | nota fiscal ou pedido da concessionária | PF: identidade, renda, residência · PJ: os de [[@d17]] |
-| Veículo usado | CRLV; laudo de vistoria se vendido por particular | PF: identidade, renda, residência |
-| Residencial pronto / Comercial pronto | matrícula atualizada, habite-se (comercial), certidões do vendedor | PF: identidade, renda, residência, estado civil · PJ (comercial): os de [[@d17]] |
-| Residencial na planta / Comercial na planta | contrato com a incorporadora, memorial de incorporação, cronograma da obra | idem imóvel pronto |
-| Terreno urbano | matrícula, IPTU, certidões do vendedor | PF: identidade, renda, residência, estado civil |
-| Terreno rural | matrícula, CCIR, ITR, CAR, certidões do vendedor | idem terreno urbano |
+| Veículo novo | identidade, comprovante de renda, comprovante de residência | contrato social, faturamento de 12 meses, documentos dos sócios e procuração |
+| Veículo usado | identidade, comprovante de renda, comprovante de residência | — |
+| Residencial pronto / Residencial na planta | identidade, comprovante de renda, comprovante de residência, estado civil | — |
+| Comercial pronto / Comercial na planta | identidade, comprovante de renda, comprovante de residência, estado civil | contrato social, faturamento de 12 meses, documentos dos sócios e procuração |
+| Terreno | identidade, comprovante de renda, comprovante de residência, estado civil | — |
 `);
 
 rn('enquadramento', 'ori.regras.jornada', 'Enquadramento para submeter',

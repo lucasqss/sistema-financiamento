@@ -22,8 +22,8 @@ com código próprio e rastreia as ligações entre eles.
 | Agregado | `AGR` | 2 | Proposta e Contrato, com composição e invariantes |
 | Ciclo de vida | `CV` | 2 | estados e transições da proposta e do contrato |
 | Evento de domínio | `EVT` | 37 | o que acontece na jornada, quem provoca e o que dispara |
-| Dimensão de variação | `DIM` | 1 | "Tipo de bem": a hierarquia veículo/imóvel até os 10 tipos finais |
-| Regra de negócio | `RN` | 31 | regras comuns, parâmetros por tipo de bem, regras da jornada |
+| Dimensão de variação | `DIM` | 2 | "Tipo de bem" (hierarquia veículo/imóvel até os 10 tipos finais) e "Forma do participante" (PF, PJ) |
+| Regra de negócio | `RN` | 32 | regras comuns, parâmetros por tipo de bem, regras da jornada |
 | Caso de uso | `UC` | 17 | comandos da jornada, com os eventos que emitem |
 | Questão em aberto | `Q` | 17 | todas respondidas |
 | Decisão | `DEC` | 17 | as decisões D1–D17 da [entrevista](../definicoes/entrevista-questoes-em-aberto.md) |
@@ -38,7 +38,8 @@ são conferidos pelo episteme: todo estado alcançável e com saída, toda trans
 As regras que mudam por tipo de bem (parâmetros, documentos, fonte da avaliação, seguros e validade da contraproposta) `VARIA_POR` a dimensão
 "Tipo de bem". O episteme confere a tabela de cada uma: todo tipo de bem coberto exatamente uma vez, diretamente ou
 por um nível acima ("Veículo usado" vale para carro e moto usados), e nenhum tipo desconhecido. Se um tipo de bem
-novo entrar na dimensão, cada regra que não o cobrir passa a ser apontada.
+novo entrar na dimensão, cada regra que não o cobrir passa a ser apontada. Os documentos dos participantes variam
+por tipo de bem **e** forma do participante: o episteme confere que todo cruzamento tem valor ("—" onde PJ não é aceita).
 
 ## Como alterar
 

@@ -54,6 +54,7 @@
     - 1.1.4.14 [GLO-0045 - Prorrogação da obra](#glo-0045)
 - 1.2 [DOC-0002 - Dimensões de variação](#doc-0002)
   - 1.2.1 [DIM-0001 - Tipo de bem](#dim-0001)
+  - 1.2.2 [DIM-0002 - Forma do participante](#dim-0002)
 - 1.3 [DOC-0003 - Atores](#doc-0003)
   - 1.3.1 [ATR-0001 - Proponente](#atr-0001)
   - 1.3.2 [ATR-0002 - Coobrigado](#atr-0002)
@@ -137,13 +138,14 @@
       - 1.6.5.2.4 [RN-0013 - Veículo usado sem restrição](#rn-0013)
       - 1.6.5.2.5 [RN-0014 - Terreno sem construção](#rn-0014)
       - 1.6.5.2.6 [RN-0015 - Uso do FGTS na entrada](#rn-0015)
-      - 1.6.5.2.7 [RN-0016 - Documentos por tipo de bem](#rn-0016)
+      - 1.6.5.2.7 [RN-0016 - Documentos do bem por tipo](#rn-0016)
+      - 1.6.5.2.8 [RN-0017 - Documentos dos participantes](#rn-0017)
     - 1.6.5.3 [S-0008 - Regras da jornada](#s-0008)
-      - 1.6.5.3.1 [RN-0017 - Enquadramento para submeter](#rn-0017)
-      - 1.6.5.3.2 [RN-0018 - Aprovação da proposta](#rn-0018)
-      - 1.6.5.3.3 [RN-0019 - Contraproposta](#rn-0019)
-      - 1.6.5.3.4 [RN-0020 - Validade da proposta aprovada](#rn-0020)
-      - 1.6.5.3.5 [RN-0021 - Avaliação válida para contratar](#rn-0021)
+      - 1.6.5.3.1 [RN-0018 - Enquadramento para submeter](#rn-0018)
+      - 1.6.5.3.2 [RN-0019 - Aprovação da proposta](#rn-0019)
+      - 1.6.5.3.3 [RN-0020 - Contraproposta](#rn-0020)
+      - 1.6.5.3.4 [RN-0021 - Validade da proposta aprovada](#rn-0021)
+      - 1.6.5.3.5 [RN-0022 - Avaliação válida para contratar](#rn-0022)
   - 1.6.6 [S-0009 - Casos de uso](#s-0009)
     - 1.6.6.1 [UC-0001 - Iniciar proposta](#uc-0001)
     - 1.6.6.2 [UC-0002 - Informar participantes](#uc-0002)
@@ -170,8 +172,8 @@
     - 1.8.2.4 [EVT-0019 - AvaliacaoVencida](#evt-0019)
     - 1.8.2.5 [EVT-0020 - MedicaoRealizada](#evt-0020)
   - 1.8.3 [DOC-0007 - Regras de Negócio](#doc-0007)
-    - 1.8.3.1 [RN-0022 - Fonte da avaliação por tipo de bem](#rn-0022)
-    - 1.8.3.2 [RN-0023 - Medição da obra](#rn-0023)
+    - 1.8.3.1 [RN-0023 - Fonte da avaliação por tipo de bem](#rn-0023)
+    - 1.8.3.2 [RN-0024 - Medição da obra](#rn-0024)
   - 1.8.4 [S-0013 - Casos de uso](#s-0013)
     - 1.8.4.1 [UC-0009 - Avaliar bem](#uc-0009)
     - 1.8.4.2 [UC-0010 - Medir obra](#uc-0010)
@@ -187,9 +189,9 @@
     - 1.9.4.5 [EVT-0025 - ContratoCancelado](#evt-0025)
     - 1.9.4.6 [EVT-0026 - PrazoDaObraProrrogado](#evt-0026)
   - 1.9.5 [DOC-0008 - Regras de Negócio](#doc-0008)
-    - 1.9.5.1 [RN-0024 - Seguros exigidos por tipo de bem](#rn-0024)
-    - 1.9.5.2 [RN-0025 - Assinaturas exigidas](#rn-0025)
-    - 1.9.5.3 [RN-0026 - Prorrogação do prazo da obra](#rn-0026)
+    - 1.9.5.1 [RN-0025 - Seguros exigidos por tipo de bem](#rn-0025)
+    - 1.9.5.2 [RN-0026 - Assinaturas exigidas](#rn-0026)
+    - 1.9.5.3 [RN-0027 - Prorrogação do prazo da obra](#rn-0027)
   - 1.9.6 [S-0015 - Casos de uso](#s-0015)
     - 1.9.6.1 [UC-0011 - Emitir contrato](#uc-0011)
     - 1.9.6.2 [UC-0012 - Assinar contrato](#uc-0012)
@@ -203,8 +205,8 @@
     - 1.10.2.4 [EVT-0030 - ExigenciaCumprida](#evt-0030)
     - 1.10.2.5 [EVT-0031 - RegistroRecusado](#evt-0031)
   - 1.10.3 [DOC-0009 - Regras de Negócio](#doc-0009)
-    - 1.10.3.1 [RN-0027 - Órgão de registro por categoria](#rn-0027)
-    - 1.10.3.2 [RN-0028 - Retorno de registro é fato, não pedido](#rn-0028)
+    - 1.10.3.1 [RN-0028 - Órgão de registro por categoria](#rn-0028)
+    - 1.10.3.2 [RN-0029 - Retorno de registro é fato, não pedido](#rn-0029)
   - 1.10.4 [S-0017 - Casos de uso](#s-0017)
     - 1.10.4.1 [UC-0014 - Registrar garantia](#uc-0014)
     - 1.10.4.2 [UC-0015 - Cumprir exigência](#uc-0015)
@@ -218,9 +220,9 @@
     - 1.11.2.5 [EVT-0036 - FgtsLiberado](#evt-0036)
     - 1.11.2.6 [EVT-0037 - FgtsNegado](#evt-0037)
   - 1.11.3 [DOC-0010 - Regras de Negócio](#doc-0010)
-    - 1.11.3.1 [RN-0029 - Nenhuma liberação sem garantia confirmada](#rn-0029)
-    - 1.11.3.2 [RN-0030 - Soma das liberações](#rn-0030)
-    - 1.11.3.3 [RN-0031 - Liberação por medição](#rn-0031)
+    - 1.11.3.1 [RN-0030 - Nenhuma liberação sem garantia confirmada](#rn-0030)
+    - 1.11.3.2 [RN-0031 - Soma das liberações](#rn-0031)
+    - 1.11.3.3 [RN-0032 - Liberação por medição](#rn-0032)
   - 1.11.4 [S-0019 - Casos de uso](#s-0019)
     - 1.11.4.1 [UC-0016 - Liberar recurso](#uc-0016)
     - 1.11.4.2 [UC-0017 - Liberar parcela da obra](#uc-0017)
@@ -552,6 +554,14 @@ um valor para um nível intermediário ("Veículo usado") quando ele vale para t
   - Terreno
     - Terreno urbano
     - Terreno rural
+
+### <a id="dim-0002"></a>1.2.2 DIM-0002 - Forma do participante
+
+Se o [participante](#glo-0001) é pessoa física ou jurídica. Muda os documentos exigidos e em quais tipos de bem
+ele pode ser proponente.
+
+- Pessoa física
+- Pessoa jurídica
 
 ## <a id="doc-0003"></a>1.3 DOC-0003 - Atores
 
@@ -916,9 +926,9 @@ documentos e os resultados da avaliação e do crédito **como chegaram à propo
 2. Só o rascunho e a proposta com pendência aceitam alteração de dados.
 3. Participantes: [RN-0001](#rn-0001) e [RN-0002](#rn-0002).
 4. Bem: [RN-0004](#rn-0004).
-5. Para submeter: completa e enquadrada ([RN-0017](#rn-0017)).
+5. Para submeter: completa e enquadrada ([RN-0018](#rn-0018)).
 6. Toda mudança de valor, entrada, prazo ou avaliação dispara novo enquadramento.
-7. Só é aprovada com avaliação válida ([RN-0021](#rn-0021)) e crédito aprovado, ambos posteriores à última versão das condições.
+7. Só é aprovada com avaliação válida ([RN-0022](#rn-0022)) e crédito aprovado, ambos posteriores à última versão das condições.
 8. Uma proposta gera no máximo um contrato.
 
 **Emite:** [EVT-0001](#evt-0001), [EVT-0002](#evt-0002), [EVT-0003](#evt-0003), [EVT-0004](#evt-0004), [EVT-0019](#evt-0019), [EVT-0005](#evt-0005), [EVT-0006](#evt-0006), [EVT-0007](#evt-0007), [EVT-0008](#evt-0008), [EVT-0009](#evt-0009), [EVT-0010](#evt-0010), [EVT-0011](#evt-0011).
@@ -960,14 +970,14 @@ stateDiagram-v2
 
 | De | Para | Evento | Regra que guarda |
 |---|---|---|---|
-| Rascunho | Em análise | [EVT-0002](#evt-0002) | [RN-0017](#rn-0017) |
-| Em análise | Com pendência | [EVT-0003](#evt-0003) | [RN-0006](#rn-0006), [RN-0021](#rn-0021) |
-| Com pendência | Em análise | [EVT-0004](#evt-0004) | [RN-0017](#rn-0017) |
-| Em contraproposta | Reprovada | [EVT-0011](#evt-0011) | [RN-0019](#rn-0019) |
-| Em análise | Em contraproposta | [EVT-0009](#evt-0009) | [RN-0019](#rn-0019) |
-| Em análise | Aprovada | [EVT-0005](#evt-0005) | [RN-0018](#rn-0018) |
-| Em análise | Reprovada | [EVT-0006](#evt-0006) | [RN-0018](#rn-0018) |
-| Aprovada | Expirada | [EVT-0008](#evt-0008) | [RN-0020](#rn-0020) |
+| Rascunho | Em análise | [EVT-0002](#evt-0002) | [RN-0018](#rn-0018) |
+| Em análise | Com pendência | [EVT-0003](#evt-0003) | [RN-0006](#rn-0006), [RN-0022](#rn-0022) |
+| Com pendência | Em análise | [EVT-0004](#evt-0004) | [RN-0018](#rn-0018) |
+| Em contraproposta | Reprovada | [EVT-0011](#evt-0011) | [RN-0020](#rn-0020) |
+| Em análise | Em contraproposta | [EVT-0009](#evt-0009) | [RN-0020](#rn-0020) |
+| Em análise | Aprovada | [EVT-0005](#evt-0005) | [RN-0019](#rn-0019) |
+| Em análise | Reprovada | [EVT-0006](#evt-0006) | [RN-0019](#rn-0019) |
+| Aprovada | Expirada | [EVT-0008](#evt-0008) | [RN-0021](#rn-0021) |
 
 ### <a id="s-0005"></a>1.6.4 S-0005 - Eventos
 
@@ -991,7 +1001,7 @@ Quem agiu resolveu a pendência (documento reenviado, entrada recomposta, bem re
 
 #### <a id="evt-0005"></a>1.6.4.5 EVT-0005 - PropostaAprovada
 
-Bem avaliado e crédito aprovado, com enquadramento válido. Começa a contar a validade ([RN-0020](#rn-0020)). Dispara [UC-0011](#uc-0011).
+Bem avaliado e crédito aprovado, com enquadramento válido. Começa a contar a validade ([RN-0021](#rn-0021)). Dispara [UC-0011](#uc-0011).
 
 #### <a id="evt-0006"></a>1.6.4.6 EVT-0006 - PropostaReprovada
 
@@ -1007,7 +1017,7 @@ A proposta aprovada não foi contratada dentro da validade.
 
 #### <a id="evt-0009"></a>1.6.4.9 EVT-0009 - ContrapropostaEmitida
 
-O crédito aprovou com ressalva e o credor emitiu nova versão das condições, com validade ([RN-0019](#rn-0019)).
+O crédito aprovou com ressalva e o credor emitiu nova versão das condições, com validade ([RN-0020](#rn-0020)).
 
 #### <a id="evt-0010"></a>1.6.4.10 EVT-0010 - ContrapropostaAceita
 
@@ -1062,7 +1072,7 @@ O [prazo](#glo-0025) fica entre o mínimo e o máximo do tipo de bem ([RN-0010](
 
 ##### <a id="rn-0009"></a>1.6.5.1.9 RN-0009 - Documentos obrigatórios
 
-Os documentos exigidos pela categoria, pelo subtipo e pela forma de cada participante (PF ou PJ) estão presentes, sem documento repetido. Lista por tipo em [RN-0016](#rn-0016).
+Os documentos exigidos pela categoria, pelo subtipo e pela forma de cada participante (PF ou PJ) estão presentes, sem documento repetido. Listas em [RN-0016](#rn-0016) e [RN-0017](#rn-0017).
 
 #### <a id="s-0007"></a>1.6.5.2 S-0007 - Regras por tipo de bem
 
@@ -1109,32 +1119,45 @@ O terreno não tem construção averbada na matrícula. O [terreno rural](#glo-0
 
 Só o imóvel residencial (pronto ou na planta) de proponente [pessoa física](#glo-0002) aceita [recurso do FGTS](#glo-0022) na entrada. A elegibilidade e o saldo são decididos pelo [ATR-0012](#atr-0012). Decisão: [DEC-0013](#dec-0013).
 
-##### <a id="rn-0016"></a>1.6.5.2.7 RN-0016 - Documentos por tipo de bem
+##### <a id="rn-0016"></a>1.6.5.2.7 RN-0016 - Documentos do bem por tipo
 
 Varia por [DIM-0001](#dim-0001).
 
-| Tipo | Documentos do bem | Documentos dos participantes |
+| Tipo | Documentos do bem |
+|---|---|
+| Veículo novo | nota fiscal ou pedido da concessionária |
+| Veículo usado | CRLV; laudo de vistoria se vendido por particular |
+| Residencial pronto / Comercial pronto | matrícula atualizada, habite-se (comercial), certidões do vendedor |
+| Residencial na planta / Comercial na planta | contrato com a incorporadora, memorial de incorporação, cronograma da obra |
+| Terreno urbano | matrícula, IPTU, certidões do vendedor |
+| Terreno rural | matrícula, CCIR, ITR, CAR, certidões do vendedor |
+
+##### <a id="rn-0017"></a>1.6.5.2.8 RN-0017 - Documentos dos participantes
+
+Varia por [DIM-0001](#dim-0001) e por [DIM-0002](#dim-0002): cada cruzamento diz o que o participante entrega.
+"—" é onde a [pessoa jurídica](#glo-0003) não pode ser proponente ([RN-0002](#rn-0002), [DEC-0001](#dec-0001)). Documentos da PJ: [DEC-0017](#dec-0017).
+
+| Tipo | Pessoa física | Pessoa jurídica |
 |---|---|---|
-| Veículo novo | nota fiscal ou pedido da concessionária | PF: identidade, renda, residência · PJ: os de [DEC-0017](#dec-0017) |
-| Veículo usado | CRLV; laudo de vistoria se vendido por particular | PF: identidade, renda, residência |
-| Residencial pronto / Comercial pronto | matrícula atualizada, habite-se (comercial), certidões do vendedor | PF: identidade, renda, residência, estado civil · PJ (comercial): os de [DEC-0017](#dec-0017) |
-| Residencial na planta / Comercial na planta | contrato com a incorporadora, memorial de incorporação, cronograma da obra | idem imóvel pronto |
-| Terreno urbano | matrícula, IPTU, certidões do vendedor | PF: identidade, renda, residência, estado civil |
-| Terreno rural | matrícula, CCIR, ITR, CAR, certidões do vendedor | idem terreno urbano |
+| Veículo novo | identidade, comprovante de renda, comprovante de residência | contrato social, faturamento de 12 meses, documentos dos sócios e procuração |
+| Veículo usado | identidade, comprovante de renda, comprovante de residência | — |
+| Residencial pronto / Residencial na planta | identidade, comprovante de renda, comprovante de residência, estado civil | — |
+| Comercial pronto / Comercial na planta | identidade, comprovante de renda, comprovante de residência, estado civil | contrato social, faturamento de 12 meses, documentos dos sócios e procuração |
+| Terreno | identidade, comprovante de renda, comprovante de residência, estado civil | — |
 
 #### <a id="s-0008"></a>1.6.5.3 S-0008 - Regras da jornada
 
 Submissão, aprovação, contraproposta e validade.
 
-##### <a id="rn-0017"></a>1.6.5.3.1 RN-0017 - Enquadramento para submeter
+##### <a id="rn-0018"></a>1.6.5.3.1 RN-0018 - Enquadramento para submeter
 
 Para submeter, a proposta está completa e respeita [RN-0001](#rn-0001), [RN-0002](#rn-0002), [RN-0003](#rn-0003), [RN-0004](#rn-0004), [RN-0005](#rn-0005), [RN-0006](#rn-0006), [RN-0007](#rn-0007), [RN-0008](#rn-0008), [RN-0009](#rn-0009) e as regras do seu tipo de bem.
 
-##### <a id="rn-0018"></a>1.6.5.3.2 RN-0018 - Aprovação da proposta
+##### <a id="rn-0019"></a>1.6.5.3.2 RN-0019 - Aprovação da proposta
 
 A proposta é aprovada quando há avaliação válida aceita como garantia **e** crédito aprovado, e o enquadramento continua válido com o valor de avaliação. Crédito reprovado ou bem recusado como garantia reprova a proposta.
 
-##### <a id="rn-0019"></a>1.6.5.3.3 RN-0019 - Contraproposta
+##### <a id="rn-0020"></a>1.6.5.3.3 RN-0020 - Contraproposta
 
 Crédito aprovado com [ressalva](#glo-0036) gera uma [contraproposta](#glo-0037) com validade. Aceita, as
 novas condições são reenquadradas e a proposta segue; recusada ou vencida, a proposta é reprovada.
@@ -1145,13 +1168,13 @@ Decisões: [DEC-0009](#dec-0009), [DEC-0015](#dec-0015). Varia por [DIM-0001](#d
 | Veículo | 5 dias corridos |
 | Imóvel | 15 dias corridos |
 
-##### <a id="rn-0020"></a>1.6.5.3.4 RN-0020 - Validade da proposta aprovada
+##### <a id="rn-0021"></a>1.6.5.3.4 RN-0021 - Validade da proposta aprovada
 
 Proposta aprovada vale 30 dias para virar contrato; depois expira.
 
-##### <a id="rn-0021"></a>1.6.5.3.5 RN-0021 - Avaliação válida para contratar
+##### <a id="rn-0022"></a>1.6.5.3.5 RN-0022 - Avaliação válida para contratar
 
-A avaliação precisa estar dentro da [validade](#glo-0020) do seu tipo de bem ([RN-0022](#rn-0022)) na emissão do contrato; vencida, a proposta fica com pendência e o bem é reavaliado. Decisões: [DEC-0011](#dec-0011), [DEC-0016](#dec-0016).
+A avaliação precisa estar dentro da [validade](#glo-0020) do seu tipo de bem ([RN-0023](#rn-0023)) na emissão do contrato; vencida, a proposta fica com pendência e o bem é reavaliado. Decisões: [DEC-0011](#dec-0011), [DEC-0016](#dec-0016).
 
 ### <a id="s-0009"></a>1.6.6 S-0009 - Casos de uso
 
@@ -1200,7 +1223,7 @@ Casos de uso da originação.
 
 **Fluxo principal**
 1. O ator submete a proposta em rascunho.
-2. O sistema aplica [RN-0017](#rn-0017).
+2. O sistema aplica [RN-0018](#rn-0018).
 3. O sistema muda a proposta para em análise. Emite [EVT-0002](#evt-0002).
 
 **Fluxo alternativo:** incompleta ou fora do enquadramento → continua em rascunho, com a lista do que falta.
@@ -1210,7 +1233,7 @@ Casos de uso da originação.
 **Ator:** [ATR-0001](#atr-0001).
 
 **Fluxo principal**
-1. O proponente vê as condições da contraproposta e a validade ([RN-0019](#rn-0019)).
+1. O proponente vê as condições da contraproposta e a validade ([RN-0020](#rn-0020)).
 2. O proponente aceita; o sistema reenquadra. Emite [EVT-0010](#evt-0010).
 
 **Fluxo alternativo:** recusa ou vencimento → a proposta é reprovada. Emite [EVT-0011](#evt-0011).
@@ -1288,7 +1311,7 @@ Os participantes têm capacidade e histórico para as condições pedidas.
 
 #### <a id="evt-0014"></a>1.7.2.3 EVT-0014 - CreditoAprovadoComRessalva
 
-Aprovação condicionada a outras condições. Dispara [UC-0006](#uc-0006) por meio da contraproposta ([RN-0019](#rn-0019)).
+Aprovação condicionada a outras condições. Dispara [UC-0006](#uc-0006) por meio da contraproposta ([RN-0020](#rn-0020)).
 
 #### <a id="evt-0015"></a>1.7.2.4 EVT-0015 - CreditoReprovado
 
@@ -1384,7 +1407,7 @@ O avaliador não aceitou o bem como garantia. A proposta é reprovada.
 
 #### <a id="evt-0019"></a>1.8.2.4 EVT-0019 - AvaliacaoVencida
 
-A avaliação passou da validade antes da contratação ([RN-0021](#rn-0021)). Dispara [UC-0009](#uc-0009).
+A avaliação passou da validade antes da contratação ([RN-0022](#rn-0022)). Dispara [UC-0009](#uc-0009).
 
 #### <a id="evt-0020"></a>1.8.2.5 EVT-0020 - MedicaoRealizada
 
@@ -1394,7 +1417,7 @@ O [ATR-0006](#atr-0006) apurou o percentual executado da obra. Dispara [UC-0017]
 
 Regras da avaliação.
 
-#### <a id="rn-0022"></a>1.8.3.1 RN-0022 - Fonte da avaliação por tipo de bem
+#### <a id="rn-0023"></a>1.8.3.1 RN-0023 - Fonte da avaliação por tipo de bem
 
 Varia por [DIM-0001](#dim-0001).
 
@@ -1405,7 +1428,7 @@ Varia por [DIM-0001](#dim-0001).
 | Residencial ou comercial | [laudo](#glo-0017) de avaliador credenciado | 180 dias |
 | Terreno | laudo de avaliador credenciado | 180 dias |
 
-#### <a id="rn-0023"></a>1.8.3.2 RN-0023 - Medição da obra
+#### <a id="rn-0024"></a>1.8.3.2 RN-0024 - Medição da obra
 
 A [medição](#glo-0019) apura o percentual acumulado executado; nunca diminui em relação à anterior. Decisão: [DEC-0006](#dec-0006).
 
@@ -1418,7 +1441,7 @@ Casos de uso da avaliação.
 **Ator:** [ATR-0007](#atr-0007).
 
 **Fluxo principal**
-1. O sistema pede a avaliação na fonte do tipo de bem ([RN-0022](#rn-0022)). Emite [EVT-0016](#evt-0016).
+1. O sistema pede a avaliação na fonte do tipo de bem ([RN-0023](#rn-0023)). Emite [EVT-0016](#evt-0016).
 2. O avaliador devolve valor e aceitação. Emite [EVT-0017](#evt-0017) ou [EVT-0018](#evt-0018).
 
 #### <a id="uc-0010"></a>1.8.4.2 UC-0010 - Medir obra
@@ -1427,7 +1450,7 @@ Casos de uso da avaliação.
 
 **Pré-condição:** contrato de imóvel na planta com garantia constituída.
 
-**Fluxo principal:** o engenheiro vistoria a obra e informa o percentual acumulado ([RN-0023](#rn-0023)). Emite [EVT-0020](#evt-0020).
+**Fluxo principal:** o engenheiro vistoria a obra e informa o percentual acumulado ([RN-0024](#rn-0024)). Emite [EVT-0020](#evt-0020).
 
 ## <a id="dom-0004"></a>1.9 DOM-0004 - Contratação
 
@@ -1522,11 +1545,11 @@ pelo identificador, sem alterá-la.
 #### Invariantes
 
 1. Condições imutáveis após a emissão.
-2. Só é emitido com os seguros exigidos contratados ([RN-0024](#rn-0024)).
-3. Só vai a registro com todas as assinaturas exigidas ([RN-0025](#rn-0025)).
-4. Retorno de registro só vale se a identificação registrada for a do contrato ([RN-0028](#rn-0028)).
-5. Nenhuma liberação sem garantia constituída ([RN-0029](#rn-0029)); soma liberada ≤ valor financiado ([RN-0030](#rn-0030)).
-6. Prorrogações da obra até o limite ([RN-0026](#rn-0026)).
+2. Só é emitido com os seguros exigidos contratados ([RN-0025](#rn-0025)).
+3. Só vai a registro com todas as assinaturas exigidas ([RN-0026](#rn-0026)).
+4. Retorno de registro só vale se a identificação registrada for a do contrato ([RN-0029](#rn-0029)).
+5. Nenhuma liberação sem garantia constituída ([RN-0030](#rn-0030)); soma liberada ≤ valor financiado ([RN-0031](#rn-0031)).
+6. Prorrogações da obra até o limite ([RN-0027](#rn-0027)).
 
 **Emite:** [EVT-0021](#evt-0021), [EVT-0022](#evt-0022), [EVT-0023](#evt-0023), [EVT-0024](#evt-0024), [EVT-0026](#evt-0026), [EVT-0025](#evt-0025).
 
@@ -1556,11 +1579,11 @@ stateDiagram-v2
 
 | Transição | Evento | Regra |
 |---|---|---|
-| Emissão | [EVT-0023](#evt-0023) | [RN-0024](#rn-0024), [RN-0021](#rn-0021) |
-| Assinatura | [EVT-0024](#evt-0024) | [RN-0025](#rn-0025) |
-| Garantia constituída | [EVT-0028](#evt-0028) | [RN-0028](#rn-0028) |
-| Liberação | [EVT-0033](#evt-0033), [EVT-0034](#evt-0034) | [RN-0029](#rn-0029) |
-| Prorrogação | [EVT-0026](#evt-0026) | [RN-0026](#rn-0026) |
+| Emissão | [EVT-0023](#evt-0023) | [RN-0025](#rn-0025), [RN-0022](#rn-0022) |
+| Assinatura | [EVT-0024](#evt-0024) | [RN-0026](#rn-0026) |
+| Garantia constituída | [EVT-0028](#evt-0028) | [RN-0029](#rn-0029) |
+| Liberação | [EVT-0033](#evt-0033), [EVT-0034](#evt-0034) | [RN-0030](#rn-0030) |
+| Prorrogação | [EVT-0026](#evt-0026) | [RN-0027](#rn-0027) |
 | Cancelamento | [EVT-0025](#evt-0025) | — |
 
 ### <a id="s-0014"></a>1.9.4 S-0014 - Eventos
@@ -1573,7 +1596,7 @@ O [ATR-0001](#atr-0001) aceitou as condições finais da proposta aprovada.
 
 #### <a id="evt-0022"></a>1.9.4.2 EVT-0022 - SegurosContratados
 
-Os seguros exigidos pelo tipo de bem foram emitidos pela [ATR-0011](#atr-0011) ([RN-0024](#rn-0024)).
+Os seguros exigidos pelo tipo de bem foram emitidos pela [ATR-0011](#atr-0011) ([RN-0025](#rn-0025)).
 
 #### <a id="evt-0023"></a>1.9.4.3 EVT-0023 - ContratoEmitido
 
@@ -1589,13 +1612,13 @@ O contrato foi desfeito antes de formalizado: desistência antes de assinar ou r
 
 #### <a id="evt-0026"></a>1.9.4.6 EVT-0026 - PrazoDaObraProrrogado
 
-O prazo previsto da obra foi estendido dentro do limite ([RN-0026](#rn-0026)).
+O prazo previsto da obra foi estendido dentro do limite ([RN-0027](#rn-0027)).
 
 ### <a id="doc-0008"></a>1.9.5 DOC-0008 - Regras de Negócio
 
 Regras da contratação.
 
-#### <a id="rn-0024"></a>1.9.5.1 RN-0024 - Seguros exigidos por tipo de bem
+#### <a id="rn-0025"></a>1.9.5.1 RN-0025 - Seguros exigidos por tipo de bem
 
 O contrato só é emitido com os [seguros exigidos](#glo-0029) contratados. Varia por [DIM-0001](#dim-0001).
 Decisão: [DEC-0012](#dec-0012).
@@ -1606,11 +1629,11 @@ Decisão: [DEC-0012](#dec-0012).
 | Terreno | MIP | prestamista |
 | Veículo | seguro do bem | prestamista |
 
-#### <a id="rn-0025"></a>1.9.5.2 RN-0025 - Assinaturas exigidas
+#### <a id="rn-0026"></a>1.9.5.2 RN-0026 - Assinaturas exigidas
 
 Assinam todos os [participantes](#glo-0001). No imóvel e no terreno assinam também o [ATR-0003](#atr-0003) e os cônjuges, quando houver.
 
-#### <a id="rn-0026"></a>1.9.5.3 RN-0026 - Prorrogação do prazo da obra
+#### <a id="rn-0027"></a>1.9.5.3 RN-0027 - Prorrogação do prazo da obra
 
 No imóvel na planta, o contrato aceita [prorrogações](#glo-0045) do prazo da obra que, somadas, não passem de 180 dias além do prazo previsto; acima disso vira pendência para o [ATR-0005](#atr-0005). Decisões: [DEC-0006](#dec-0006), [DEC-0014](#dec-0014).
 
@@ -1629,20 +1652,20 @@ Casos de uso da contratação.
 
 **Fluxo principal**
 1. O proponente aceita as condições finais. Emite [EVT-0021](#evt-0021).
-2. O sistema exige os seguros ([RN-0024](#rn-0024)) e confere a avaliação ([RN-0021](#rn-0021)). Emite [EVT-0022](#evt-0022).
+2. O sistema exige os seguros ([RN-0025](#rn-0025)) e confere a avaliação ([RN-0022](#rn-0022)). Emite [EVT-0022](#evt-0022).
 3. O sistema emite o contrato. Emite [EVT-0023](#evt-0023).
 
 #### <a id="uc-0012"></a>1.9.6.2 UC-0012 - Assinar contrato
 
 **Atores:** [ATR-0001](#atr-0001), [ATR-0002](#atr-0002), [ATR-0003](#atr-0003).
 
-**Fluxo principal:** cada signatário exigido ([RN-0025](#rn-0025)) assina; com a última assinatura, emite [EVT-0024](#evt-0024).
+**Fluxo principal:** cada signatário exigido ([RN-0026](#rn-0026)) assina; com a última assinatura, emite [EVT-0024](#evt-0024).
 
 #### <a id="uc-0013"></a>1.9.6.3 UC-0013 - Prorrogar prazo da obra
 
 **Atores:** [ATR-0003](#atr-0003) (incorporadora), [ATR-0005](#atr-0005).
 
-**Fluxo principal:** a incorporadora pede nova data; o sistema aplica [RN-0026](#rn-0026) e registra. Emite [EVT-0026](#evt-0026).
+**Fluxo principal:** a incorporadora pede nova data; o sistema aplica [RN-0027](#rn-0027) e registra. Emite [EVT-0026](#evt-0026).
 
 **Fluxo alternativo:** acima do limite → pendência para o analista decidir.
 
@@ -1711,7 +1734,7 @@ O contrato assinado foi enviado ao órgão de registro com um protocolo nosso.
 
 #### <a id="evt-0028"></a>1.10.2.2 EVT-0028 - GarantiaRegistrada
 
-O órgão confirmou o registro do bem do contrato ([RN-0028](#rn-0028)). Dispara [UC-0016](#uc-0016).
+O órgão confirmou o registro do bem do contrato ([RN-0029](#rn-0029)). Dispara [UC-0016](#uc-0016).
 
 #### <a id="evt-0029"></a>1.10.2.3 EVT-0029 - ExigenciaEmitida
 
@@ -1729,11 +1752,11 @@ O órgão recusou o registro.
 
 Regras da garantia.
 
-#### <a id="rn-0027"></a>1.10.3.1 RN-0027 - Órgão de registro por categoria
+#### <a id="rn-0028"></a>1.10.3.1 RN-0028 - Órgão de registro por categoria
 
 Imóvel e terreno: [ATR-0009](#atr-0009) da matrícula. Veículo: [ATR-0010](#atr-0010) (sistema de gravames).
 
-#### <a id="rn-0028"></a>1.10.3.2 RN-0028 - Retorno de registro é fato, não pedido
+#### <a id="rn-0029"></a>1.10.3.2 RN-0029 - Retorno de registro é fato, não pedido
 
 O retorno do órgão é classificado, não recusado: se a identificação registrada é a do bem do contrato, a garantia está constituída; se é de outro bem, vira pendência para o [ATR-0005](#atr-0005). Retorno repetido do mesmo protocolo não tem novo efeito.
 
@@ -1746,8 +1769,8 @@ Casos de uso da garantia.
 **Atores:** [ATR-0009](#atr-0009) ou [ATR-0010](#atr-0010).
 
 **Fluxo principal**
-1. O sistema envia o contrato ao órgão da categoria ([RN-0027](#rn-0027)). Emite [EVT-0027](#evt-0027).
-2. O órgão devolve o resultado; o sistema classifica ([RN-0028](#rn-0028)). Emite [EVT-0028](#evt-0028).
+1. O sistema envia o contrato ao órgão da categoria ([RN-0028](#rn-0028)). Emite [EVT-0027](#evt-0027).
+2. O órgão devolve o resultado; o sistema classifica ([RN-0029](#rn-0029)). Emite [EVT-0028](#evt-0028).
 
 **Fluxos alternativos:** exigência → emite [EVT-0029](#evt-0029) e segue em [UC-0015](#uc-0015); recusa → emite [EVT-0031](#evt-0031).
 
@@ -1842,17 +1865,17 @@ O sistema do FGTS negou o uso. A entrada precisa ser recomposta com recurso pró
 
 Regras do desembolso.
 
-#### <a id="rn-0029"></a>1.11.3.1 RN-0029 - Nenhuma liberação sem garantia confirmada
+#### <a id="rn-0030"></a>1.11.3.1 RN-0030 - Nenhuma liberação sem garantia confirmada
 
 Nenhum valor é liberado antes de a garantia estar registrada e confirmada pelo órgão, em todos os tipos de bem. Decisão: [DEC-0008](#dec-0008).
 
-#### <a id="rn-0030"></a>1.11.3.2 RN-0030 - Soma das liberações
+#### <a id="rn-0031"></a>1.11.3.2 RN-0031 - Soma das liberações
 
 A soma das liberações nunca passa do valor financiado. Cada liberação é paga uma única vez, ao vendedor da proposta.
 
-#### <a id="rn-0031"></a>1.11.3.3 RN-0031 - Liberação por medição
+#### <a id="rn-0032"></a>1.11.3.3 RN-0032 - Liberação por medição
 
-No imóvel na planta, cada parcela = valor financiado × (percentual medido acumulado − percentual já liberado) ([RN-0023](#rn-0023)). Decisão: [DEC-0006](#dec-0006).
+No imóvel na planta, cada parcela = valor financiado × (percentual medido acumulado − percentual já liberado) ([RN-0024](#rn-0024)). Decisão: [DEC-0006](#dec-0006).
 
 ### <a id="s-0019"></a>1.11.4 S-0019 - Casos de uso
 
@@ -1862,12 +1885,12 @@ Casos de uso do desembolso.
 
 **Ator:** [ATR-0003](#atr-0003) (favorecido).
 
-**Pré-condição:** garantia constituída ([RN-0029](#rn-0029)).
+**Pré-condição:** garantia constituída ([RN-0030](#rn-0030)).
 
 **Fluxo principal**
 1. O sistema pede a liberação. Emite [EVT-0032](#evt-0032).
 2. Se a entrada usa FGTS, o sistema pede ao sistema do FGTS ([RN-0015](#rn-0015)). Emite [EVT-0035](#evt-0035) e, com a liberação confirmada, [EVT-0036](#evt-0036).
-3. O sistema paga o vendedor ([RN-0030](#rn-0030)). Emite [EVT-0033](#evt-0033).
+3. O sistema paga o vendedor ([RN-0031](#rn-0031)). Emite [EVT-0033](#evt-0033).
 
 **Fluxo alternativo:** FGTS negado → emite [EVT-0037](#evt-0037) e a liberação espera a entrada recomposta.
 
@@ -1877,7 +1900,7 @@ Casos de uso do desembolso.
 
 **Pré-condição:** imóvel na planta com garantia constituída e nova medição.
 
-**Fluxo principal:** o sistema calcula a parcela ([RN-0031](#rn-0031), [RN-0030](#rn-0030)) e paga a incorporadora. Emite [EVT-0034](#evt-0034).
+**Fluxo principal:** o sistema calcula a parcela ([RN-0032](#rn-0032), [RN-0031](#rn-0031)) e paga a incorporadora. Emite [EVT-0034](#evt-0034).
 
 ## <a id="dom-0007"></a>1.12 DOM-0007 - Cadastro de pessoas
 
