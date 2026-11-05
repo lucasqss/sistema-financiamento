@@ -161,7 +161,7 @@ const termo = (chave: string, secao: string, titulo: string, texto: string) => i
 termo('participante', 'pessoas', 'Participante', 'Pessoa que integra a proposta: o proponente ou um coobrigado. Uma proposta tem de 1 a 5 participantes.');
 termo('pf', 'pessoas', 'Pessoa física', 'Participante identificado por CPF, com renda pessoal comprovada.');
 termo('pj', 'pessoas', 'Pessoa jurídica', 'Participante identificado por CNPJ (empresa), com faturamento comprovado. Só pode ser proponente em carro novo, moto nova e imóvel comercial.');
-termo('renda', 'pessoas', 'Renda comprovada', 'Renda mensal (PF) ou faturamento mensal (PJ) aceito após análise dos comprovantes. A da proposta é a soma da dos participantes.');
+termo('renda', 'pessoas', 'Renda comprovada', 'Renda mensal (PF) ou faturamento mensal médio dos últimos 12 meses (PJ), aceito após análise dos comprovantes. A da proposta é a soma da dos participantes.');
 termo('incorporadora', 'pessoas', 'Incorporadora', 'Empresa que constrói e vende o imóvel na planta. É o vendedor nesse caso e recebe o dinheiro por medição da obra.');
 
 termo('bem', 'bem', 'Bem', 'Objeto comprado com o financiamento. É também a garantia do contrato.');
@@ -251,7 +251,7 @@ ator('fgts', 'Sistema do FGTS', 'Decide a elegibilidade e libera o saldo de FGTS
 
 // ===== Questões em aberto ==================================================
 
-it('questoes', 'raiz', 'DOCUMENTO', 'Questões em aberto', 'Perguntas de negócio que mudam o modelo. As respondidas apontam para a decisão; as abertas aguardam resposta.');
+it('questoes', 'raiz', 'DOCUMENTO', 'Questões em aberto', 'Perguntas de negócio que mudam o modelo. Cada questão respondida aponta para a decisão que a responde.');
 const q = (n: number, titulo: string, texto: string, aberta = false) =>
   add({ chave: `q${n}`, pai: 'questoes', tipo: 'QUESTAO', titulo, texto, situacao: aberta ? 'RASCUNHO' : 'APROVADO' });
 q(1, 'O proponente pode ser pessoa jurídica?', 'Define se o [[@t.participante|participante]] tem duas formas e se a análise de crédito e os documentos variam.');
@@ -267,14 +267,14 @@ q(10, 'O que acontece com a aprovação com ressalva?', 'O proponente aceita no 
 q(11, 'A entrada do imóvel pode usar FGTS ou subsídio?', 'Muda a composição da entrada e acrescenta um sistema externo.');
 q(12, 'O mesmo bem pode estar em mais de uma proposta ativa?', 'Evita duas garantias sobre o mesmo bem.');
 q(13, 'A avaliação do bem tem validade?', 'Se vencer antes da contratação, precisa ser refeita?');
-q(14, 'Qual o limite de prorrogações da obra?', 'Quantidade de prorrogações ou meses acumulados aceitos antes de virar pendência para o analista.', true);
-q(15, 'Qual o prazo de validade da contraproposta?', 'A sugestão inicial é 10 dias.', true);
-q(16, 'Qual a validade exata da avaliação em cada categoria?', 'Sugestão inicial: laudo de imóvel e terreno 180 dias; tabela de referência do veículo usado, o mês da consulta; nota fiscal do novo, 30 dias.', true);
-q(17, 'Quais documentos são exigidos de participante pessoa jurídica?', 'Contrato social, balanço, faturamento, procuração dos sócios?', true);
+q(14, 'Qual o limite de prorrogações da obra?', 'Quantidade de prorrogações ou meses acumulados aceitos antes de virar pendência para o analista.');
+q(15, 'Qual o prazo de validade da contraproposta?', 'Prazo para o proponente aceitar ou recusar as condições da contraproposta.');
+q(16, 'Qual a validade exata da avaliação em cada categoria?', 'Sugestão inicial: laudo de imóvel e terreno 180 dias; tabela de referência do veículo usado, o mês da consulta; nota fiscal do novo, 30 dias.');
+q(17, 'Quais documentos são exigidos de participante pessoa jurídica?', 'Contrato social, balanço, faturamento, procuração dos sócios?');
 
 // ===== Decisões ============================================================
 
-it('decisoes', 'raiz', 'DOCUMENTO', 'Decisões', 'Decisões de negócio tomadas na entrevista de 2026-11-05 (registro completo em docs/definicoes).');
+it('decisoes', 'raiz', 'DOCUMENTO', 'Decisões', 'Decisões de negócio tomadas nas entrevistas de 2026-11-05 (registro completo em docs/definicoes).');
 const d = (n: number, qs: number[], titulo: string, texto: string) =>
   add({
     chave: `d${n}`, pai: 'decisoes', tipo: 'DECISAO', titulo, situacao: 'APROVADO',
@@ -293,6 +293,10 @@ d(10, [12], 'Um bem em no máximo uma proposta ativa', 'A identificação do bem
 d(11, [13], 'A avaliação tem validade por categoria', 'Vencida antes da contratação, a proposta fica com pendência e o bem é reavaliado.');
 d(12, [8], 'Seguros entram como exigência, sem cálculo', 'Imóvel pronto ou na planta: [[@t.mip|MIP]] e [[@t.dfi|DFI]]. Terreno: MIP. Veículo: seguro do bem. Prestamista opcional em todos. O prêmio não é calculado.');
 d(13, [11], 'FGTS na entrada só no imóvel residencial de pessoa física', 'Elegibilidade e saldo são decididos pelo [[@a.fgts]]. Sem subsídio habitacional.');
+d(14, [14], 'Prorrogação da obra até 180 dias acumulados', 'As prorrogações somadas podem estender o prazo previsto da obra em até 180 dias, em quantas vezes for preciso. Acima disso vira pendência para o [[@a.analista]].');
+d(15, [15], 'Validade da contraproposta por categoria', 'Veículo: 5 dias corridos, porque a venda é rápida e a loja segura o bem por pouco tempo. Imóvel e terreno: 15 dias corridos.');
+d(16, [16], 'Validade da avaliação por tipo de bem', 'Veículo novo: 30 dias (nota fiscal). Veículo usado: o mês da consulta à tabela de referência. Imóvel e terreno: 180 dias (laudo).');
+d(17, [17], 'Documentos de participante pessoa jurídica', 'Contrato social e alterações, faturamento dos últimos 12 meses e documentos dos sócios, com procuração quando quem assina não é sócio. O faturamento é a [[@t.renda|renda comprovada]] da [[@t.pj|pessoa jurídica]].');
 
 // ===== Domínios ============================================================
 
@@ -483,9 +487,9 @@ Varia por [[VARIA_POR:@dim.tipo]].
 
 | Tipo | Documentos do bem | Documentos dos participantes |
 |---|---|---|
-| Veículo novo | nota fiscal ou pedido da concessionária | PF: identidade, renda, residência · PJ: ver [[@q17]] |
+| Veículo novo | nota fiscal ou pedido da concessionária | PF: identidade, renda, residência · PJ: os de [[@d17]] |
 | Veículo usado | CRLV; laudo de vistoria se vendido por particular | PF: identidade, renda, residência |
-| Residencial pronto / Comercial pronto | matrícula atualizada, habite-se (comercial), certidões do vendedor | PF: identidade, renda, residência, estado civil · PJ (comercial): ver [[@q17]] |
+| Residencial pronto / Comercial pronto | matrícula atualizada, habite-se (comercial), certidões do vendedor | PF: identidade, renda, residência, estado civil · PJ (comercial): os de [[@d17]] |
 | Residencial na planta / Comercial na planta | contrato com a incorporadora, memorial de incorporação, cronograma da obra | idem imóvel pronto |
 | Terreno urbano | matrícula, IPTU, certidões do vendedor | PF: identidade, renda, residência, estado civil |
 | Terreno rural | matrícula, CCIR, ITR, CAR, certidões do vendedor | idem terreno urbano |
@@ -495,12 +499,20 @@ rn('enquadramento', 'ori.regras.jornada', 'Enquadramento para submeter',
   'Para submeter, a proposta está completa e respeita [[INCLUI:@rn.participantes]], [[INCLUI:@rn.pj]], [[INCLUI:@rn.vendedor]], [[INCLUI:@rn.bem-unico]], [[INCLUI:@rn.valor-financiado]], [[INCLUI:@rn.ltv]], [[INCLUI:@rn.prazo]], [[INCLUI:@rn.comprometimento]], [[INCLUI:@rn.documentos]] e as regras do seu tipo de bem.');
 rn('aprovacao', 'ori.regras.jornada', 'Aprovação da proposta',
   'A proposta é aprovada quando há avaliação válida aceita como garantia **e** crédito aprovado, e o enquadramento continua válido com o valor de avaliação. Crédito reprovado ou bem recusado como garantia reprova a proposta.');
-rn('contraproposta', 'ori.regras.jornada', 'Contraproposta',
-  'Crédito aprovado com [[@t.ressalva|ressalva]] gera uma [[@t.contraproposta|contraproposta]] com validade (ver [[@q15]]). Aceita, as novas condições são reenquadradas e a proposta segue; recusada ou vencida, a proposta é reprovada. Decisão: [[@d9]].');
+rn('contraproposta', 'ori.regras.jornada', 'Contraproposta', `
+Crédito aprovado com [[@t.ressalva|ressalva]] gera uma [[@t.contraproposta|contraproposta]] com validade. Aceita, as
+novas condições são reenquadradas e a proposta segue; recusada ou vencida, a proposta é reprovada.
+Decisões: [[@d9]], [[@d15]]. Varia por [[VARIA_POR:@dim.tipo]].
+
+| Tipo | Validade da contraproposta |
+|---|---|
+| Veículo | 5 dias corridos |
+| Imóvel | 15 dias corridos |
+`);
 rn('validade-proposta', 'ori.regras.jornada', 'Validade da proposta aprovada',
   'Proposta aprovada vale 30 dias para virar contrato; depois expira.');
 rn('validade-avaliacao', 'ori.regras.jornada', 'Avaliação válida para contratar',
-  'A avaliação precisa estar dentro da [[@t.validade-avaliacao|validade]] da sua categoria (ver [[@q16]]) na emissão do contrato; vencida, a proposta fica com pendência e o bem é reavaliado. Decisão: [[@d11]].');
+  'A avaliação precisa estar dentro da [[@t.validade-avaliacao|validade]] do seu tipo de bem ([[@rn.fonte-avaliacao]]) na emissão do contrato; vencida, a proposta fica com pendência e o bem é reavaliado. Decisões: [[@d11]], [[@d16]].');
 
 // Casos de uso da originação
 it('ori.ucs', 'ori', 'SECAO', 'Casos de uso', 'Casos de uso da originação.');
@@ -614,7 +626,7 @@ it('ava.regras', 'ava', 'DOCUMENTO', 'Regras de Negócio', 'Regras da avaliaçã
 rn('fonte-avaliacao', 'ava.regras', 'Fonte da avaliação por tipo de bem', `
 Varia por [[VARIA_POR:@dim.tipo]].
 
-| Tipo | Fonte | Validade (ver [[@q16]]) |
+| Tipo | Fonte | Validade ([[@d16]]) |
 |---|---|---|
 | Veículo novo | nota fiscal ou preço de fábrica | 30 dias |
 | Veículo usado | tabela de referência | mês da consulta |
@@ -730,7 +742,8 @@ Decisão: [[@d12]].
 rn('assinaturas', 'con.regras', 'Assinaturas exigidas',
   'Assinam todos os [[@t.participante|participantes]]. No imóvel e no terreno assinam também o [[@a.vendedor]] e os cônjuges, quando houver.');
 rn('prorrogacao', 'con.regras', 'Prorrogação do prazo da obra',
-  'No imóvel na planta, o contrato aceita [[@t.prorrogacao|prorrogações]] do prazo da obra até um limite (ver [[@q14]]); acima dele vira pendência para o [[@a.analista]]. Decisão: [[@d6]].');
+  'No imóvel na planta, o contrato aceita [[@t.prorrogacao|prorrogações]] do prazo da obra que, somadas, não passem de 180 dias além do prazo previsto; acima disso vira pendência para o [[@a.analista]]. Decisões: [[@d6]], [[@d14]].',
+  'Obra prevista para 30/06; prorrogações de 90 e de 60 dias somam 150 → aceitas. Um novo pedido de 45 dias somaria 195 → pendência para o analista.');
 it('con.ucs', 'con', 'SECAO', 'Casos de uso', 'Casos de uso da contratação.');
 uc('emitir-contrato', 'con.ucs', 'Emitir contrato', `
 **Atores:** [[@a.proponente]], [[@a.seguradora]].

@@ -99,6 +99,10 @@
   - 1.5.11 [DEC-0011 - A avaliação tem validade por categoria](#dec-0011)
   - 1.5.12 [DEC-0012 - Seguros entram como exigência, sem cálculo](#dec-0012)
   - 1.5.13 [DEC-0013 - FGTS na entrada só no imóvel residencial de pessoa física](#dec-0013)
+  - 1.5.14 [DEC-0014 - Prorrogação da obra até 180 dias acumulados](#dec-0014)
+  - 1.5.15 [DEC-0015 - Validade da contraproposta por categoria](#dec-0015)
+  - 1.5.16 [DEC-0016 - Validade da avaliação por tipo de bem](#dec-0016)
+  - 1.5.17 [DEC-0017 - Documentos de participante pessoa jurídica](#dec-0017)
 - 1.6 [DOM-0001 - Originação](#dom-0001)
   - 1.6.1 [VIS-0001 - Visão do Domínio](#vis-0001)
   - 1.6.2 [AGR-0001 - Proposta](#agr-0001)
@@ -341,7 +345,7 @@ Participante identificado por CNPJ (empresa), com faturamento comprovado. Só po
 
 #### <a id="glo-0004"></a>1.1.1.4 GLO-0004 - Renda comprovada
 
-Renda mensal (PF) ou faturamento mensal (PJ) aceito após análise dos comprovantes. A da proposta é a soma da dos participantes.
+Renda mensal (PF) ou faturamento mensal médio dos últimos 12 meses (PJ), aceito após análise dos comprovantes. A da proposta é a soma da dos participantes.
 
 #### <a id="glo-0005"></a>1.1.1.5 GLO-0005 - Incorporadora
 
@@ -599,7 +603,7 @@ Decide a elegibilidade e libera o saldo de FGTS usado na entrada.
 
 ## <a id="doc-0004"></a>1.4 DOC-0004 - Questões em aberto
 
-Perguntas de negócio que mudam o modelo. As respondidas apontam para a decisão; as abertas aguardam resposta.
+Perguntas de negócio que mudam o modelo. Cada questão respondida aponta para a decisão que a responde.
 
 ### <a id="q-0001"></a>1.4.1 Q-0001 - O proponente pode ser pessoa jurídica?
 
@@ -659,7 +663,7 @@ Quantidade de prorrogações ou meses acumulados aceitos antes de virar pendênc
 
 ### <a id="q-0015"></a>1.4.15 Q-0015 - Qual o prazo de validade da contraproposta?
 
-A sugestão inicial é 10 dias.
+Prazo para o proponente aceitar ou recusar as condições da contraproposta.
 
 ### <a id="q-0016"></a>1.4.16 Q-0016 - Qual a validade exata da avaliação em cada categoria?
 
@@ -671,7 +675,7 @@ Contrato social, balanço, faturamento, procuração dos sócios?
 
 ## <a id="doc-0005"></a>1.5 DOC-0005 - Decisões
 
-Decisões de negócio tomadas na entrevista de 2026-11-05 (registro completo em docs/definicoes).
+Decisões de negócio tomadas nas entrevistas de 2026-11-05 (registro completo em docs/definicoes).
 
 ### <a id="dec-0001"></a>1.5.1 DEC-0001 - Pessoa jurídica só em carro novo, moto nova e imóvel comercial
 
@@ -750,6 +754,30 @@ Imóvel pronto ou na planta: [MIP](#glo-0030) e [DFI](#glo-0031). Terreno: MIP. 
 Responde [Q-0011](#q-0011).
 
 Elegibilidade e saldo são decididos pelo [ATR-0012](#atr-0012). Sem subsídio habitacional.
+
+### <a id="dec-0014"></a>1.5.14 DEC-0014 - Prorrogação da obra até 180 dias acumulados
+
+Responde [Q-0014](#q-0014).
+
+As prorrogações somadas podem estender o prazo previsto da obra em até 180 dias, em quantas vezes for preciso. Acima disso vira pendência para o [ATR-0005](#atr-0005).
+
+### <a id="dec-0015"></a>1.5.15 DEC-0015 - Validade da contraproposta por categoria
+
+Responde [Q-0015](#q-0015).
+
+Veículo: 5 dias corridos, porque a venda é rápida e a loja segura o bem por pouco tempo. Imóvel e terreno: 15 dias corridos.
+
+### <a id="dec-0016"></a>1.5.16 DEC-0016 - Validade da avaliação por tipo de bem
+
+Responde [Q-0016](#q-0016).
+
+Veículo novo: 30 dias (nota fiscal). Veículo usado: o mês da consulta à tabela de referência. Imóvel e terreno: 180 dias (laudo).
+
+### <a id="dec-0017"></a>1.5.17 DEC-0017 - Documentos de participante pessoa jurídica
+
+Responde [Q-0017](#q-0017).
+
+Contrato social e alterações, faturamento dos últimos 12 meses e documentos dos sócios, com procuração quando quem assina não é sócio. O faturamento é a [renda comprovada](#glo-0004) da [pessoa jurídica](#glo-0003).
 
 ## <a id="dom-0001"></a>1.6 DOM-0001 - Originação
 
@@ -1003,9 +1031,9 @@ Varia por [DIM-0001](#dim-0001).
 
 | Tipo | Documentos do bem | Documentos dos participantes |
 |---|---|---|
-| Veículo novo | nota fiscal ou pedido da concessionária | PF: identidade, renda, residência · PJ: ver [Q-0017](#q-0017) |
+| Veículo novo | nota fiscal ou pedido da concessionária | PF: identidade, renda, residência · PJ: os de [DEC-0017](#dec-0017) |
 | Veículo usado | CRLV; laudo de vistoria se vendido por particular | PF: identidade, renda, residência |
-| Residencial pronto / Comercial pronto | matrícula atualizada, habite-se (comercial), certidões do vendedor | PF: identidade, renda, residência, estado civil · PJ (comercial): ver [Q-0017](#q-0017) |
+| Residencial pronto / Comercial pronto | matrícula atualizada, habite-se (comercial), certidões do vendedor | PF: identidade, renda, residência, estado civil · PJ (comercial): os de [DEC-0017](#dec-0017) |
 | Residencial na planta / Comercial na planta | contrato com a incorporadora, memorial de incorporação, cronograma da obra | idem imóvel pronto |
 | Terreno urbano | matrícula, IPTU, certidões do vendedor | PF: identidade, renda, residência, estado civil |
 | Terreno rural | matrícula, CCIR, ITR, CAR, certidões do vendedor | idem terreno urbano |
@@ -1024,7 +1052,14 @@ A proposta é aprovada quando há avaliação válida aceita como garantia **e**
 
 ##### <a id="rn-0019"></a>1.6.5.3.3 RN-0019 - Contraproposta
 
-Crédito aprovado com [ressalva](#glo-0036) gera uma [contraproposta](#glo-0037) com validade (ver [Q-0015](#q-0015)). Aceita, as novas condições são reenquadradas e a proposta segue; recusada ou vencida, a proposta é reprovada. Decisão: [DEC-0009](#dec-0009).
+Crédito aprovado com [ressalva](#glo-0036) gera uma [contraproposta](#glo-0037) com validade. Aceita, as
+novas condições são reenquadradas e a proposta segue; recusada ou vencida, a proposta é reprovada.
+Decisões: [DEC-0009](#dec-0009), [DEC-0015](#dec-0015). Varia por [DIM-0001](#dim-0001).
+
+| Tipo | Validade da contraproposta |
+|---|---|
+| Veículo | 5 dias corridos |
+| Imóvel | 15 dias corridos |
 
 ##### <a id="rn-0020"></a>1.6.5.3.4 RN-0020 - Validade da proposta aprovada
 
@@ -1032,7 +1067,7 @@ Proposta aprovada vale 30 dias para virar contrato; depois expira.
 
 ##### <a id="rn-0021"></a>1.6.5.3.5 RN-0021 - Avaliação válida para contratar
 
-A avaliação precisa estar dentro da [validade](#glo-0020) da sua categoria (ver [Q-0016](#q-0016)) na emissão do contrato; vencida, a proposta fica com pendência e o bem é reavaliado. Decisão: [DEC-0011](#dec-0011).
+A avaliação precisa estar dentro da [validade](#glo-0020) do seu tipo de bem ([RN-0022](#rn-0022)) na emissão do contrato; vencida, a proposta fica com pendência e o bem é reavaliado. Decisões: [DEC-0011](#dec-0011), [DEC-0016](#dec-0016).
 
 ### <a id="s-0009"></a>1.6.6 S-0009 - Casos de uso
 
@@ -1201,7 +1236,7 @@ Regras da avaliação.
 
 Varia por [DIM-0001](#dim-0001).
 
-| Tipo | Fonte | Validade (ver [Q-0016](#q-0016)) |
+| Tipo | Fonte | Validade ([DEC-0016](#dec-0016)) |
 |---|---|---|
 | Veículo novo | nota fiscal ou preço de fábrica | 30 dias |
 | Veículo usado | tabela de referência | mês da consulta |
@@ -1354,7 +1389,10 @@ Assinam todos os [participantes](#glo-0001). No imóvel e no terreno assinam tam
 
 #### <a id="rn-0026"></a>1.9.5.3 RN-0026 - Prorrogação do prazo da obra
 
-No imóvel na planta, o contrato aceita [prorrogações](#glo-0045) do prazo da obra até um limite (ver [Q-0014](#q-0014)); acima dele vira pendência para o [ATR-0005](#atr-0005). Decisão: [DEC-0006](#dec-0006).
+No imóvel na planta, o contrato aceita [prorrogações](#glo-0045) do prazo da obra que, somadas, não passem de 180 dias além do prazo previsto; acima disso vira pendência para o [ATR-0005](#atr-0005). Decisões: [DEC-0006](#dec-0006), [DEC-0014](#dec-0014).
+
+**Detalhes/Exemplo:**
+Obra prevista para 30/06; prorrogações de 90 e de 60 dias somam 150 → aceitas. Um novo pedido de 45 dias somaria 195 → pendência para o analista.
 
 ### <a id="s-0015"></a>1.9.6 S-0015 - Casos de uso
 

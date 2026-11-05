@@ -25,13 +25,13 @@ com código próprio e rastreia as ligações entre eles.
 | Dimensão de variação | `DIM` | 1 | "Tipo de bem": a hierarquia veículo/imóvel até os 10 tipos finais |
 | Regra de negócio | `RN` | 31 | regras comuns, parâmetros por tipo de bem, regras da jornada |
 | Caso de uso | `UC` | 17 | comandos da jornada, com os eventos que emitem |
-| Questão em aberto | `Q` | 17 | 13 respondidas e 4 ainda abertas (Q-0014 a Q-0017) |
-| Decisão | `DEC` | 13 | as decisões D1–D13 da [entrevista](../definicoes/entrevista-questoes-em-aberto.md) |
+| Questão em aberto | `Q` | 17 | todas respondidas |
+| Decisão | `DEC` | 17 | as decisões D1–D17 da [entrevista](../definicoes/entrevista-questoes-em-aberto.md) |
 
 As ligações também são dados: o caso de uso `EMITE` evento, o evento `DISPARA` caso de uso (a política), o agregado
 `USA` regra (invariante) e `EMITE` evento, a decisão `RESPONDE` questão e a visão `DEPENDE_DE` outro domínio.
 
-As regras que mudam por tipo de bem (parâmetros, documentos, fonte da avaliação e seguros) `VARIA_POR` a dimensão
+As regras que mudam por tipo de bem (parâmetros, documentos, fonte da avaliação, seguros e validade da contraproposta) `VARIA_POR` a dimensão
 "Tipo de bem". O episteme confere a tabela de cada uma: todo tipo de bem coberto exatamente uma vez, diretamente ou
 por um nível acima ("Veículo usado" vale para carro e moto usados), e nenhum tipo desconhecido. Se um tipo de bem
 novo entrar na dimensão, cada regra que não o cobrir passa a ser apontada.

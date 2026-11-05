@@ -3,8 +3,8 @@
 - **Data:** 2026-11-05
 - **Objetivo:** responder às questões em aberto levantadas na modelagem do espaço do problema
   ([`../dominio/especificacao.md`](../dominio/especificacao.md) (seção "Questões em aberto")), antes de passar ao espaço da solução.
-- **Formato:** entrevista em 5 rodadas. As 4 primeiras cobrem as 13 questões originais; a 5ª trata dos desdobramentos
-  que as respostas abriram. Em cada pergunta estão as opções apresentadas e a resposta (**➜**).
+- **Formato:** entrevista em 6 rodadas. As 4 primeiras cobrem as 13 questões originais; a 5ª trata dos desdobramentos
+  que as respostas abriram; a 6ª responde às 4 questões que surgiram delas. Em cada pergunta estão as opções apresentadas e a resposta (**➜**).
 
 ---
 
@@ -186,12 +186,59 @@ pendência para o analista.
 | D12 | Q8 / rodada 5 | Seguros como exigência: MIP+DFI (imóvel), MIP (terreno), seguro do bem (veículo), prestamista opcional | Seguro exigido por tipo; novo externo: seguradora |
 | D13 | Q11 / rodada 5 | FGTS na entrada só em imóvel residencial de PF; elegibilidade pelo sistema do FGTS | Entrada = recurso próprio + FGTS; novo externo |
 
-## Novas questões surgidas
+## Rodada 6: as questões que surgiram (2026-11-05)
 
-1. Qual o limite de prorrogações (quantidade ou meses) do prazo da obra?
-2. Qual o prazo exato de validade da contraproposta?
-3. Qual a validade exata da avaliação em cada categoria (veículo novo, usado, imóvel, terreno)?
-4. Quais documentos são exigidos de participante PJ (contrato social, balanço, procuração dos sócios)?
+As quatro questões abertas pelas respostas anteriores, registradas no modelo como Q-0014 a Q-0017.
+
+### Q-0014. Qual o limite de prorrogações da obra do imóvel na planta?
+- 180 dias acumulados (sugerida)
+- Até 2 prorrogações
+- Os dois limites
+
+**➜ 180 dias acumulados.** As prorrogações somadas estendem o prazo previsto da obra em até 180 dias, em quantas
+vezes for preciso. Acima disso, pendência para o analista.
+
+### Q-0015. Qual a validade da contraproposta?
+- 10 dias corridos (sugerida)
+- Por categoria
+- Igual à da proposta (30 dias)
+
+**➜ Por categoria.** Desdobramento, quais prazos:
+- Veículo 5, imóvel e terreno 15 dias (sugerida)
+- Veículo 3, imóvel e terreno 10 dias
+- Veículo 7, imóvel e terreno 30 dias
+
+**➜ Veículo 5 dias, imóvel e terreno 15 dias**, corridos.
+
+### Q-0016. Qual a validade da avaliação em cada tipo de bem?
+- Sugestão: veículo novo 30 dias, veículo usado o mês da consulta, imóvel e terreno 180 dias (sugerida)
+- Imóvel na planta mais curto (90 dias)
+- Tudo 90 dias
+
+**➜ Usar a sugestão.**
+
+### Q-0017. Quais documentos são exigidos de participante pessoa jurídica?
+Opções (múltipla escolha): contrato social e alterações; faturamento dos últimos 12 meses; balanço e DRE do último
+exercício; documentos dos sócios e procuração.
+
+**➜ Contrato social e alterações; documentos dos sócios e procuração.** Desdobramento: sem faturamento, como fica a
+renda comprovada da PJ, usada no limite de 30% da parcela?
+- Faturamento obtido pelo bureau (sugerida)
+- PJ fora do limite de comprometimento
+- Incluir o faturamento nos documentos
+
+**➜ Incluir o faturamento dos últimos 12 meses nos documentos.** Ele é a renda comprovada da PJ.
+
+### Decisões da rodada 6
+
+| # | Questão | Decisão | Impacto no modelo |
+|---|---|---|---|
+| D14 | Q-0014 | Prorrogação da obra até 180 dias acumulados | Regra de prorrogação com limite definido |
+| D15 | Q-0015 | Contraproposta vale 5 dias (veículo) ou 15 dias (imóvel e terreno) | Regra da contraproposta passa a variar por tipo de bem |
+| D16 | Q-0016 | Avaliação: veículo novo 30 dias, usado o mês da consulta, imóvel e terreno 180 dias | Tabela de fonte da avaliação deixa de ser hipotética |
+| D17 | Q-0017 | PJ entrega contrato social, faturamento de 12 meses e documentos dos sócios com procuração | Documentos de PJ e definição da renda comprovada da PJ |
+
+Com isso, **não há questão em aberto** no modelo.
 
 ## Próximo passo
 
