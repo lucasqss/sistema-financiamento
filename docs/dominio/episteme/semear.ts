@@ -101,7 +101,7 @@ externos são **assíncronos** e podem chegar repetidos ou fora de ordem.
 - Cálculo financeiro (taxa, CET, PRICE/SAC) e cálculo de prêmio de seguro: a parcela é um dado da simulação.
 - Subsídio habitacional, consórcio, leasing e refinanciamento.
 
-> Os números das regras são **hipotéticos e parametrizáveis**: cada projeto ajusta os seus.
+> Os números das regras são **valores de referência do modelo**, parametrizáveis: cada projeto que usar este modelo ajusta os seus.
 `);
 
 // ===== Glossário ===========================================================
@@ -207,6 +207,21 @@ ele pode ser proponente.
 - Pessoa jurídica
 `);
 
+// ===== Fontes normativas ===================================================
+
+it('fontes', 'raiz', 'DOCUMENTO', 'Fontes normativas', 'Leis e normas em que as regras de negócio se apoiam.');
+const fonte = (chave: string, titulo: string, texto: string) => it(`f.${chave}`, 'fontes', 'FONTE', titulo, texto);
+fonte('9514', 'Lei 9.514/1997', 'Institui a alienação fiduciária de coisa imóvel: base da garantia do imóvel e do terreno e do seu registro na matrícula, no cartório de registro de imóveis.');
+fonte('cc', 'Código Civil, arts. 1.361 e seguintes', 'Propriedade fiduciária de bem móvel: base da alienação fiduciária do veículo.');
+fonte('gravame', 'Normas do CONTRAN e do sistema nacional de gravames', 'Regras para o registro do contrato e a inclusão do gravame do veículo no órgão de trânsito.');
+fonte('8036', 'Lei 8.036/1990 (FGTS)', 'Regras do Fundo de Garantia do Tempo de Serviço, inclusive o uso do saldo na compra de imóvel residencial.');
+fonte('lgpd', 'Lei 13.709/2018 (LGPD)', 'Lei Geral de Proteção de Dados Pessoais: os dados dos participantes só são tratados para a finalidade do financiamento.');
+
+// ===== Requisitos não funcionais do sistema =================================
+
+it('rnfs', 'raiz', 'DOCUMENTO', 'Requisitos não funcionais do sistema', 'Qualidades de negócio que valem para o sistema todo.');
+it('rnfs.canais', 'rnfs', 'RNF_SISTEMA', 'Canais disponíveis 24x7', 'Proponente, vendedor e correspondente conseguem iniciar, acompanhar e responder propostas a qualquer hora, todos os dias. Etapas com decisão humana (análise manual, exigências) correm em horário comercial.');
+
 // ===== Atores ==============================================================
 
 it('atores', 'raiz', 'DOCUMENTO', 'Atores', 'Pessoas e sistemas que agem na jornada do financiamento.');
@@ -296,6 +311,8 @@ aprovada à Contratação.
 **Guarda:** o agregado [[@ori.agr.proposta]] e o seu [[@ori.cv.proposta]].
 
 **Atores:** [[@a.proponente]], [[@a.coobrigado]], [[@a.vendedor]], [[@a.correspondente]], [[@a.analista]].
+
+**Sujeito a:** [[@rnfs.canais]].
 
 ## Jornada
 
@@ -422,11 +439,11 @@ const rn = (chave: string, secao: string, titulo: string, texto: string, exemplo
   it(`rn.${chave}`, secao, 'REGRA', titulo, texto, exemplo ? { exemplo } : {});
 
 rn('participantes', 'ori.regras.comuns', 'Participantes da proposta',
-  'Uma proposta tem um [[@a.proponente]] e até 4 [[@a.coobrigado|coobrigados]]: de 1 a 5 [[@t.participante|participantes]], sem repetir CPF ou CNPJ. Pessoa física é maior e capaz. Decisão: [[@d2]].');
+  'Uma proposta tem um [[@a.proponente]] e até 4 [[@a.coobrigado|coobrigados]]: de 1 a 5 [[@t.participante|participantes]], sem repetir CPF ou CNPJ ([[@rn.documento-valido]]). Pessoa física é maior e capaz. Os dados pessoais servem só ao financiamento ([[@f.lgpd]]). Decisão: [[@d2]].');
 rn('pj', 'ori.regras.comuns', 'Pessoa jurídica como proponente',
   'O proponente pode ser [[@t.pj|pessoa jurídica]] só em carro novo, moto nova e imóvel comercial (pronto ou na planta). Em proposta de PJ, o coobrigado pode ser PF ou PJ. Decisão: [[@d1]].');
 rn('vendedor', 'ori.regras.comuns', 'Vendedor identificado',
-  'O [[@a.vendedor]] é identificado e diferente do proponente. Veículo usado vendido por particular exige [[@t.vistoria|vistoria]] aprovada. Imóvel na planta é vendido por [[@t.incorporadora|incorporadora]]. Decisões: [[@d4]], [[@d5]].');
+  'O [[@a.vendedor]] é identificado e diferente do proponente. Veículo usado vendido por particular exige [[@t.vistoria|vistoria]] aprovada. [[@t.planta|Imóvel na planta]] é vendido por [[@t.incorporadora|incorporadora]]. Decisões: [[@d4]], [[@d5]].');
 rn('bem-unico', 'ori.regras.comuns', 'Bem em uma só proposta ativa',
   'A [[@t.identificacao|identificação do bem]] é única entre propostas ativas (rascunho, em análise, com pendência, em contraproposta, aprovada). Decisão: [[@d10]].');
 rn('valor-financiado', 'ori.regras.comuns', 'Valor financiado',
@@ -437,12 +454,12 @@ rn('ltv', 'ori.regras.comuns', 'Limite da cota de financiamento',
 rn('prazo', 'ori.regras.comuns', 'Prazo dentro da faixa do tipo',
   'O [[@t.prazo|prazo]] fica entre o mínimo e o máximo do tipo de bem ([[INCLUI:@rn.matriz]]).');
 rn('comprometimento', 'ori.regras.comuns', 'Comprometimento de renda',
-  '[[@t.parcela|Parcela]] ≤ 30% da [[@t.renda|renda comprovada]] somada dos participantes.');
+  '[[@t.comprometimento|Comprometimento de renda]]: [[@t.parcela|parcela]] ≤ 30% da [[@t.renda|renda comprovada]] somada dos participantes.');
 rn('documentos', 'ori.regras.comuns', 'Documentos obrigatórios',
   'Os documentos exigidos pela categoria, pelo subtipo e pela forma de cada participante (PF ou PJ) estão presentes, sem documento repetido. Listas em [[INCLUI:@rn.documentos-tipo]] e [[INCLUI:@rn.documentos-participantes]].');
 
 rn('matriz', 'ori.regras.tipo', 'Parâmetros por tipo de bem', `
-Varia por [[VARIA_POR:@dim.tipo]]. Valores **hipotéticos e parametrizáveis**.
+Varia por [[VARIA_POR:@dim.tipo]]. **Valores de referência do modelo**, parametrizáveis por projeto.
 
 | Parâmetro | Carro novo | Carro usado | Moto nova | Moto usada | Residencial pronto | Residencial na planta | Comercial pronto | Comercial na planta | Terreno urbano | Terreno rural |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -466,7 +483,7 @@ rn('restricao-veiculo', 'ori.regras.tipo', 'Veículo usado sem restrição',
 rn('terreno', 'ori.regras.tipo', 'Terreno sem construção',
   'O terreno não tem construção averbada na matrícula. O [[@t.terreno-rural|terreno rural]] apresenta CCIR, ITR e CAR. Decisão: [[@d7]].');
 rn('fgts', 'ori.regras.tipo', 'Uso do FGTS na entrada',
-  'Só o imóvel residencial (pronto ou na planta) de proponente [[@t.pf|pessoa física]] aceita [[@t.fgts|recurso do FGTS]] na entrada. A elegibilidade e o saldo são decididos pelo [[@a.fgts]]. Decisão: [[@d13]].');
+  'Só o imóvel residencial (pronto ou na planta) de proponente [[@t.pf|pessoa física]] aceita [[@t.fgts|recurso do FGTS]] na entrada. A elegibilidade e o saldo são decididos pelo [[@a.fgts]]. Base legal: [[@f.8036]]. Decisão: [[@d13]].');
 rn('documentos-tipo', 'ori.regras.tipo', 'Documentos do bem por tipo', `
 Varia por [[VARIA_POR:@dim.tipo]].
 
@@ -493,7 +510,7 @@ Varia por [[VARIA_POR:@dim.tipo]] e por [[VARIA_POR:@dim.forma]]: cada cruzament
 `);
 
 rn('enquadramento', 'ori.regras.jornada', 'Enquadramento para submeter',
-  'Para submeter, a proposta está completa e respeita [[INCLUI:@rn.participantes]], [[INCLUI:@rn.pj]], [[INCLUI:@rn.vendedor]], [[INCLUI:@rn.bem-unico]], [[INCLUI:@rn.valor-financiado]], [[INCLUI:@rn.ltv]], [[INCLUI:@rn.prazo]], [[INCLUI:@rn.comprometimento]], [[INCLUI:@rn.documentos]] e as regras do seu tipo de bem.');
+  'Para a [[@t.submissao|submissão]], o [[@t.enquadramento|enquadramento]] exige a proposta completa e respeitando [[INCLUI:@rn.participantes]], [[INCLUI:@rn.pj]], [[INCLUI:@rn.vendedor]], [[INCLUI:@rn.bem-unico]], [[INCLUI:@rn.valor-financiado]], [[INCLUI:@rn.ltv]], [[INCLUI:@rn.prazo]], [[INCLUI:@rn.comprometimento]], [[INCLUI:@rn.documentos]] e as regras do seu tipo de bem: [[INCLUI:@rn.idade-veiculo]], [[INCLUI:@rn.idade-proponente]], [[INCLUI:@rn.restricao-veiculo]], [[INCLUI:@rn.terreno]] e [[INCLUI:@rn.fgts]].');
 rn('aprovacao', 'ori.regras.jornada', 'Aprovação da proposta',
   'A proposta é aprovada quando há avaliação válida aceita como garantia **e** crédito aprovado, e o enquadramento continua válido com o valor de avaliação. Crédito reprovado ou bem recusado como garantia reprova a proposta.');
 rn('contraproposta', 'ori.regras.jornada', 'Contraproposta', `
@@ -548,7 +565,7 @@ uc('condicoes', 'ori.ucs', 'Simular e escolher condições', `
 2. O sistema mostra a parcela simulada e o enquadramento em [[USA:@rn.ltv]], [[USA:@rn.prazo]] e [[USA:@rn.comprometimento]].
 `);
 uc('submeter', 'ori.ucs', 'Submeter proposta', `
-**Ator:** [[@a.proponente]] ou [[@a.correspondente]].
+**Ator:** [[@a.proponente]] ou [[@a.correspondente]]. Faz a [[@t.submissao|submissão]] da proposta.
 
 **Fluxo principal**
 1. O ator submete a proposta em rascunho.
@@ -556,6 +573,30 @@ uc('submeter', 'ori.ucs', 'Submeter proposta', `
 3. O sistema muda a proposta para em análise. Emite [[EMITE:@evt.submetida]].
 
 **Fluxo alternativo:** incompleta ou fora do enquadramento → continua em rascunho, com a lista do que falta.
+`);
+uc('decidir', 'ori.ucs', 'Decidir proposta', `
+**Ator:** nenhum: é automático, disparado pelos resultados da avaliação e do crédito.
+
+**Fluxo principal**
+1. Com bem avaliado e crédito aprovado, o sistema confere [[USA:@rn.aprovacao]] e [[USA:@rn.enquadramento]] com o valor de avaliação.
+2. A proposta é aprovada. Emite [[EMITE:@evt.aprovada]].
+
+**Fluxos alternativos**
+- Crédito reprovado ou bem recusado como garantia → a proposta é reprovada. Emite [[EMITE:@evt.reprovada]].
+- Cota estourada com o valor de avaliação → emite [[EMITE:@evt.pendencia]].
+- Crédito aprovado com ressalva → segue para a contraproposta ([[USA:@rn.contraproposta]]).
+`);
+uc('expirar', 'ori.ucs', 'Expirar proposta', `
+**Ator:** nenhum: acontece pela passagem do tempo.
+
+**Fluxo principal:** a proposta aprovada passa da validade sem contrato ([[USA:@rn.validade-proposta]]) e é encerrada. Emite [[EMITE:@evt.expirada]].
+`);
+uc('resolver-pendencia', 'ori.ucs', 'Resolver pendência', `
+**Atores:** [[@a.proponente]], [[@a.correspondente]] ou [[@a.analista]].
+
+**Fluxo principal**
+1. O ator vê a [[@t.pendencia|pendência]] e age: reenvia documento, recompõe a entrada ou pede nova avaliação.
+2. O sistema reenquadra ([[USA:@rn.enquadramento]]) e a proposta volta à análise. Emite [[EMITE:@evt.pendencia-resolvida]].
 `);
 uc('contraproposta', 'ori.ucs', 'Responder contraproposta', `
 **Ator:** [[@a.proponente]].
@@ -596,12 +637,13 @@ Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que
 `;
 it('cre.eventos', 'cre', 'SECAO', 'Eventos', 'Fatos do domínio de crédito.');
 evt('analise-solicitada', 'cre.eventos', 'AnaliseCreditoSolicitada', 'A análise dos participantes foi pedida após a submissão.');
-evt('credito-aprovado', 'cre.eventos', 'CreditoAprovado', 'Os participantes têm capacidade e histórico para as condições pedidas.');
+evt('credito-aprovado', 'cre.eventos', 'CreditoAprovado', 'Os participantes têm capacidade e histórico para as condições pedidas. Dispara [[DISPARA:@uc.decidir]].');
 evt('credito-ressalva', 'cre.eventos', 'CreditoAprovadoComRessalva', 'Aprovação condicionada a outras condições. Dispara [[DISPARA:@uc.contraproposta]] por meio da contraproposta ([[@rn.contraproposta]]).');
-evt('credito-reprovado', 'cre.eventos', 'CreditoReprovado', 'Os participantes não têm capacidade ou histórico. A proposta é reprovada.');
+evt('credito-reprovado', 'cre.eventos', 'CreditoReprovado', 'Os participantes não têm capacidade ou histórico. Dispara [[DISPARA:@uc.decidir]], que reprova a proposta.');
+it('rnfd.credito', 'cre', 'RNF_DOMINIO', 'Resposta do crédito em até 1 dia útil', 'O proponente recebe a decisão de crédito (aprovada, com ressalva ou reprovada) em até 1 dia útil após a submissão. Casos em análise manual podem levar mais, e o proponente é avisado.');
 it('cre.ucs', 'cre', 'SECAO', 'Casos de uso', 'Casos de uso do crédito.');
 uc('analisar', 'cre.ucs', 'Analisar crédito', `
-**Atores:** [[@a.bureau]], [[@a.analista]].
+**Atores:** [[@a.bureau]], [[@a.analista]]. Faz a [[@t.analise|análise de crédito]] dos participantes, no prazo de [[USA:@rnfd.credito]].
 
 **Fluxo principal**
 1. O sistema consulta o bureau para cada participante. Emite [[EMITE:@evt.analise-solicitada]].
@@ -633,8 +675,8 @@ Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que
 `;
 it('ava.eventos', 'ava', 'SECAO', 'Eventos', 'Fatos do domínio de avaliação.');
 evt('avaliacao-solicitada', 'ava.eventos', 'AvaliacaoSolicitada', 'A avaliação do bem foi pedida após a submissão.');
-evt('bem-avaliado', 'ava.eventos', 'BemAvaliado', 'O bem recebeu valor de avaliação e foi aceito como garantia. A Originação recalcula o valor de referência e o enquadramento ([[@rn.ltv]]).');
-evt('bem-recusado', 'ava.eventos', 'BemRecusadoComoGarantia', 'O avaliador não aceitou o bem como garantia. A proposta é reprovada.');
+evt('bem-avaliado', 'ava.eventos', 'BemAvaliado', 'O bem recebeu valor de avaliação e foi aceito como garantia. A Originação recalcula o valor de referência e o enquadramento ([[@rn.ltv]]). Dispara [[DISPARA:@uc.decidir]].');
+evt('bem-recusado', 'ava.eventos', 'BemRecusadoComoGarantia', 'O avaliador não aceitou o bem como garantia. Dispara [[DISPARA:@uc.decidir]], que reprova a proposta.');
 evt('avaliacao-vencida', 'ava.eventos', 'AvaliacaoVencida', 'A avaliação passou da validade antes da contratação ([[@rn.validade-avaliacao]]). Dispara [[DISPARA:@uc.avaliar]].');
 evt('medicao', 'ava.eventos', 'MedicaoRealizada', 'O [[@a.engenheiro]] apurou o percentual executado da obra. Dispara [[DISPARA:@uc.liberar-parcela]].');
 it('ava.regras', 'ava', 'DOCUMENTO', 'Regras de Negócio', 'Regras da avaliação.');
@@ -768,6 +810,7 @@ rn('assinaturas', 'con.regras', 'Assinaturas exigidas',
 rn('prorrogacao', 'con.regras', 'Prorrogação do prazo da obra',
   'No imóvel na planta, o contrato aceita [[@t.prorrogacao|prorrogações]] do prazo da obra que, somadas, não passem de 180 dias além do prazo previsto; acima disso vira pendência para o [[@a.analista]]. Decisões: [[@d6]], [[@d14]].',
   'Obra prevista para 30/06; prorrogações de 90 e de 60 dias somam 150 → aceitas. Um novo pedido de 45 dias somaria 195 → pendência para o analista.');
+it('rnfd.contrato', 'con', 'RNF_DOMINIO', 'Contrato disponível em até 2 dias úteis', 'Depois que o proponente aceita as condições finais, o contrato fica disponível para assinatura em até 2 dias úteis.');
 it('con.ucs', 'con', 'SECAO', 'Casos de uso', 'Casos de uso da contratação.');
 uc('emitir-contrato', 'con.ucs', 'Emitir contrato', `
 **Atores:** [[@a.proponente]], [[@a.seguradora]].
@@ -777,12 +820,17 @@ uc('emitir-contrato', 'con.ucs', 'Emitir contrato', `
 **Fluxo principal**
 1. O proponente aceita as condições finais. Emite [[EMITE:@evt.condicoes-aceitas]].
 2. O sistema exige os seguros ([[USA:@rn.seguros]]) e confere a avaliação ([[USA:@rn.validade-avaliacao]]). Emite [[EMITE:@evt.seguros]].
-3. O sistema emite o contrato. Emite [[EMITE:@evt.contrato-emitido]].
+3. O sistema emite o contrato, no prazo de [[USA:@rnfd.contrato]]. Emite [[EMITE:@evt.contrato-emitido]].
 `);
 uc('assinar', 'con.ucs', 'Assinar contrato', `
 **Atores:** [[@a.proponente]], [[@a.coobrigado]], [[@a.vendedor]].
 
 **Fluxo principal:** cada signatário exigido ([[USA:@rn.assinaturas]]) assina; com a última assinatura, emite [[EMITE:@evt.contrato-assinado]].
+`);
+uc('cancelar-contrato', 'con.ucs', 'Cancelar contrato', `
+**Atores:** [[@a.proponente]] (desistência antes de assinar) ou [[@a.analista]] (registro recusado sem solução).
+
+**Fluxo principal:** o contrato ainda não formalizado é desfeito e a garantia, se registrada, é baixada. Emite [[EMITE:@evt.contrato-cancelado]].
 `);
 uc('prorrogar', 'con.ucs', 'Prorrogar prazo da obra', `
 **Atores:** [[@a.vendedor]] (incorporadora), [[@a.analista]].
@@ -813,23 +861,30 @@ Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que
 it('gar.eventos', 'gar', 'SECAO', 'Eventos', 'Fatos do domínio de garantia.');
 evt('registro-solicitado', 'gar.eventos', 'RegistroSolicitado', 'O contrato assinado foi enviado ao órgão de registro com um protocolo nosso.');
 evt('garantia-registrada', 'gar.eventos', 'GarantiaRegistrada', 'O órgão confirmou o registro do bem do contrato ([[@rn.retorno-registro]]). Dispara [[DISPARA:@uc.liberar]].');
-evt('exigencia', 'gar.eventos', 'ExigenciaEmitida', 'O [[@a.cartorio]] emitiu exigência para registrar.');
-evt('exigencia-cumprida', 'gar.eventos', 'ExigenciaCumprida', 'O [[@a.analista]] cumpriu a exigência e reenviou.');
-evt('registro-recusado', 'gar.eventos', 'RegistroRecusado', 'O órgão recusou o registro.');
+evt('exigencia', 'gar.eventos', 'ExigenciaEmitida', 'O [[@a.cartorio]] emitiu exigência para registrar. Dispara [[DISPARA:@uc.exigencia]].');
+evt('exigencia-cumprida', 'gar.eventos', 'ExigenciaCumprida', 'O [[@a.analista]] cumpriu a exigência. Dispara [[DISPARA:@uc.registrar]] (reenvio).');
+evt('registro-recusado', 'gar.eventos', 'RegistroRecusado', 'O órgão recusou o registro. Dispara [[DISPARA:@uc.registro-recusado]].');
 it('gar.regras', 'gar', 'DOCUMENTO', 'Regras de Negócio', 'Regras da garantia.');
 rn('orgao', 'gar.regras', 'Órgão de registro por categoria',
-  'Imóvel e terreno: [[@a.cartorio]] da matrícula. Veículo: [[@a.transito]] (sistema de gravames).');
+  'Imóvel e terreno: [[@a.cartorio]] da matrícula ([[@f.9514]]). Veículo: [[@a.transito]], pelo sistema de gravames ([[@f.cc]], [[@f.gravame]]).');
 rn('retorno-registro', 'gar.regras', 'Retorno de registro é fato, não pedido',
   'O retorno do órgão é classificado, não recusado: se a identificação registrada é a do bem do contrato, a garantia está constituída; se é de outro bem, vira pendência para o [[@a.analista]]. Retorno repetido do mesmo protocolo não tem novo efeito.');
 it('gar.ucs', 'gar', 'SECAO', 'Casos de uso', 'Casos de uso da garantia.');
 uc('registrar', 'gar.ucs', 'Registrar garantia', `
-**Atores:** [[@a.cartorio]] ou [[@a.transito]].
+**Atores:** [[@a.cartorio]] ou [[@a.transito]]. Faz o [[@t.registro|registro da garantia]].
 
 **Fluxo principal**
 1. O sistema envia o contrato ao órgão da categoria ([[USA:@rn.orgao]]). Emite [[EMITE:@evt.registro-solicitado]].
 2. O órgão devolve o resultado; o sistema classifica ([[USA:@rn.retorno-registro]]). Emite [[EMITE:@evt.garantia-registrada]].
 
-**Fluxos alternativos:** exigência → emite [[EMITE:@evt.exigencia]] e segue em [[INCLUI:@uc.exigencia]]; recusa → emite [[EMITE:@evt.registro-recusado]].
+**Fluxos alternativos:** exigência → emite [[EMITE:@evt.exigencia]]; recusa → emite [[EMITE:@evt.registro-recusado]].
+`);
+uc('registro-recusado', 'gar.ucs', 'Tratar registro recusado', `
+**Ator:** [[@a.analista]].
+
+**Fluxo principal:** o analista corrige o motivo da recusa e reenvia; o sistema volta a [[INCLUI:@uc.registrar]].
+
+**Fluxo alternativo:** sem solução → [[INCLUI:@uc.cancelar-contrato]].
 `);
 uc('exigencia', 'gar.ucs', 'Cumprir exigência', `
 **Ator:** [[@a.analista]].
@@ -861,7 +916,7 @@ evt('recurso-liberado', 'des.eventos', 'RecursoLiberado', 'O vendedor recebeu o 
 evt('parcela-obra', 'des.eventos', 'ParcelaDaObraLiberada', 'A incorporadora recebeu a parcela correspondente à última medição.');
 evt('fgts-solicitado', 'des.eventos', 'FgtsSolicitado', 'O uso do FGTS na entrada foi pedido ao [[@a.fgts]].');
 evt('fgts-liberado', 'des.eventos', 'FgtsLiberado', 'O FGTS da entrada foi liberado ao vendedor.');
-evt('fgts-negado', 'des.eventos', 'FgtsNegado', 'O sistema do FGTS negou o uso. A entrada precisa ser recomposta com recurso próprio.');
+evt('fgts-negado', 'des.eventos', 'FgtsNegado', 'O sistema do FGTS negou o uso. Dispara [[DISPARA:@uc.recompor-entrada]].');
 it('des.regras', 'des', 'DOCUMENTO', 'Regras de Negócio', 'Regras do desembolso.');
 rn('sem-garantia-sem-dinheiro', 'des.regras', 'Nenhuma liberação sem garantia confirmada',
   'Nenhum valor é liberado antes de a garantia estar registrada e confirmada pelo órgão, em todos os tipos de bem. Decisão: [[@d8]].');
@@ -871,7 +926,7 @@ rn('liberacao-medicao', 'des.regras', 'Liberação por medição',
   'No imóvel na planta, cada parcela = valor financiado × (percentual medido acumulado − percentual já liberado) ([[@rn.medicao]]). Decisão: [[@d6]].');
 it('des.ucs', 'des', 'SECAO', 'Casos de uso', 'Casos de uso do desembolso.');
 uc('liberar', 'des.ucs', 'Liberar recurso', `
-**Ator:** [[@a.vendedor]] (favorecido).
+**Atores:** [[@a.vendedor]] (favorecido) e [[@a.fgts]] (quando a entrada usa FGTS).
 
 **Pré-condição:** garantia constituída ([[USA:@rn.sem-garantia-sem-dinheiro]]).
 
@@ -881,6 +936,11 @@ uc('liberar', 'des.ucs', 'Liberar recurso', `
 3. O sistema paga o vendedor ([[USA:@rn.liberacao-acumulada]]). Emite [[EMITE:@evt.recurso-liberado]].
 
 **Fluxo alternativo:** FGTS negado → emite [[EMITE:@evt.fgts-negado]] e a liberação espera a entrada recomposta.
+`);
+uc('recompor-entrada', 'des.ucs', 'Recompor entrada', `
+**Ator:** [[@a.proponente]].
+
+**Fluxo principal:** com o FGTS negado, o proponente paga com recurso próprio a parte da entrada que viria do FGTS ([[USA:@rn.valor-financiado]]); a liberação segue em [[INCLUI:@uc.liberar]].
 `);
 uc('liberar-parcela', 'des.ucs', 'Liberar parcela da obra', `
 **Ator:** [[@a.vendedor]] (incorporadora).
@@ -900,12 +960,31 @@ Mantém os dados cadastrais de [[@t.pf|pessoas físicas]] e [[@t.pj|jurídicas]]
 sobre a proposta.
 `;
 dominio('doc', 'Documentos', 'Genérico', 'Recebimento, guarda e conferência dos arquivos exigidos.');
+it('pes.regras', 'pes', 'DOCUMENTO', 'Regras de Negócio', 'Regras do cadastro de pessoas.');
+rn('documento-valido', 'pes.regras', 'CPF ou CNPJ válido',
+  'Todo participante e todo vendedor tem CPF ([[@t.pf|pessoa física]]) ou CNPJ ([[@t.pj|pessoa jurídica]]) válido e regular na Receita Federal. Os dados são tratados só para o financiamento ([[@f.lgpd]]).');
 visoes['doc'] = `
 ## Propósito e fronteiras
 
 Recebe e guarda os documentos dos participantes e do bem e registra a conferência (aceito, recusado, ilegível).
 Quais documentos são exigidos é regra da Originação, não deste domínio.
+
+## Jornada em eventos
+
+\`\`\`event-storming
+\`\`\`
 `;
+it('doc.eventos', 'doc', 'SECAO', 'Eventos', 'Fatos do domínio de documentos.');
+evt('documento-recusado', 'doc.eventos', 'DocumentoRecusado', 'Um documento foi recusado na conferência (ilegível, vencido ou divergente). Dispara [[DISPARA:@evt.pendencia]] na proposta.');
+evt('documento-aceito', 'doc.eventos', 'DocumentoAceito', 'Um documento foi conferido e aceito.');
+it('doc.ucs', 'doc', 'SECAO', 'Casos de uso', 'Casos de uso de documentos.');
+uc('conferir-documento', 'doc.ucs', 'Conferir documento', `
+**Ator:** [[@a.analista]].
+
+**Fluxo principal:** o analista confere o documento enviado contra o que é exigido ([[USA:@rn.documentos]]) e o aceita. Emite [[EMITE:@evt.documento-aceito]].
+
+**Fluxo alternativo:** ilegível, vencido ou divergente → recusa. Emite [[EMITE:@evt.documento-recusado]].
+`);
 
 // ---------------------------------------------------------------------------
 // Carga

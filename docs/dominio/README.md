@@ -21,11 +21,13 @@ com código próprio e rastreia as ligações entre eles.
 | Domínio (com visão) | `DOM` / `VIS` | 8 | subdomínios e mapa de contexto: Originação (principal); Crédito, Avaliação, Contratação, Garantia e Desembolso (suporte); Cadastro de pessoas e Documentos (genéricos) |
 | Agregado | `AGR` | 2 | Proposta e Contrato, com composição e invariantes |
 | Ciclo de vida | `CV` | 2 | estados e transições da proposta e do contrato |
-| Evento de domínio | `EVT` | 37 | o que acontece na jornada, quem provoca e o que dispara |
+| Evento de domínio | `EVT` | 39 | o que acontece na jornada, quem provoca e o que dispara |
 | Dimensão de variação | `DIM` | 2 | "Tipo de bem" (hierarquia veículo/imóvel até os 10 tipos finais) e "Forma do participante" (PF, PJ) |
-| Regra de negócio | `RN` | 32 | regras comuns, parâmetros por tipo de bem, regras da jornada |
-| Caso de uso | `UC` | 17 | comandos da jornada, com os eventos que emitem |
+| Regra de negócio | `RN` | 33 | regras comuns, parâmetros por tipo de bem, regras da jornada |
+| Caso de uso | `UC` | 24 | comandos da jornada, com os eventos que emitem |
 | Questão em aberto | `Q` | 17 | todas respondidas |
+| Fonte normativa | `F` | 5 | Lei 9.514/1997, Código Civil (art. 1.361 e seguintes), normas do CONTRAN e gravames, Lei 8.036/1990 (FGTS), LGPD |
+| Requisito não funcional | `RNFD` / `RNFS` | 3 | crédito respondido em 1 dia útil, contrato em 2 dias úteis, canais 24x7 |
 | Decisão | `DEC` | 17 | as decisões D1–D17 da [entrevista](../definicoes/entrevista-questoes-em-aberto.md) |
 
 As ligações também são dados: o caso de uso `EMITE` evento, o evento `DISPARA` caso de uso (a política), o agregado
