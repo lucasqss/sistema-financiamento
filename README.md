@@ -9,7 +9,8 @@ Etapa atual:
 - **código iniciado**:
   - o esqueleto dos 8 módulos e as fitness functions;
   - a originação, da proposta à aprovação, com os plug-ins de veículo e imóvel;
-  - os módulos Crédito e Avaliação, cujos resultados decidem a proposta.
+  - os módulos Crédito e Avaliação, cujos resultados decidem a proposta;
+  - a Contratação, do aceite das condições ao contrato assinado.
 
 - [`docs/dominio`](docs/dominio/README.md): o modelo (documento compilado, base do episteme e script de carga);
 - [`docs/arquitetura`](docs/arquitetura/README.md): a arquitetura (características, estilo, módulos e ADRs);

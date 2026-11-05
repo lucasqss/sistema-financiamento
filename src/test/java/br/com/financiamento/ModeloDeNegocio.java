@@ -103,6 +103,37 @@ public final class ModeloDeNegocio {
         return java.util.Arrays.stream(corpo.split("\\|")).map(String::trim).toList();
     }
 
+    /**
+     * Um ciclo de vida do modelo (stateDiagram): transições "DE --EVENTO--> PARA",
+     * em constantes (EmAnalise -> EM_ANALISE), o início e os estados finais. Um
+     * rótulo pode trazer vários eventos ("A / B") e uma explicação entre parênteses.
+     */
+    public record CicloDeVida(java.util.Set<String> transicoes, String inicial, java.util.Set<String> finais) {
+    }
+
+    public static CicloDeVida cicloDeVida(String codigo) {
+        var linha = java.util.regex.Pattern.compile("^(\\[\\*]|\\w+)\\s*-->\\s*(\\[\\*]|\\w+)(?:\\s*:\\s*(.+))?$");
+        var transicoes = new java.util.TreeSet<String>();
+        var finais = new java.util.TreeSet<String>();
+        String inicial = null;
+        for (var l : diagrama(codigo)) {
+            var m = linha.matcher(l);
+            if (!m.matches()) continue;
+            var eventos = m.group(3) == null ? List.<String>of()
+                    : java.util.Arrays.stream(m.group(3).replaceAll("\\([^)]*\\)", "").split("/"))
+                    .map(String::trim).filter(e -> !e.isEmpty()).map(ModeloDeNegocio::constante).toList();
+            if (m.group(1).equals("[*]")) inicial = constante(m.group(2)) + " por " + eventos.getFirst();
+            else if (m.group(2).equals("[*]")) finais.add(constante(m.group(1)));
+            else for (var e : eventos) transicoes.add(constante(m.group(1)) + " --" + e + "--> " + constante(m.group(2)));
+        }
+        return new CicloDeVida(transicoes, inicial, finais);
+    }
+
+    /** "EmAnalise" -> EM_ANALISE. */
+    public static String constante(String nome) {
+        return nome.replaceAll("([a-z])([A-Z])", "$1_$2").toUpperCase();
+    }
+
     /** O bloco mermaid da seção (ex.: o stateDiagram de um ciclo de vida). */
     public static List<String> diagrama(String codigo) {
         var saida = new ArrayList<String>();

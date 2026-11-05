@@ -98,6 +98,23 @@ class Veiculo implements CategoriaDeBem {
         return NOVOS.contains(tipo) ? avaliadaEm.plusDays(30) : avaliadaEm.with(TemporalAdjusters.lastDayOfMonth());
     }
 
+    /** RN-0025. */
+    @Override
+    public List<String> segurosExigidos(TipoDeBem tipo) {
+        return List.of("seguro do bem");
+    }
+
+    @Override
+    public List<String> segurosOpcionais(TipoDeBem tipo) {
+        return List.of("prestamista");
+    }
+
+    /** RN-0026: no veículo assinam só os participantes. */
+    @Override
+    public boolean vendedorEConjugesAssinam(TipoDeBem tipo) {
+        return false;
+    }
+
     @Override
     public Period validadeDaContraproposta() {
         return Period.ofDays(5);

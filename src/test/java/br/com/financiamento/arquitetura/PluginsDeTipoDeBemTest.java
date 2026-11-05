@@ -163,6 +163,28 @@ class PluginsDeTipoDeBemTest {
         assertTrue(problemas.isEmpty(), String.join("\n", problemas));
     }
 
+    @Test
+    void segurosConferemComARegraRN0025() {
+        var tabela = ModeloDeNegocio.tabela("RN-0025");
+        var problemas = new ArrayList<String>();
+        var cobertos = new java.util.HashSet<TipoDeBem>();
+        for (var linha : tabela.entrySet()) {
+            var exigidos = List.of(ModeloDeNegocio.semLinks(linha.getValue().get("Obrigatórios")).split("\\s+e\\s+"));
+            var opcionais = List.of(ModeloDeNegocio.semLinks(linha.getValue().get("Opcional")).split("\\s+e\\s+"));
+            var folhas = ModeloDeNegocio.folhasAbaixoDe("DIM-0001", linha.getKey());
+            if (folhas.isEmpty()) problemas.add("linha da RN-0025 sem tipo de bem: " + linha.getKey());
+            for (var folha : folhas) {
+                var tipo = TipoDeBem.doNome(folha);
+                cobertos.add(tipo);
+                var plugin = plugins.stream().filter(p -> p.tipos().contains(tipo)).findFirst().orElseThrow();
+                confere(problemas, tipo, "seguros exigidos", exigidos, plugin.segurosExigidos(tipo));
+                confere(problemas, tipo, "seguros opcionais", opcionais, plugin.segurosOpcionais(tipo));
+            }
+        }
+        assertEquals(10, cobertos.size(), "tipos cobertos pela RN-0025: " + cobertos);
+        assertTrue(problemas.isEmpty(), String.join("\n", problemas));
+    }
+
     private static boolean simNao(String valor) {
         return switch (valor) {
             case "sim" -> true;

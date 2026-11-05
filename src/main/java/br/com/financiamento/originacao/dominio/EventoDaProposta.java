@@ -24,6 +24,14 @@ enum EventoDaProposta {
     AVALIACAO_VENCIDA,
     CONTRATO_EMITIDO;
 
+    /**
+     * A proposta emite o evento (lista "Emite" do AGR-0001)? ContratoEmitido é do
+     * contrato (EVT-0023): a proposta só muda de estado com ele.
+     */
+    boolean emitidoPelaProposta() {
+        return this != CONTRATO_EMITIDO;
+    }
+
     /** O nome do evento no modelo de negócio: PROPOSTA_INICIADA -> PropostaIniciada. */
     String nomeNoModelo() {
         return Arrays.stream(name().split("_"))

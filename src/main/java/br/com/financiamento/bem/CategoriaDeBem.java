@@ -40,6 +40,15 @@ public interface CategoriaDeBem {
     /** RN-0023 e DEC-0016: até quando vale uma avaliação feita na data informada. */
     LocalDate validadeDaAvaliacao(TipoDeBem tipo, LocalDate avaliadaEm);
 
+    /** RN-0025: seguros obrigatórios para emitir o contrato. */
+    List<String> segurosExigidos(TipoDeBem tipo);
+
+    /** RN-0025: seguros que o proponente pode escolher contratar. */
+    List<String> segurosOpcionais(TipoDeBem tipo);
+
+    /** RN-0026: além dos participantes, o vendedor e os cônjuges assinam o contrato? */
+    boolean vendedorEConjugesAssinam(TipoDeBem tipo);
+
     /** RN-0020: validade da contraproposta. */
     Period validadeDaContraproposta();
 }

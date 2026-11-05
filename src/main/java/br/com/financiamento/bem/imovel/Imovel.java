@@ -131,6 +131,23 @@ class Imovel implements CategoriaDeBem {
         return avaliadaEm.plusDays(180);
     }
 
+    /** RN-0025: MIP e DFI no residencial e comercial; só MIP no terreno, que não tem construção. */
+    @Override
+    public List<String> segurosExigidos(TipoDeBem tipo) {
+        return TERRENOS.contains(tipo) ? List.of("MIP") : List.of("MIP", "DFI");
+    }
+
+    @Override
+    public List<String> segurosOpcionais(TipoDeBem tipo) {
+        return List.of("prestamista");
+    }
+
+    /** RN-0026: no imóvel e no terreno assinam também o vendedor e os cônjuges. */
+    @Override
+    public boolean vendedorEConjugesAssinam(TipoDeBem tipo) {
+        return true;
+    }
+
     @Override
     public Period validadeDaContraproposta() {
         return Period.ofDays(15);

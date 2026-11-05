@@ -179,4 +179,24 @@ class DecisaoDaPropostaTest {
         p.cancelar();
         assertFalse(p.registrarAvaliacao(new AvaliacaoDaProposta(true, r("1"), "x", HOJE, HOJE)));
     }
+
+    @Test
+    void contrataSoAAprovadaDentroDaValidadeEComAvaliacaoValida_uc0014() {
+        assertNotNull(emAnalise().impedimentoParaContratar(HOJE));
+
+        var p = aprovada();
+        assertNull(p.impedimentoParaContratar(HOJE));
+        p.registrarContrato(77L, HOJE);
+        assertEquals(CONTRATADA, p.estado());
+        assertEquals(77L, p.contratoId());
+        assertThrows(RegraVioladaException.class, () -> p.registrarContrato(78L, HOJE), "um contrato por proposta");
+
+        var expirada = aprovada();
+        assertTrue(expirada.impedimentoParaContratar(HOJE.plusDays(31)).startsWith("RN-0021"));
+        assertEquals(EXPIRADA, expirada.estado());
+
+        var vencida = aprovada();
+        assertTrue(vencida.impedimentoParaContratar(LocalDate.of(2026, 12, 1)).startsWith("RN-0022"));
+        assertEquals(COM_PENDENCIA, vencida.estado());
+    }
 }

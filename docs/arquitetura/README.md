@@ -138,13 +138,14 @@ Assim, a regra "outro módulo só pela raiz" já impede o núcleo e os outros m�
 
 **Passo 1, núcleo da originação:** o agregado Proposta, o ciclo de vida e o enquadramento, com os dois plug-ins.
 **Passo 2, decisão da proposta:** os módulos Crédito e Avaliação, e a decisão, contraproposta, pendência e prazos na Originação.
+**Passo 3, contratação:** do aceite das condições finais ao contrato assinado, ou à desistência.
 
 | Modelo de negócio | Código |
 |---|---|
 | AGR-0001 Proposta e invariantes | `originacao/dominio/Proposta` |
 | CV-0001 Ciclo de vida da proposta | `originacao/dominio/EstadoProposta`, conferido contra o diagrama do modelo |
 | RN-0001 a RN-0009, RN-0015, RN-0018 e RN-0033 | `originacao/dominio/RegrasDeEnquadramento` |
-| RN-0010, RN-0016, RN-0017, RN-0020 e RN-0023 por tipo | `bem/veiculo/Veiculo` e `bem/imovel/Imovel`, conferidos contra as tabelas RN-0010 e RN-0023 do modelo |
+| RN-0010, RN-0016, RN-0017, RN-0020, RN-0023, RN-0025 e RN-0026 por tipo | `bem/veiculo/Veiculo` e `bem/imovel/Imovel`, conferidos contra as tabelas RN-0010, RN-0023 e RN-0025 do modelo |
 | RN-0011 | plug-in `veiculo` |
 | RN-0012 e RN-0014 | plug-in `imovel` |
 | UC-0001 a UC-0005 e UC-0010 | `originacao/aplicacao/*Service` e API web `/web/propostas` |
@@ -154,12 +155,17 @@ Assim, a regra "outro módulo só pela raiz" já impede o núcleo e os outros m�
 | UC-0007, RN-0021, RN-0022 e contraproposta vencida | `VerificarPrazosService`, agendado todo dia (`entrypoint/agenda`) |
 | UC-0011 Analisar crédito | módulo `credito`: `AnaliseDeCredito`, retorno do bureau em `/retornos/bureau-de-credito` e decisão do analista em `/web/analises-de-credito` |
 | UC-0012 Avaliar bem | módulo `avaliacao`: `Avaliacao`, laudo do avaliador em `/retornos/avaliador` |
-| EVT-0001 a EVT-0019 do caminho até a aprovação | gravados no outbox (`shared.outbox`) na transação do caso de uso |
+| UC-0014 Emitir contrato, RN-0025 | módulo `contratacao`: `PreparoDoContrato` (aceite e seguros, antes do ciclo do contrato) e `Contrato.emitir`; apólices da seguradora em `/retornos/seguradora` |
+| AGR-0002 Contrato e CV-0002 | `contratacao/dominio/Contrato` e `EstadoContrato`, conferido contra o diagrama do modelo |
+| RN-0021 e RN-0022 na emissão | `OriginacaoFacade.contratabilidade`: proposta vencida expira e avaliação vencida dá pendência, e a emissão espera |
+| UC-0015 Assinar contrato, RN-0026 | `Contrato.assinar`: todos os participantes; no imóvel e no terreno, também o vendedor e os cônjuges (plug-in) |
+| UC-0016 Cancelar contrato (desistência) | `Contrato.cancelar`, antes de assinar |
+| Eventos do caminho até o contrato assinado | gravados no outbox (`shared.outbox`) na transação do caso de uso |
 
 Os retornos externos chegam hoje por REST. Em produção, chegam pela fila ([ADR 0006](adr/0006-mensageria-por-fila-gerenciada.md)) para o mesmo serviço, que é idempotente: o mesmo retorno repetido não tem novo efeito, e um retorno diferente do já registrado é recusado.
 
 **Próximos passos:**
-- Contratação: emitir contrato (UC-0014), com a avaliação válida na emissão (RN-0022);
+- Garantia: registrar a alienação fiduciária no órgão da categoria (UC-0018 a UC-0020, RN-0028, RN-0029), disparada pelo contrato assinado, e o cancelamento por registro recusado;
 - RN-0013 e a elegibilidade do FGTS, que dependem de sistemas externos;
 - o relay do outbox para a fila.
 
@@ -199,8 +205,9 @@ Os 6 sistemas externos do modelo têm cada um uma camada anticorrupção no mód
   - `PluginsDeTipoDeBemTest`:
     - ninguém fora de um plug-in depende dele;
     - cada tipo de bem final de DIM-0001, lido de `docs/dominio/especificacao.md`, tem exatamente um plug-in;
-    - os parâmetros conferem com a tabela RN-0010, e a fonte e a validade da avaliação com a RN-0023;
+    - os parâmetros conferem com a tabela RN-0010, a fonte e a validade da avaliação com a RN-0023, e os seguros com a RN-0025;
   - `EsquemaPorModuloTest`: entidades, migrações e consultas só no esquema do próprio módulo.
+- Os ciclos de vida implementados (`EstadoProposta`, `EstadoContrato`) são conferidos contra os diagramas CV-0001 e CV-0002 do modelo.
 
 ## ADRs
 

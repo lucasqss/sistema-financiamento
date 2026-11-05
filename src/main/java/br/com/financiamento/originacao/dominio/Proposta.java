@@ -110,6 +110,10 @@ public class Proposta extends PanacheEntityBase {
     @Column(name = "aprovacao_valida_ate")
     private LocalDate aprovacaoValidaAte;
 
+    /** Invariante 8: uma proposta gera no máximo um contrato. */
+    @Column(name = "contrato_id")
+    private Long contratoId;
+
     @Version
     @Column(name = "versao_registro")
     private long versaoDoRegistro;
@@ -273,13 +277,37 @@ public class Proposta extends PanacheEntityBase {
         return true;
     }
 
-    /** O crédito precisa analisar a versão atual das condições, e ainda não foi pedido? */
+    // --- Contratação (UC-0014) ---
+
+    /**
+     * O que impede a proposta de virar contrato hoje, ou null. Muda a proposta
+     * quando o impedimento é um fato do tempo: a validade vencida a expira
+     * (RN-0021) e a avaliação vencida a põe em pendência (RN-0022).
+     */
+    public String impedimentoParaContratar(LocalDate hoje) {
+        if (estado != EstadoProposta.APROVADA) return "A proposta está " + nomeDoEstado() + "; só a aprovada é contratada.";
+        if (expirarSeVencida(hoje)) return "RN-0021: a proposta passou da validade de 30 dias e expirou.";
+        if (pendenciaSeAvaliacaoVencida(hoje)) return "RN-0022: a avaliação do bem venceu; a proposta ficou com pendência para reavaliar.";
+        return null;
+    }
+
+    /** O contrato foi emitido: a proposta fica contratada e não gera outro (invariante 8). */
+    public void registrarContrato(Long contratoId, LocalDate hoje) {
+        var impedimento = impedimentoParaContratar(hoje);
+        if (impedimento != null) throw new RegraVioladaException("UC-0014", impedimento);
+        this.contratoId = contratoId;
+        transicionar(EventoDaProposta.CONTRATO_EMITIDO, Map.of("contratoId", contratoId));
+    }
+
+    /** O crédito precisa analisar a versão atual das condições da proposta submetida, e ainda não foi pedido? */
     public boolean precisaDeAnaliseDeCredito() {
+        if (estado == EstadoProposta.RASCUNHO || !estado.ativa()) return false;
         return condicoes != null && !Integer.valueOf(condicoes.versao()).equals(creditoSolicitadoNaVersao);
     }
 
-    /** O bem precisa de (nova) avaliação, e ainda não foi pedida? */
+    /** A proposta submetida e ativa precisa de (nova) avaliação do bem, e ainda não foi pedida? */
     public boolean precisaDeAvaliacao(LocalDate hoje) {
+        if (estado == EstadoProposta.RASCUNHO || !estado.ativa()) return false;
         return !avaliacaoPendente && (avaliacao == null || avaliacao.vencidaEm(hoje));
     }
 
@@ -314,6 +342,7 @@ public class Proposta extends PanacheEntityBase {
     }
 
     private void registrar(EventoDaProposta evento, Map<String, Object> dados) {
+        if (!evento.emitidoPelaProposta()) return;
         var completos = new LinkedHashMap<String, Object>(dados);
         completos.put("estado", estado.name());
         eventos.add(new EventoRegistrado(evento.nomeNoModelo(), completos));
@@ -351,6 +380,7 @@ public class Proposta extends PanacheEntityBase {
     public Contraproposta contraproposta() { return contraproposta; }
     public String pendencia() { return pendencia; }
     public LocalDate aprovacaoValidaAte() { return aprovacaoValidaAte; }
+    public Long contratoId() { return contratoId; }
 
     public Participante proponente() {
         return participantes.stream().filter(Participante::proponente).findFirst().orElse(null);
