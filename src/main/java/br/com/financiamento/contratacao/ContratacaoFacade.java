@@ -1,5 +1,6 @@
 package br.com.financiamento.contratacao;
 
+import br.com.financiamento.contratacao.aplicacao.LiberacaoDoContratoService;
 import br.com.financiamento.contratacao.aplicacao.RegistroDoContratoService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -13,6 +14,29 @@ public class ContratacaoFacade {
 
     @Inject
     RegistroDoContratoService registro;
+
+    @Inject
+    LiberacaoDoContratoService liberacao;
+
+    /** O que o Desembolso precisa para liberar (UC-0021, UC-0023). */
+    public ContratoParaDesembolso paraDesembolso(Long contratoId) {
+        return liberacao.paraDesembolso(contratoId);
+    }
+
+    /** EVT-0033: o contrato do bem pronto fica formalizado. */
+    public void recursoLiberado(Long contratoId) {
+        liberacao.recursoLiberado(contratoId);
+    }
+
+    /** EVT-0034: a última parcela formaliza o contrato; as outras o mantêm em obra. */
+    public void parcelaDaObraLiberada(Long contratoId, boolean ultima) {
+        liberacao.parcelaDaObraLiberada(contratoId, ultima);
+    }
+
+    /** EVT-0020 no contrato em obra. */
+    public void medicaoRealizada(Long contratoId) {
+        liberacao.medicaoRealizada(contratoId);
+    }
 
     public void registroSolicitado(Long contratoId, String orgao, String protocolo) {
         registro.registroSolicitado(contratoId, orgao, protocolo);

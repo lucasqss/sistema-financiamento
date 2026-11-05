@@ -2,6 +2,7 @@ package br.com.financiamento.contratacao.aplicacao;
 
 import br.com.financiamento.bem.BemFacade;
 import br.com.financiamento.contratacao.dominio.Contrato;
+import br.com.financiamento.contratacao.dominio.CronogramaDaObra;
 import br.com.financiamento.contratacao.dominio.PreparoDoContrato;
 import br.com.financiamento.contratacao.dominio.assinatura.Signatario;
 import br.com.financiamento.contratacao.dominio.condicoes.CondicoesFinais;
@@ -57,7 +58,9 @@ public class EmitirContratoService {
         }
         var p = contratabilidade.proposta();
         var contrato = Contrato.emitir(p.propostaId(), p.tipoDeBem(), p.documentoDoVendedor(), condicoesFinais(p),
-                preparo.seguros(), signatarios(p, preparo), relogio.instant());
+                preparo.seguros(), signatarios(p, preparo),
+                preparo.previsaoDeEntregaDaObra() == null ? null : new CronogramaDaObra(preparo.previsaoDeEntregaDaObra()),
+                relogio.instant());
         contratacoes.salvar(contrato);
         originacao.contratoEmitido(p.propostaId(), contrato.id());
         preparo.contratoEmitido(contrato.id());

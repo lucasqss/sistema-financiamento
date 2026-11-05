@@ -8,4 +8,8 @@ package br.com.financiamento.avaliacao;
 public interface OuvinteDaAvaliacao {
 
     void bemAvaliado(ResultadoDeAvaliacao resultado);
+
+    /** MedicaoRealizada dispara a liberação da parcela da obra (UC-0023). Quem não a acompanha não faz nada. */
+    default void medicaoRealizada(MedicaoRealizada medicao) {
+    }
 }

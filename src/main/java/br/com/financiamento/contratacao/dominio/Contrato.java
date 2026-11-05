@@ -86,6 +86,10 @@ public class Contrato extends PanacheEntityBase {
     @Column(name = "garantia_situacao")
     private String situacaoDaGarantia;
 
+    /** Só no imóvel na planta (AGR-0002): prazo previsto e prorrogações. */
+    @Embedded
+    private CronogramaDaObra cronograma;
+
     @Version
     @Column(name = "versao_registro")
     private long versaoDoRegistro;
@@ -98,7 +102,8 @@ public class Contrato extends PanacheEntityBase {
 
     /** UC-0014, passo 3. Emite ContratoEmitido; o contrato aguarda as assinaturas. */
     public static Contrato emitir(Long propostaId, TipoDeBem tipo, String documentoDoVendedor, CondicoesFinais condicoes,
-                                  List<Seguro> seguros, List<Signatario> signatarios, Instant agora) {
+                                  List<Seguro> seguros, List<Signatario> signatarios, CronogramaDaObra cronograma,
+                                  Instant agora) {
         if (seguros.stream().filter(Seguro::obrigatorio).anyMatch(s -> !s.contratado())) {
             throw new RegraVioladaException("RN-0025", "O contrato só é emitido com os seguros exigidos contratados.");
         }
@@ -111,6 +116,7 @@ public class Contrato extends PanacheEntityBase {
         c.emitidoEm = agora;
         seguros.forEach(s -> c.seguros.add(s.copia()));
         c.signatarios.addAll(signatarios);
+        c.cronograma = cronograma;
         c.estado = EstadoContrato.ESTADO_INICIAL;
         c.registrar(EstadoContrato.EVENTO_INICIAL, Map.of("propostaId", propostaId,
                 "signatarios", signatarios.stream().map(Signatario::documento).toList()));
@@ -169,6 +175,66 @@ public class Contrato extends PanacheEntityBase {
         garantia(orgaoDaGarantia, protocolo, "constituída");
     }
 
+    // --- Liberação (UC-0021, UC-0023): fatos do Desembolso que movem o contrato ---
+
+    /** O vendedor recebeu o valor financiado (EVT-0033): o contrato do bem pronto está formalizado. */
+    public void recursoLiberado() {
+        transicionar(EventoDoContrato.RECURSO_LIBERADO, Map.of());
+    }
+
+    /**
+     * Uma parcela da obra foi paga (EVT-0034). A primeira põe o contrato em obra;
+     * a intermediária o mantém em obra; a última o formaliza.
+     */
+    public void parcelaDaObraLiberada(boolean ultima) {
+        if (estado == EstadoContrato.GARANTIA_CONSTITUIDA) {
+            transicionarPara(EventoDoContrato.PARCELA_DA_OBRA_LIBERADA, EstadoContrato.EM_OBRA, Map.of());
+            if (!ultima) return;
+        }
+        transicionarPara(EventoDoContrato.PARCELA_DA_OBRA_LIBERADA,
+                ultima ? EstadoContrato.FORMALIZADO : EstadoContrato.EM_OBRA, Map.of());
+    }
+
+    /**
+     * O engenheiro mediu a obra (EVT-0020). Em obra, é a transição do CV-0002; com a
+     * garantia recém-constituída, a primeira medição leva direto à primeira parcela.
+     */
+    public void medicaoRealizada() {
+        if (estado == EstadoContrato.GARANTIA_CONSTITUIDA && cronograma != null) return;
+        transicionar(EventoDoContrato.MEDICAO_REALIZADA, Map.of());
+    }
+
+    // --- Prorrogação do prazo da obra (UC-0017, RN-0027) ---
+
+    /**
+     * A incorporadora pede nova data. Dentro do limite de 180 dias somados além do
+     * prazo previsto, aplica e emite PrazoDaObraProrrogado; acima, fica pendente
+     * para o analista decidir. Devolve se foi aplicada.
+     */
+    public boolean pedirProrrogacao(java.time.LocalDate novaData) {
+        exigirTransicao(EventoDoContrato.PRAZO_DA_OBRA_PRORROGADO);
+        if (cronograma.dentroDoLimite(novaData)) {
+            aplicarProrrogacao(novaData);
+            return true;
+        }
+        cronograma.deixarPendente(novaData);
+        return false;
+    }
+
+    /** RN-0027, acima do limite: o analista (ATR-0005) aprova ou nega a prorrogação pendente. */
+    public void decidirProrrogacao(boolean aprovada) {
+        var pendente = cronograma.pendente();
+        if (pendente == null) throw new RegraVioladaException("RN-0027", "Não há prorrogação pendente.");
+        if (aprovada) aplicarProrrogacao(pendente);
+        else cronograma.negarPendente();
+    }
+
+    private void aplicarProrrogacao(java.time.LocalDate novaData) {
+        var dias = cronograma.prorrogar(novaData);
+        transicionar(EventoDoContrato.PRAZO_DA_OBRA_PRORROGADO, Map.of("novaPrevisao", novaData.toString(),
+                "diasProrrogados", dias));
+    }
+
     private void garantia(String orgao, String protocolo, String situacao) {
         this.orgaoDaGarantia = orgao;
         this.protocoloDaGarantia = protocolo;
@@ -176,7 +242,7 @@ public class Contrato extends PanacheEntityBase {
     }
 
     private void exigirTransicao(EventoDoContrato evento) {
-        if (estado.apos(evento).isEmpty()) {
+        if (!estado.aceita(evento)) {
             throw new RegraVioladaException("CV-0002",
                     "O contrato " + nomeDoEstado() + " não aceita " + evento.nomeNoModelo() + ".");
         }
@@ -185,6 +251,15 @@ public class Contrato extends PanacheEntityBase {
     private void transicionar(EventoDoContrato evento, Map<String, Object> dados) {
         exigirTransicao(evento);
         this.estado = estado.apos(evento).orElseThrow();
+        registrar(evento, dados);
+    }
+
+    private void transicionarPara(EventoDoContrato evento, EstadoContrato destino, Map<String, Object> dados) {
+        if (!estado.aceita(evento, destino)) {
+            throw new RegraVioladaException("CV-0002", "O contrato " + nomeDoEstado() + " não vai para "
+                    + destino.name().toLowerCase().replace('_', ' ') + " com " + evento.nomeNoModelo() + ".");
+        }
+        this.estado = destino;
         registrar(evento, dados);
     }
 
@@ -214,6 +289,7 @@ public class Contrato extends PanacheEntityBase {
     public CondicoesFinais condicoes() { return condicoes; }
     public List<Seguro> seguros() { return List.copyOf(seguros); }
     public List<Signatario> signatarios() { return List.copyOf(signatarios); }
+    public CronogramaDaObra cronograma() { return cronograma; }
     public String orgaoDaGarantia() { return orgaoDaGarantia; }
     public String protocoloDaGarantia() { return protocoloDaGarantia; }
     public String situacaoDaGarantia() { return situacaoDaGarantia; }

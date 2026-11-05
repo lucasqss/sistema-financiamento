@@ -1,6 +1,7 @@
 package br.com.financiamento.contratacao.aplicacao;
 
 import br.com.financiamento.bem.BemFacade;
+import br.com.financiamento.bem.FormaDeLiberacao;
 import br.com.financiamento.contratacao.dominio.PreparoDoContrato;
 import br.com.financiamento.contratacao.dominio.PreparoDoContratoRepository;
 import br.com.financiamento.contratacao.dominio.assinatura.Signatario;
@@ -11,6 +12,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -40,7 +42,8 @@ public class AceitarCondicoesService {
     Clock relogio;
 
     @Transactional
-    public DetalheDaContratacao executar(Long propostaId, List<String> segurosOpcionais, List<Conjuge> conjuges) {
+    public DetalheDaContratacao executar(Long propostaId, List<String> segurosOpcionais, List<Conjuge> conjuges,
+                                         LocalDate previsaoDeEntregaDaObra) {
         if (preparos.daProposta(propostaId).isPresent()) {
             throw new RegraVioladaException("AGR-0001", "As condições desta proposta já foram aceitas: uma proposta gera no máximo um contrato.");
         }
@@ -59,10 +62,17 @@ public class AceitarCondicoesService {
         if (!listaDeConjuges.isEmpty() && !categoria.vendedorEConjugesAssinam(proposta.tipoDeBem())) {
             throw new RegraVioladaException("RN-0026", "Cônjuges assinam só no imóvel e no terreno.");
         }
+        boolean naPlanta = categoria.parametros(proposta.tipoDeBem()).liberacao() == FormaDeLiberacao.POR_MEDICAO;
+        if (naPlanta && previsaoDeEntregaDaObra == null) {
+            throw new RegraVioladaException("UC-0014", "No imóvel na planta, informe a previsão de entrega da obra.");
+        }
+        if (!naPlanta && previsaoDeEntregaDaObra != null) {
+            throw new RegraVioladaException("UC-0014", "Previsão de entrega da obra só no imóvel na planta.");
+        }
         var preparo = PreparoDoContrato.aceitar(propostaId, proposta.tipoDeBem(), proposta.condicoesVersao(),
                 categoria.segurosExigidos(proposta.tipoDeBem()), opcionais,
                 listaDeConjuges.stream().map(c -> new Signatario("CONJUGE", c.documento(), c.nome())).toList(),
-                relogio.instant());
+                previsaoDeEntregaDaObra, relogio.instant());
         contratacoes.salvar(preparo);
         return DetalheDaContratacao.de(preparo);
     }

@@ -3,6 +3,7 @@ package br.com.financiamento.contratacao.entrypoint.api.web;
 import br.com.financiamento.contratacao.aplicacao.AssinarContratoService;
 import br.com.financiamento.contratacao.aplicacao.CancelarContratoService;
 import br.com.financiamento.contratacao.aplicacao.ConsultarContratacaoService;
+import br.com.financiamento.contratacao.aplicacao.ProrrogarObraService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -16,6 +17,7 @@ public class ContratoWebResource {
     @Inject ConsultarContratacaoService consultar;
     @Inject AssinarContratoService assinar;
     @Inject CancelarContratoService cancelar;
+    @Inject ProrrogarObraService prorrogar;
 
     @GET
     @Path("/{id}")
@@ -33,5 +35,19 @@ public class ContratoWebResource {
     @Path("/{id}/cancelamento")
     public ContratoWebResponse cancelar(@PathParam("id") Long id, CancelamentoRequest r) {
         return ContratoWebResponse.de(cancelar.executar(id, r == null ? null : r.motivo()));
+    }
+
+    /** UC-0017: a incorporadora pede nova data para a obra. */
+    @POST
+    @Path("/{id}/prorrogacoes")
+    public ContratoWebResponse prorrogar(@PathParam("id") Long id, ProrrogacaoRequest r) {
+        return ContratoWebResponse.de(prorrogar.pedir(id, r.novaData()));
+    }
+
+    /** RN-0027, acima do limite: o analista decide a prorrogação pendente. */
+    @POST
+    @Path("/{id}/prorrogacoes/pendente/decisao")
+    public ContratoWebResponse decidirProrrogacao(@PathParam("id") Long id, DecisaoDeProrrogacaoRequest r) {
+        return ContratoWebResponse.de(prorrogar.decidir(id, r.aprovada()));
     }
 }

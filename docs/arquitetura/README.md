@@ -140,6 +140,7 @@ Assim, a regra "outro módulo só pela raiz" já impede o núcleo e os outros m�
 **Passo 2, decisão da proposta:** os módulos Crédito e Avaliação, e a decisão, contraproposta, pendência e prazos na Originação.
 **Passo 3, contratação:** do aceite das condições finais ao contrato assinado, ou à desistência.
 **Passo 4, garantia:** do contrato assinado à garantia constituída, com exigências, recusas e retornos repetidos.
+**Passo 5, desembolso:** da garantia constituída ao contrato formalizado, de uma vez ou por medição da obra, com o FGTS da entrada.
 
 | Modelo de negócio | Código |
 |---|---|
@@ -165,14 +166,20 @@ Assim, a regra "outro módulo só pela raiz" já impede o núcleo e os outros m�
 | RN-0029 Retorno é fato, não pedido | `Registro.classificar` e `/retornos/orgao-de-registro`: todo retorno é guardado e classificado (constituída, exigência, recusa, divergência de identificação, repetido ou sem efeito), nunca recusado |
 | UC-0019 Tratar registro recusado, UC-0020 Cumprir exigência | `TratarRegistroService` e `/web/registros/{id}/reenvio`, `/exigencia-cumprida`, `/desfazimento` (que cancela o contrato, UC-0016) |
 | Garantia no AGR-0002 | o contrato guarda o resumo (órgão, protocolo, situação) e muda de estado pelos fatos da Garantia, sem publicá-los de novo |
-| Eventos do caminho até a garantia constituída | gravados no outbox (`shared.outbox`) na transação do caso de uso, cada um pelo agregado que o emite no modelo |
+| UC-0021 Liberar recurso, RN-0030, RN-0031 | módulo `desembolso`: `Desembolso`, aberto pelo `OuvinteDaGarantia` quando a garantia é constituída; uma liberação por protocolo (`LIB-<contrato>-<n>`), confirmada em `/retornos/pagamento`, nunca acima do valor financiado |
+| UC-0022 Recompor entrada (FGTS) | FgtsSolicitado com a garantia; retorno do FGTS em `/retornos/fgts`; negado, `/web/desembolsos/{id}/entrada-recomposta` |
+| UC-0013 Medir obra, RN-0024 | módulo `avaliacao`: `MedicaoDaObra` em `/web/medicoes`; avisa o Desembolso pelo `OuvinteDaAvaliacao`, que recusa (e desfaz) a medição de contrato fora da planta ou sem garantia |
+| UC-0023 Liberar parcela da obra, RN-0032 | `Desembolso.medicaoRealizada`: parcela = financiado × (acumulado − já liberado); a de 100% é a última e formaliza o contrato |
+| UC-0017 Prorrogar prazo da obra, RN-0027 | `Contrato.pedirProrrogacao` e `/web/contratos/{id}/prorrogacoes`: até 180 dias somados aplica; acima, pendência para o analista decidir |
+| CV-0002 com parcela intermediária (snapshot v3 do modelo) | `EstadoContrato` com mais de um destino por evento: a parcela intermediária fica em obra, a última formaliza |
+| Eventos de toda a jornada, até o contrato formalizado | gravados no outbox (`shared.outbox`) na transação do caso de uso, cada um pelo agregado que o emite no modelo |
 
 Os retornos externos chegam hoje por REST. Em produção, chegam pela fila ([ADR 0006](adr/0006-mensageria-por-fila-gerenciada.md)) para o mesmo serviço, que é idempotente: o mesmo retorno repetido não tem novo efeito, e um retorno diferente do já registrado é recusado.
 
 **Próximos passos:**
-- Desembolso: liberar o recurso só com a garantia constituída (UC-0021 a UC-0023, RN-0030 a RN-0032), com a medição da obra (UC-0013) e a prorrogação (UC-0017) no imóvel na planta;
-- RN-0013 e a elegibilidade do FGTS, que dependem de sistemas externos;
-- o relay do outbox para a fila.
+- o relay do outbox para a fila (ADR 0006), que tira os pedidos aos externos do banco;
+- RN-0013 (veículo sem restrição) e a elegibilidade do FGTS antes da submissão, que dependem de sistemas externos;
+- Cadastro de pessoas e Documentos, hoje só com a fachada.
 
 ## 4. Dados e comunicação
 

@@ -4,10 +4,16 @@ import br.com.financiamento.contratacao.aplicacao.DetalheDoContrato;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 public record ContratoWebResponse(Long id, Long propostaId, String tipoDeBem, String estado, Condicoes condicoes,
-                                  List<Seguro> seguros, List<Signatario> signatarios, Garantia garantia) {
+                                  List<Seguro> seguros, List<Signatario> signatarios, Garantia garantia,
+                                  Obra obra) {
+
+    public record Obra(LocalDate previsaoOriginal, LocalDate previsaoAtual, long diasProrrogados,
+                       LocalDate prorrogacaoPendente) {
+    }
 
     public record Garantia(String orgao, String protocolo, String situacao) {
     }
@@ -30,6 +36,8 @@ public record ContratoWebResponse(Long id, Long propostaId, String tipoDeBem, St
                 d.seguros().stream().map(s -> new Seguro(s.nome(), s.obrigatorio(), s.apolice())).toList(),
                 d.signatarios().stream().map(s -> new Signatario(s.papel(), s.documento(), s.nome(), s.assinadoEm())).toList(),
                 d.orgaoDaGarantia() == null ? null
-                        : new Garantia(d.orgaoDaGarantia(), d.protocoloDaGarantia(), d.situacaoDaGarantia()));
+                        : new Garantia(d.orgaoDaGarantia(), d.protocoloDaGarantia(), d.situacaoDaGarantia()),
+                d.cronograma() == null ? null : new Obra(d.cronograma().previsaoOriginal(), d.cronograma().previsaoAtual(),
+                        d.cronograma().diasProrrogados(), d.cronograma().pendente()));
     }
 }

@@ -3,8 +3,9 @@
 Modelo de domínio do sistema de financiamento de bens (carro e moto novos e usados, imóvel residencial e comercial
 pronto ou na planta, terreno urbano e rural), no **espaço do problema**: sem arquitetura, tecnologia nem banco.
 
-> **Situação:** definições negociais desta fase **aprovadas** em 2026-11-05 (snapshot v2 em
-> [`episteme/snapshots`](episteme/snapshots/README.md)). Fora de escopo: cálculo financeiro e vida do contrato após a liberação.
+> **Situação:** definições negociais desta fase **aprovadas** em 2026-11-05 (snapshot v3 em
+> [`episteme/snapshots`](episteme/snapshots/README.md), com duas correções do v2 achadas na implementação: a parcela
+> intermediária da obra no CV-0002 e a previsão de entrega da obra no aceite, UC-0014). Fora de escopo: cálculo financeiro e vida do contrato após a liberação.
 
 O modelo é mantido no [episteme](https://github.com/lucasqss/episteme), que guarda cada conceito como um artefato
 com código próprio e rastreia as ligações entre eles.

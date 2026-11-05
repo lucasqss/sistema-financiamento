@@ -11,7 +11,8 @@ Etapa atual:
   - a originação, da proposta à aprovação, com os plug-ins de veículo e imóvel;
   - os módulos Crédito e Avaliação, cujos resultados decidem a proposta;
   - a Contratação, do aceite das condições ao contrato assinado;
-  - a Garantia, do contrato assinado à alienação fiduciária registrada.
+  - a Garantia, do contrato assinado à alienação fiduciária registrada;
+  - o Desembolso, da garantia constituída ao contrato formalizado, de uma vez ou por medição da obra.
 
 - [`docs/dominio`](docs/dominio/README.md): o modelo (documento compilado, base do episteme e script de carga);
 - [`docs/arquitetura`](docs/arquitetura/README.md): a arquitetura (características, estilo, módulos e ADRs);

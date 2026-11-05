@@ -59,6 +59,10 @@ public class PreparoDoContrato extends PanacheEntityBase {
     @OrderColumn(name = "ordem")
     private List<Signatario> conjuges = new ArrayList<>();
 
+    /** Só no imóvel na planta: a previsão de entrega da obra informada no aceite (UC-0014). */
+    @Column(name = "previsao_entrega_obra")
+    private java.time.LocalDate previsaoDeEntregaDaObra;
+
     @Column(name = "contrato_id")
     private Long contratoId;
 
@@ -77,7 +81,8 @@ public class PreparoDoContrato extends PanacheEntityBase {
 
     /** UC-0014, passo 1: o proponente aceita as condições finais. Emite CondicoesAceitas. */
     public static PreparoDoContrato aceitar(Long propostaId, TipoDeBem tipo, int condicoesVersao, List<String> exigidos,
-                                            List<String> opcionaisEscolhidos, List<Signatario> conjuges, Instant agora) {
+                                            List<String> opcionaisEscolhidos, List<Signatario> conjuges,
+                                            java.time.LocalDate previsaoDeEntregaDaObra, Instant agora) {
         var p = new PreparoDoContrato();
         p.propostaId = propostaId;
         p.tipoDeBem = tipo.codigo();
@@ -85,6 +90,7 @@ public class PreparoDoContrato extends PanacheEntityBase {
         exigidos.forEach(s -> p.seguros.add(new Seguro(s, true)));
         opcionaisEscolhidos.forEach(s -> p.seguros.add(new Seguro(s, false)));
         p.conjuges.addAll(conjuges);
+        p.previsaoDeEntregaDaObra = previsaoDeEntregaDaObra;
         p.registrar("CondicoesAceitas", Map.of("propostaId", propostaId, "condicoesVersao", condicoesVersao,
                 "seguros", p.seguros.stream().map(Seguro::nome).toList()));
         return p;
@@ -144,5 +150,6 @@ public class PreparoDoContrato extends PanacheEntityBase {
     public List<Seguro> seguros() { return List.copyOf(seguros); }
     public List<Signatario> conjuges() { return List.copyOf(conjuges); }
     public Long contratoId() { return contratoId; }
+    public java.time.LocalDate previsaoDeEntregaDaObra() { return previsaoDeEntregaDaObra; }
     public String impedimento() { return impedimento; }
 }

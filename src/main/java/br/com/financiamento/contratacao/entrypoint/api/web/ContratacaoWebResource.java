@@ -23,7 +23,7 @@ public class ContratacaoWebResource {
 
     @POST
     public Response aceitar(AceiteRequest r) {
-        var d = aceitar.executar(r.propostaId(), r.segurosOpcionais(), r.conjuges());
+        var d = aceitar.executar(r.propostaId(), r.segurosOpcionais(), r.conjuges(), r.previsaoDeEntregaDaObra());
         if (d.id() == null) return impedida(d);
         return Response.created(URI.create("/web/contratacoes/" + d.id())).entity(ContratacaoWebResponse.de(d)).build();
     }

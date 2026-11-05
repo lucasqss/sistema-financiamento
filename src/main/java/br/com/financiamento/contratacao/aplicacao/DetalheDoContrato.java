@@ -1,6 +1,7 @@
 package br.com.financiamento.contratacao.aplicacao;
 
 import br.com.financiamento.contratacao.dominio.Contrato;
+import br.com.financiamento.contratacao.dominio.CronogramaDaObra;
 import br.com.financiamento.contratacao.dominio.EstadoContrato;
 import br.com.financiamento.contratacao.dominio.assinatura.Signatario;
 import br.com.financiamento.contratacao.dominio.condicoes.CondicoesFinais;
@@ -10,10 +11,12 @@ import java.util.List;
 
 public record DetalheDoContrato(Long id, Long propostaId, String tipoDeBem, EstadoContrato estado,
                                 CondicoesFinais condicoes, List<Seguro> seguros, List<Signatario> signatarios,
-                                String orgaoDaGarantia, String protocoloDaGarantia, String situacaoDaGarantia) {
+                                String orgaoDaGarantia, String protocoloDaGarantia, String situacaoDaGarantia,
+                                CronogramaDaObra cronograma) {
 
     static DetalheDoContrato de(Contrato c) {
         return new DetalheDoContrato(c.id(), c.propostaId(), c.tipoDeBem().codigo(), c.estado(), c.condicoes(),
-                c.seguros(), c.signatarios(), c.orgaoDaGarantia(), c.protocoloDaGarantia(), c.situacaoDaGarantia());
+                c.seguros(), c.signatarios(), c.orgaoDaGarantia(), c.protocoloDaGarantia(), c.situacaoDaGarantia(),
+                c.cronograma());
     }
 }

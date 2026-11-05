@@ -1682,6 +1682,7 @@ stateDiagram-v2
     GarantiaConstituida --> Formalizado: RecursoLiberado (bem pronto)
     GarantiaConstituida --> EmObra: ParcelaDaObraLiberada (na planta)
     EmObra --> EmObra: MedicaoRealizada / PrazoDaObraProrrogado
+    EmObra --> EmObra: ParcelaDaObraLiberada (intermediária)
     EmObra --> Formalizado: ParcelaDaObraLiberada (última)
     Formalizado --> [*]
     Cancelado --> [*]
@@ -1765,7 +1766,7 @@ Casos de uso da contratação.
 **Pré-condição:** proposta aprovada, dentro da validade.
 
 **Fluxo principal**
-1. O proponente aceita as condições finais. Emite [EVT-0021](#evt-0021).
+1. O proponente aceita as condições finais. No imóvel na planta, informa a previsão de entrega da obra, do cronograma da [incorporadora](#glo-0005): é o prazo previsto do cronograma da obra. Emite [EVT-0021](#evt-0021).
 2. O sistema exige os seguros ([RN-0025](#rn-0025)) e confere a avaliação ([RN-0022](#rn-0022)). Emite [EVT-0022](#evt-0022).
 3. O sistema emite o contrato, no prazo de [RNFD-0002](#rnfd-0002). Emite [EVT-0023](#evt-0023).
 

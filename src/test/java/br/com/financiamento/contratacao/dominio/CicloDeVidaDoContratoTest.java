@@ -17,7 +17,8 @@ class CicloDeVidaDoContratoTest {
         var modelo = ModeloDeNegocio.cicloDeVida("CV-0002");
         var implementadas = new TreeSet<String>();
         for (var de : EstadoContrato.values()) {
-            de.transicoes().forEach((evento, para) -> implementadas.add(de + " --" + evento + "--> " + para));
+            de.transicoes().forEach((evento, destinos) ->
+                    destinos.forEach(para -> implementadas.add(de + " --" + evento + "--> " + para)));
         }
         assertEquals(modelo.transicoes(), implementadas);
         assertEquals(modelo.inicial(), EstadoContrato.ESTADO_INICIAL + " por " + EstadoContrato.EVENTO_INICIAL);

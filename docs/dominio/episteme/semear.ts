@@ -780,6 +780,7 @@ stateDiagram-v2
     GarantiaConstituida --> Formalizado: RecursoLiberado (bem pronto)
     GarantiaConstituida --> EmObra: ParcelaDaObraLiberada (na planta)
     EmObra --> EmObra: MedicaoRealizada / PrazoDaObraProrrogado
+    EmObra --> EmObra: ParcelaDaObraLiberada (intermediária)
     EmObra --> Formalizado: ParcelaDaObraLiberada (última)
     Formalizado --> [*]
     Cancelado --> [*]
@@ -825,7 +826,7 @@ uc('emitir-contrato', 'con.ucs', 'Emitir contrato', `
 **Pré-condição:** proposta aprovada, dentro da validade.
 
 **Fluxo principal**
-1. O proponente aceita as condições finais. Emite [[EMITE:@evt.condicoes-aceitas]].
+1. O proponente aceita as condições finais. No imóvel na planta, informa a previsão de entrega da obra, do cronograma da [[@t.incorporadora|incorporadora]]: é o prazo previsto do cronograma da obra. Emite [[EMITE:@evt.condicoes-aceitas]].
 2. O sistema exige os seguros ([[USA:@rn.seguros]]) e confere a avaliação ([[USA:@rn.validade-avaliacao]]). Emite [[EMITE:@evt.seguros]].
 3. O sistema emite o contrato, no prazo de [[USA:@rnfd.contrato]]. Emite [[EMITE:@evt.contrato-emitido]].
 `);
