@@ -36,6 +36,33 @@ public final class JornadaParaTeste {
                 List.of("identidade", "comprovante de renda", "comprovante de residência", "estado civil"), 500000);
     }
 
+    /** Moto usada aprovada, contratada e assinada: devolve o contrato. */
+    public static long motoUsadaComContratoAssinado(String proponente, String vendedor) {
+        long proposta = motoUsadaAprovada(proponente, vendedor);
+        return contratoAssinado(proposta, List.of("seguro do bem"), List.of(proponente));
+    }
+
+    /** Residencial pronto aprovado, contratado e assinado (proponente e vendedor): devolve o contrato. */
+    public static long residencialComContratoAssinado(String proponente, String vendedor) {
+        long proposta = residencialProntoAprovado(proponente, vendedor);
+        return contratoAssinado(proposta, List.of("MIP", "DFI"), List.of(proponente, vendedor));
+    }
+
+    private static long contratoAssinado(long proposta, List<String> seguros, List<String> signatarios) {
+        long contratacao = given().contentType(ContentType.JSON).body(Map.of("propostaId", proposta))
+                .post("/web/contratacoes").then().statusCode(201).extract().jsonPath().getLong("id");
+        for (var s : seguros) {
+            given().contentType(ContentType.JSON).body(Map.of("seguro", s, "apolice", "AP-" + UUID.randomUUID()))
+                    .post("/retornos/seguradora/" + contratacao).then().statusCode(202);
+        }
+        long contrato = given().get("/web/contratacoes/" + contratacao).then().extract().jsonPath().getLong("contratoId");
+        for (var d : signatarios) {
+            given().contentType(ContentType.JSON).body(Map.of("documento", d))
+                    .post("/web/contratos/" + contrato + "/assinaturas").then().statusCode(200);
+        }
+        return contrato;
+    }
+
     private static long aprovada(String tipo, String proponente, String vendedor, Map<String, Object> bem,
                                  Map<String, Object> condicoes, List<String> documentosDoBem,
                                  List<String> documentosDoProponente, int valorDeAvaliacao) {

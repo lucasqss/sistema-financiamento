@@ -139,13 +139,14 @@ Assim, a regra "outro módulo só pela raiz" já impede o núcleo e os outros m�
 **Passo 1, núcleo da originação:** o agregado Proposta, o ciclo de vida e o enquadramento, com os dois plug-ins.
 **Passo 2, decisão da proposta:** os módulos Crédito e Avaliação, e a decisão, contraproposta, pendência e prazos na Originação.
 **Passo 3, contratação:** do aceite das condições finais ao contrato assinado, ou à desistência.
+**Passo 4, garantia:** do contrato assinado à garantia constituída, com exigências, recusas e retornos repetidos.
 
 | Modelo de negócio | Código |
 |---|---|
 | AGR-0001 Proposta e invariantes | `originacao/dominio/Proposta` |
 | CV-0001 Ciclo de vida da proposta | `originacao/dominio/EstadoProposta`, conferido contra o diagrama do modelo |
 | RN-0001 a RN-0009, RN-0015, RN-0018 e RN-0033 | `originacao/dominio/RegrasDeEnquadramento` |
-| RN-0010, RN-0016, RN-0017, RN-0020, RN-0023, RN-0025 e RN-0026 por tipo | `bem/veiculo/Veiculo` e `bem/imovel/Imovel`, conferidos contra as tabelas RN-0010, RN-0023 e RN-0025 do modelo |
+| RN-0010, RN-0016, RN-0017, RN-0020, RN-0023, RN-0025, RN-0026 e RN-0028 por tipo | `bem/veiculo/Veiculo` e `bem/imovel/Imovel`, conferidos contra as tabelas RN-0010, RN-0023 e RN-0025 do modelo |
 | RN-0011 | plug-in `veiculo` |
 | RN-0012 e RN-0014 | plug-in `imovel` |
 | UC-0001 a UC-0005 e UC-0010 | `originacao/aplicacao/*Service` e API web `/web/propostas` |
@@ -160,12 +161,16 @@ Assim, a regra "outro módulo só pela raiz" já impede o núcleo e os outros m�
 | RN-0021 e RN-0022 na emissão | `OriginacaoFacade.contratabilidade`: proposta vencida expira e avaliação vencida dá pendência, e a emissão espera |
 | UC-0015 Assinar contrato, RN-0026 | `Contrato.assinar`: todos os participantes; no imóvel e no terreno, também o vendedor e os cônjuges (plug-in) |
 | UC-0016 Cancelar contrato (desistência) | `Contrato.cancelar`, antes de assinar |
-| Eventos do caminho até o contrato assinado | gravados no outbox (`shared.outbox`) na transação do caso de uso |
+| UC-0018 Registrar garantia, RN-0028 | módulo `garantia`: `Registro`, disparado por `OuvinteDoContrato` quando o contrato é assinado ([ADR 0009](adr/0009-retorno-entre-modulos-por-porta-de-ouvinte.md)); o órgão vem do plug-in; um protocolo nosso por tentativa (`GAR-<contrato>-<n>`) |
+| RN-0029 Retorno é fato, não pedido | `Registro.classificar` e `/retornos/orgao-de-registro`: todo retorno é guardado e classificado (constituída, exigência, recusa, divergência de identificação, repetido ou sem efeito), nunca recusado |
+| UC-0019 Tratar registro recusado, UC-0020 Cumprir exigência | `TratarRegistroService` e `/web/registros/{id}/reenvio`, `/exigencia-cumprida`, `/desfazimento` (que cancela o contrato, UC-0016) |
+| Garantia no AGR-0002 | o contrato guarda o resumo (órgão, protocolo, situação) e muda de estado pelos fatos da Garantia, sem publicá-los de novo |
+| Eventos do caminho até a garantia constituída | gravados no outbox (`shared.outbox`) na transação do caso de uso, cada um pelo agregado que o emite no modelo |
 
 Os retornos externos chegam hoje por REST. Em produção, chegam pela fila ([ADR 0006](adr/0006-mensageria-por-fila-gerenciada.md)) para o mesmo serviço, que é idempotente: o mesmo retorno repetido não tem novo efeito, e um retorno diferente do já registrado é recusado.
 
 **Próximos passos:**
-- Garantia: registrar a alienação fiduciária no órgão da categoria (UC-0018 a UC-0020, RN-0028, RN-0029), disparada pelo contrato assinado, e o cancelamento por registro recusado;
+- Desembolso: liberar o recurso só com a garantia constituída (UC-0021 a UC-0023, RN-0030 a RN-0032), com a medição da obra (UC-0013) e a prorrogação (UC-0017) no imóvel na planta;
 - RN-0013 e a elegibilidade do FGTS, que dependem de sistemas externos;
 - o relay do outbox para a fila.
 

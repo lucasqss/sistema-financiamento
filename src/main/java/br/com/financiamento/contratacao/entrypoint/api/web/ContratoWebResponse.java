@@ -7,7 +7,10 @@ import java.time.Instant;
 import java.util.List;
 
 public record ContratoWebResponse(Long id, Long propostaId, String tipoDeBem, String estado, Condicoes condicoes,
-                                  List<Seguro> seguros, List<Signatario> signatarios) {
+                                  List<Seguro> seguros, List<Signatario> signatarios, Garantia garantia) {
+
+    public record Garantia(String orgao, String protocolo, String situacao) {
+    }
 
     public record Condicoes(int versao, String identificacaoDoBem, BigDecimal valorDeCompra, BigDecimal valorFinanciado,
                             BigDecimal entradaPropria, BigDecimal entradaFgts, int prazoMeses, BigDecimal parcela) {
@@ -25,6 +28,8 @@ public record ContratoWebResponse(Long id, Long propostaId, String tipoDeBem, St
                 new Condicoes(c.versao(), c.identificacaoDoBem(), c.valorDeCompra(), c.valorFinanciado(),
                         c.entradaPropria(), c.entradaFgts(), c.prazoMeses(), c.parcela()),
                 d.seguros().stream().map(s -> new Seguro(s.nome(), s.obrigatorio(), s.apolice())).toList(),
-                d.signatarios().stream().map(s -> new Signatario(s.papel(), s.documento(), s.nome(), s.assinadoEm())).toList());
+                d.signatarios().stream().map(s -> new Signatario(s.papel(), s.documento(), s.nome(), s.assinadoEm())).toList(),
+                d.orgaoDaGarantia() == null ? null
+                        : new Garantia(d.orgaoDaGarantia(), d.protocoloDaGarantia(), d.situacaoDaGarantia()));
     }
 }

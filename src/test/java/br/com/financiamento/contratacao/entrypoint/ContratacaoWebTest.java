@@ -71,7 +71,8 @@ class ContratacaoWebTest {
                 .body("condicoes.valorFinanciado", equalTo(12600.0f));
 
         assinar(contrato, ANA);
-        given().get("/web/contratos/" + contrato).then().body("estado", equalTo("ASSINADO"));
+        // Assinado, o contrato já segue para o registro da garantia (UC-0018), na mesma transação.
+        given().get("/web/contratos/" + contrato).then().body("estado", equalTo("EM_REGISTRO"));
 
         assertEquals(List.of("CondicoesAceitas", "SegurosContratados"), eventos("Contratacao", contratacao));
         assertEquals(List.of("ContratoEmitido", "ContratoAssinado"), eventos("Contrato", contrato));
@@ -103,7 +104,8 @@ class ContratacaoWebTest {
         assinar(contrato, VENDEDOR);
         given().get("/web/contratos/" + contrato).then().body("estado", equalTo("AGUARDANDO_ASSINATURA"));
         assinar(contrato, CONJUGE);
-        given().get("/web/contratos/" + contrato).then().body("estado", equalTo("ASSINADO"));
+        // Assinado, o contrato já segue para o registro da garantia (UC-0018), na mesma transação.
+        given().get("/web/contratos/" + contrato).then().body("estado", equalTo("EM_REGISTRO"));
     }
 
     @Test

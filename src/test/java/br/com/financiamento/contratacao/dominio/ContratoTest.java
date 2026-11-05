@@ -94,4 +94,24 @@ class ContratoTest {
         var erro = assertThrows(RegraVioladaException.class, () -> assinado.cancelar("desistência"));
         assertEquals("CV-0002", erro.violacoes().getFirst().regra());
     }
+
+    @Test
+    void registroDaGarantiaMoveOContratoSemPublicarEventosDaGarantia() {
+        var c = emitido();
+        List.of(ANA, VENDEDOR, BRUNO).forEach(d -> c.assinar(d, AGORA));
+        c.retirarEventos();
+        c.registroSolicitado("cartório de registro de imóveis", "GAR-1-1");
+        assertEquals(EstadoContrato.EM_REGISTRO, c.estado());
+        c.exigenciaEmitida("certidão");
+        assertEquals(EstadoContrato.EM_EXIGENCIA, c.estado());
+        c.exigenciaCumprida("GAR-1-2");
+        c.registroRecusado("vendedor sem poderes");
+        assertEquals(EstadoContrato.REGISTRO_RECUSADO, c.estado());
+        c.registroSolicitado("cartório de registro de imóveis", "GAR-1-3");
+        c.garantiaRegistrada("GAR-1-3");
+        assertEquals(EstadoContrato.GARANTIA_CONSTITUIDA, c.estado());
+        assertEquals("GAR-1-3", c.protocoloDaGarantia());
+        assertTrue(c.retirarEventos().isEmpty(), "EVT-0027 a EVT-0031 são da Garantia");
+        assertThrows(RegraVioladaException.class, () -> c.garantiaRegistrada("GAR-1-3"), "CV-0002");
+    }
 }

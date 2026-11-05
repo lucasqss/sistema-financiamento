@@ -148,6 +148,12 @@ class Imovel implements CategoriaDeBem {
         return true;
     }
 
+    /** RN-0028: averbação na matrícula, no cartório de registro de imóveis (F-0001). */
+    @Override
+    public String orgaoDeRegistro(TipoDeBem tipo) {
+        return "cartório de registro de imóveis";
+    }
+
     @Override
     public Period validadeDaContraproposta() {
         return Period.ofDays(15);

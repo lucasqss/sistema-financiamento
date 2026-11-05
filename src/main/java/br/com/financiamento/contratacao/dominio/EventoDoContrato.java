@@ -19,6 +19,18 @@ enum EventoDoContrato {
     MEDICAO_REALIZADA,
     PRAZO_DA_OBRA_PRORROGADO;
 
+    /**
+     * O contrato emite o evento (lista "Emite" do AGR-0002)? Os eventos do registro
+     * (EVT-0027 a EVT-0031) são da Garantia, e os da liberação, do Desembolso: o
+     * contrato só muda de estado com eles.
+     */
+    boolean emitidoPeloContrato() {
+        return switch (this) {
+            case CONTRATO_EMITIDO, CONTRATO_ASSINADO, CONTRATO_CANCELADO, PRAZO_DA_OBRA_PRORROGADO -> true;
+            default -> false;
+        };
+    }
+
     /** CONTRATO_EMITIDO -> ContratoEmitido. */
     String nomeNoModelo() {
         return Arrays.stream(name().split("_"))

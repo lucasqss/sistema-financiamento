@@ -59,4 +59,9 @@ class VeiculoTest {
         assertEquals(LocalDate.of(2026, 2, 28), veiculo.validadeDaAvaliacao(Veiculo.MOTO_USADA, dia));
         assertEquals("tabela de referência", veiculo.fonteDaAvaliacao(Veiculo.CARRO_USADO));
     }
+
+    @Test
+    void rn0028_orgaoDeRegistro() {
+        assertEquals("órgão de trânsito", veiculo.orgaoDeRegistro(Veiculo.MOTO_NOVA));
+    }
 }

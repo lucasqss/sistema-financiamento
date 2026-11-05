@@ -115,6 +115,12 @@ class Veiculo implements CategoriaDeBem {
         return false;
     }
 
+    /** RN-0028: gravame no órgão de trânsito, pelo sistema de gravames (F-0002, F-0003). */
+    @Override
+    public String orgaoDeRegistro(TipoDeBem tipo) {
+        return "órgão de trânsito";
+    }
+
     @Override
     public Period validadeDaContraproposta() {
         return Period.ofDays(5);

@@ -49,6 +49,9 @@ public interface CategoriaDeBem {
     /** RN-0026: além dos participantes, o vendedor e os cônjuges assinam o contrato? */
     boolean vendedorEConjugesAssinam(TipoDeBem tipo);
 
+    /** RN-0028: onde a alienação fiduciária é registrada. */
+    String orgaoDeRegistro(TipoDeBem tipo);
+
     /** RN-0020: validade da contraproposta. */
     Period validadeDaContraproposta();
 }

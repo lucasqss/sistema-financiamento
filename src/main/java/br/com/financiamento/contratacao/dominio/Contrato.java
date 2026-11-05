@@ -76,6 +76,16 @@ public class Contrato extends PanacheEntityBase {
     @OrderColumn(name = "ordem")
     private List<Signatario> signatarios = new ArrayList<>();
 
+    /** Resumo da garantia (AGR-0002): o processo de registro fica no módulo Garantia. */
+    @Column(name = "garantia_orgao")
+    private String orgaoDaGarantia;
+
+    @Column(name = "garantia_protocolo")
+    private String protocoloDaGarantia;
+
+    @Column(name = "garantia_situacao")
+    private String situacaoDaGarantia;
+
     @Version
     @Column(name = "versao_registro")
     private long versaoDoRegistro;
@@ -129,6 +139,42 @@ public class Contrato extends PanacheEntityBase {
         transicionar(EventoDoContrato.CONTRATO_CANCELADO, Map.of("motivo", motivo));
     }
 
+    // --- Registro da garantia (UC-0018 a UC-0020): fatos da Garantia que movem o contrato ---
+
+    /** O contrato assinado foi enviado ao órgão (EVT-0027); também o reenvio depois de uma recusa. */
+    public void registroSolicitado(String orgao, String protocolo) {
+        transicionar(EventoDoContrato.REGISTRO_SOLICITADO, Map.of());
+        garantia(orgao, protocolo, "em registro");
+    }
+
+    /** Reenvio depois de cumprida a exigência (EVT-0030): volta a "em registro". */
+    public void exigenciaCumprida(String protocolo) {
+        transicionar(EventoDoContrato.EXIGENCIA_CUMPRIDA, Map.of());
+        garantia(orgaoDaGarantia, protocolo, "em registro");
+    }
+
+    public void exigenciaEmitida(String exigencia) {
+        transicionar(EventoDoContrato.EXIGENCIA_EMITIDA, Map.of());
+        this.situacaoDaGarantia = "em exigência: " + exigencia;
+    }
+
+    public void registroRecusado(String motivo) {
+        transicionar(EventoDoContrato.REGISTRO_RECUSADO, Map.of());
+        this.situacaoDaGarantia = "recusado: " + motivo;
+    }
+
+    /** RN-0029: o órgão registrou o bem do contrato; a garantia está constituída. */
+    public void garantiaRegistrada(String protocolo) {
+        transicionar(EventoDoContrato.GARANTIA_REGISTRADA, Map.of());
+        garantia(orgaoDaGarantia, protocolo, "constituída");
+    }
+
+    private void garantia(String orgao, String protocolo, String situacao) {
+        this.orgaoDaGarantia = orgao;
+        this.protocoloDaGarantia = protocolo;
+        this.situacaoDaGarantia = situacao;
+    }
+
     private void exigirTransicao(EventoDoContrato evento) {
         if (estado.apos(evento).isEmpty()) {
             throw new RegraVioladaException("CV-0002",
@@ -143,6 +189,7 @@ public class Contrato extends PanacheEntityBase {
     }
 
     private void registrar(EventoDoContrato evento, Map<String, Object> dados) {
+        if (!evento.emitidoPeloContrato()) return;
         var completos = new LinkedHashMap<String, Object>(dados);
         completos.put("estado", estado.name());
         eventos.add(new EventoRegistrado(evento.nomeNoModelo(), completos));
@@ -167,4 +214,7 @@ public class Contrato extends PanacheEntityBase {
     public CondicoesFinais condicoes() { return condicoes; }
     public List<Seguro> seguros() { return List.copyOf(seguros); }
     public List<Signatario> signatarios() { return List.copyOf(signatarios); }
+    public String orgaoDaGarantia() { return orgaoDaGarantia; }
+    public String protocoloDaGarantia() { return protocoloDaGarantia; }
+    public String situacaoDaGarantia() { return situacaoDaGarantia; }
 }

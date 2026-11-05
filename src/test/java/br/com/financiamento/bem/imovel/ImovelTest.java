@@ -54,4 +54,9 @@ class ImovelTest {
         assertEquals(HOJE.plusDays(180), imovel.validadeDaAvaliacao(Imovel.TERRENO_URBANO, HOJE));
         assertEquals("laudo de avaliador credenciado", imovel.fonteDaAvaliacao(Imovel.COMERCIAL_NA_PLANTA));
     }
+
+    @Test
+    void rn0028_orgaoDeRegistro() {
+        assertEquals("cartório de registro de imóveis", imovel.orgaoDeRegistro(Imovel.TERRENO_RURAL));
+    }
 }

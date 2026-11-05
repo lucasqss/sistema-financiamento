@@ -9,10 +9,11 @@ import br.com.financiamento.contratacao.dominio.seguro.Seguro;
 import java.util.List;
 
 public record DetalheDoContrato(Long id, Long propostaId, String tipoDeBem, EstadoContrato estado,
-                                CondicoesFinais condicoes, List<Seguro> seguros, List<Signatario> signatarios) {
+                                CondicoesFinais condicoes, List<Seguro> seguros, List<Signatario> signatarios,
+                                String orgaoDaGarantia, String protocoloDaGarantia, String situacaoDaGarantia) {
 
     static DetalheDoContrato de(Contrato c) {
         return new DetalheDoContrato(c.id(), c.propostaId(), c.tipoDeBem().codigo(), c.estado(), c.condicoes(),
-                c.seguros(), c.signatarios());
+                c.seguros(), c.signatarios(), c.orgaoDaGarantia(), c.protocoloDaGarantia(), c.situacaoDaGarantia());
     }
 }
