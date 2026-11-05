@@ -264,46 +264,48 @@ flowchart TD
 
 ## Mapa de contexto
 
+Gerado pelo episteme a partir das dependências que cada visão de domínio declara (`DEPENDE_DE`): domínios do
+sistema com a classificação (principal em destaque, genéricos tracejados) e, tracejados, os sistemas externos.
+
 ```mermaid
 flowchart LR
-    subgraph nosso[Nosso sistema]
-        ORI[Originação<br/>principal]
-        CRE[Crédito]
-        AVA[Avaliação]
-        CON[Contratação]
-        GAR[Garantia]
-        DES[Desembolso]
-        PES[Cadastro de pessoas<br/>genérico]
-        DOC[Documentos<br/>genérico]
+    subgraph sistema[Domínios do sistema]
+        DOM_0001["Originação<br/>principal"]
+        DOM_0002["Crédito<br/>suporte"]
+        DOM_0003["Avaliação<br/>suporte"]
+        DOM_0004["Contratação<br/>suporte"]
+        DOM_0005["Garantia<br/>suporte"]
+        DOM_0006["Desembolso<br/>suporte"]
+        DOM_0007["Cadastro de pessoas<br/>genérico"]
+        DOM_0008["Documentos<br/>genérico"]
     end
-    BUR[(Bureau de crédito)]
-    TAB[(Tabela de referência<br/>de veículos)]
-    LAU[(Empresa de avaliação<br/>e engenharia)]
-    SEG[(Seguradora)]
-    CAR[(Cartório de<br/>Registro de Imóveis)]
-    DET[(Órgão de trânsito /<br/>sistema de gravames)]
-    FGT[(Sistema do FGTS)]
-    VEN[(Vendedor)]
-
-    ORI -- solicita análise --> CRE
-    ORI -- solicita avaliação --> AVA
-    ORI -- proposta aprovada --> CON
-    CON -- contrato assinado --> GAR
-    GAR -- garantia registrada --> DES
-    AVA -- medição da obra --> DES
-    ORI -.-> PES
-    ORI -.-> DOC
-    CRE -. ACL .-> BUR
-    AVA -. ACL .-> TAB
-    AVA -. ACL .-> LAU
-    CON -. ACL .-> SEG
-    GAR -. ACL .-> CAR
-    GAR -. ACL .-> DET
-    DES -. ACL .-> FGT
-    DES -- paga --> VEN
+    ATR_0007[("Avaliador")]
+    ATR_0008[("Bureau de crédito")]
+    ATR_0009[("Cartório de Registro de Imóveis")]
+    ATR_0010[("Órgão de trânsito")]
+    ATR_0011[("Seguradora")]
+    ATR_0012[("Sistema do FGTS")]
+    DOM_0001 -->|depende de| DOM_0002
+    DOM_0001 -->|depende de| DOM_0003
+    DOM_0001 -->|depende de| DOM_0007
+    DOM_0001 -->|depende de| DOM_0008
+    DOM_0002 -.->|depende de| ATR_0008
+    DOM_0003 -.->|depende de| ATR_0007
+    DOM_0004 -.->|depende de| ATR_0011
+    DOM_0004 -->|depende de| DOM_0001
+    DOM_0005 -.->|depende de| ATR_0009
+    DOM_0005 -.->|depende de| ATR_0010
+    DOM_0005 -->|depende de| DOM_0004
+    DOM_0006 -.->|depende de| ATR_0012
+    DOM_0006 -->|depende de| DOM_0003
+    DOM_0006 -->|depende de| DOM_0005
+    classDef principal stroke-width:3px,font-weight:bold
+    classDef generico stroke-dasharray:4 3
+    class DOM_0001 principal
+    class DOM_0007,DOM_0008 generico
 ```
 
-ACL é a camada anticorrupção: códigos e formatos de sistemas externos não entram no modelo. Os retornos
+Toda dependência de sistema externo passa por uma camada anticorrupção: códigos e formatos externos não entram no modelo. Os retornos
 externos são **assíncronos** e podem chegar repetidos ou fora de ordem.
 
 ## Fora de escopo nesta etapa
@@ -1152,6 +1154,8 @@ Decide sobre os participantes. A decisão é em boa parte terceirizada (bureau, 
 Recebe a proposta submetida, consulta o [ATR-0008](#atr-0008) e decide: aprovada, aprovada com ressalva ou reprovada.
 A decisão volta para a Originação como fato.
 
+**Depende de:** [ATR-0008](#atr-0008).
+
 **Atores:** [ATR-0008](#atr-0008), [ATR-0005](#atr-0005). **Eventos:** [EVT-0011](#evt-0011), [EVT-0012](#evt-0012), [EVT-0013](#evt-0013), [EVT-0014](#evt-0014).
 
 ### <a id="s-0010"></a>1.7.2 S-0010 - Eventos
@@ -1201,6 +1205,8 @@ Define o valor de avaliação do bem e, no imóvel na planta, mede o avanço da 
 
 Define o [valor de avaliação](#glo-0014) pela fonte certa para cada tipo de bem e controla a validade
 da avaliação. No imóvel na planta, faz as [medições](#glo-0019) que liberam as parcelas.
+
+**Depende de:** [ATR-0007](#atr-0007).
 
 **Atores:** [ATR-0007](#atr-0007), [ATR-0006](#atr-0006).
 
@@ -1280,7 +1286,7 @@ Emite e acompanha o contrato a partir da proposta aprovada: seguros, assinaturas
 Transforma a proposta aprovada em [contrato](#glo-0040): exige os seguros, emite o instrumento, colhe as assinaturas
 e entrega o contrato assinado à Garantia.
 
-**Depende de:** [Originação](#dom-0001).
+**Depende de:** [Originação](#dom-0001) e [ATR-0011](#atr-0011).
 
 **Guarda:** o agregado [AGR-0002](#agr-0002) e o seu [CV-0002](#cv-0002). **Atores:** [ATR-0001](#atr-0001), [ATR-0002](#atr-0002), [ATR-0003](#atr-0003), [ATR-0011](#atr-0011).
 
@@ -1436,7 +1442,7 @@ Constitui e acompanha a alienação fiduciária no cartório (imóvel e terreno)
 Registra a [alienação fiduciária](#glo-0041): averbação na matrícula ou [gravame](#glo-0042) do veículo. Trata
 [exigências](#glo-0039) e retornos assíncronos, que podem chegar repetidos ou fora de ordem.
 
-**Depende de:** [Contratação](#dom-0004). **Atores:** [ATR-0009](#atr-0009), [ATR-0010](#atr-0010), [ATR-0005](#atr-0005).
+**Depende de:** [Contratação](#dom-0004), [ATR-0009](#atr-0009) e [ATR-0010](#atr-0010). **Atores:** [ATR-0009](#atr-0009), [ATR-0010](#atr-0010), [ATR-0005](#atr-0005).
 
 ### <a id="s-0016"></a>1.10.2 S-0016 - Eventos
 
@@ -1507,7 +1513,7 @@ Libera o dinheiro ao vendedor — de uma vez, ou por medição no imóvel na pla
 Paga o [ATR-0003](#atr-0003) quando a garantia está constituída: [liberação](#glo-0044) única no bem pronto, ou por
 [medição](#glo-0019) no imóvel na planta. Pede ao [ATR-0012](#atr-0012) a liberação do FGTS da entrada.
 
-**Depende de:** [Garantia](#dom-0005) e [Avaliação](#dom-0003) (medições).
+**Depende de:** [Garantia](#dom-0005), [Avaliação](#dom-0003) (medições) e [ATR-0012](#atr-0012).
 
 ### <a id="s-0018"></a>1.11.2 S-0018 - Eventos
 

@@ -86,46 +86,13 @@ flowchart TD
 
 ## Mapa de contexto
 
-\`\`\`mermaid
-flowchart LR
-    subgraph nosso[Nosso sistema]
-        ORI[Originação<br/>principal]
-        CRE[Crédito]
-        AVA[Avaliação]
-        CON[Contratação]
-        GAR[Garantia]
-        DES[Desembolso]
-        PES[Cadastro de pessoas<br/>genérico]
-        DOC[Documentos<br/>genérico]
-    end
-    BUR[(Bureau de crédito)]
-    TAB[(Tabela de referência<br/>de veículos)]
-    LAU[(Empresa de avaliação<br/>e engenharia)]
-    SEG[(Seguradora)]
-    CAR[(Cartório de<br/>Registro de Imóveis)]
-    DET[(Órgão de trânsito /<br/>sistema de gravames)]
-    FGT[(Sistema do FGTS)]
-    VEN[(Vendedor)]
+Gerado pelo episteme a partir das dependências que cada visão de domínio declara (\`DEPENDE_DE\`): domínios do
+sistema com a classificação (principal em destaque, genéricos tracejados) e, tracejados, os sistemas externos.
 
-    ORI -- solicita análise --> CRE
-    ORI -- solicita avaliação --> AVA
-    ORI -- proposta aprovada --> CON
-    CON -- contrato assinado --> GAR
-    GAR -- garantia registrada --> DES
-    AVA -- medição da obra --> DES
-    ORI -.-> PES
-    ORI -.-> DOC
-    CRE -. ACL .-> BUR
-    AVA -. ACL .-> TAB
-    AVA -. ACL .-> LAU
-    CON -. ACL .-> SEG
-    GAR -. ACL .-> CAR
-    GAR -. ACL .-> DET
-    DES -. ACL .-> FGT
-    DES -- paga --> VEN
+\`\`\`mapa-de-contexto
 \`\`\`
 
-ACL é a camada anticorrupção: códigos e formatos de sistemas externos não entram no modelo. Os retornos
+Toda dependência de sistema externo passa por uma camada anticorrupção: códigos e formatos externos não entram no modelo. Os retornos
 externos são **assíncronos** e podem chegar repetidos ou fora de ordem.
 
 ## Fora de escopo nesta etapa
@@ -586,6 +553,8 @@ visoes['cre'] = `
 Recebe a proposta submetida, consulta o [[@a.bureau]] e decide: aprovada, aprovada com ressalva ou reprovada.
 A decisão volta para a Originação como fato.
 
+**Depende de:** [[DEPENDE_DE:@a.bureau]].
+
 **Atores:** [[@a.bureau]], [[@a.analista]]. **Eventos:** [[@evt.analise-solicitada]], [[@evt.credito-aprovado]], [[@evt.credito-ressalva]], [[@evt.credito-reprovado]].
 `;
 it('cre.eventos', 'cre', 'SECAO', 'Eventos', 'Fatos do domínio de crédito.');
@@ -613,6 +582,8 @@ visoes['ava'] = `
 
 Define o [[@t.valor-avaliacao|valor de avaliação]] pela fonte certa para cada tipo de bem e controla a validade
 da avaliação. No imóvel na planta, faz as [[@t.medicao|medições]] que liberam as parcelas.
+
+**Depende de:** [[DEPENDE_DE:@a.avaliador]].
 
 **Atores:** [[@a.avaliador]], [[@a.engenheiro]].
 `;
@@ -660,7 +631,7 @@ visoes['con'] = `
 Transforma a proposta aprovada em [[@t.contrato|contrato]]: exige os seguros, emite o instrumento, colhe as assinaturas
 e entrega o contrato assinado à Garantia.
 
-**Depende de:** [[DEPENDE_DE:@ori|Originação]].
+**Depende de:** [[DEPENDE_DE:@ori|Originação]] e [[DEPENDE_DE:@a.seguradora]].
 
 **Guarda:** o agregado [[@con.agr.contrato]] e o seu [[@con.cv.contrato]]. **Atores:** [[@a.proponente]], [[@a.coobrigado]], [[@a.vendedor]], [[@a.seguradora]].
 `;
@@ -777,7 +748,7 @@ visoes['gar'] = `
 Registra a [[@t.alienacao|alienação fiduciária]]: averbação na matrícula ou [[@t.gravame|gravame]] do veículo. Trata
 [[@t.exigencia|exigências]] e retornos assíncronos, que podem chegar repetidos ou fora de ordem.
 
-**Depende de:** [[DEPENDE_DE:@con|Contratação]]. **Atores:** [[@a.cartorio]], [[@a.transito]], [[@a.analista]].
+**Depende de:** [[DEPENDE_DE:@con|Contratação]], [[DEPENDE_DE:@a.cartorio]] e [[DEPENDE_DE:@a.transito]]. **Atores:** [[@a.cartorio]], [[@a.transito]], [[@a.analista]].
 `;
 it('gar.eventos', 'gar', 'SECAO', 'Eventos', 'Fatos do domínio de garantia.');
 evt('registro-solicitado', 'gar.eventos', 'RegistroSolicitado', 'O contrato assinado foi enviado ao órgão de registro com um protocolo nosso.');
@@ -815,7 +786,7 @@ visoes['des'] = `
 Paga o [[@a.vendedor]] quando a garantia está constituída: [[@t.liberacao|liberação]] única no bem pronto, ou por
 [[@t.medicao|medição]] no imóvel na planta. Pede ao [[@a.fgts]] a liberação do FGTS da entrada.
 
-**Depende de:** [[DEPENDE_DE:@gar|Garantia]] e [[DEPENDE_DE:@ava|Avaliação]] (medições).
+**Depende de:** [[DEPENDE_DE:@gar|Garantia]], [[DEPENDE_DE:@ava|Avaliação]] (medições) e [[DEPENDE_DE:@a.fgts]].
 `;
 it('des.eventos', 'des', 'SECAO', 'Eventos', 'Fatos do domínio de desembolso.');
 evt('liberacao-solicitada', 'des.eventos', 'LiberacaoSolicitada', 'A liberação do valor financiado (ou de uma parcela da obra) foi pedida.');

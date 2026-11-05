@@ -29,7 +29,8 @@ com código próprio e rastreia as ligações entre eles.
 | Decisão | `DEC` | 17 | as decisões D1–D17 da [entrevista](../definicoes/entrevista-questoes-em-aberto.md) |
 
 As ligações também são dados: o caso de uso `EMITE` evento, o evento `DISPARA` caso de uso (a política), o agregado
-`USA` regra (invariante) e `EMITE` evento, a decisão `RESPONDE` questão e a visão `DEPENDE_DE` outro domínio.
+`USA` regra (invariante) e `EMITE` evento, a decisão `RESPONDE` questão e a visão `DEPENDE_DE` outro domínio ou um
+sistema externo. O **mapa de contexto** do documento é gerado dessas dependências: não é desenhado à mão.
 
 As regras que mudam por tipo de bem (parâmetros, documentos, fonte da avaliação, seguros e validade da contraproposta) `VARIA_POR` a dimensão
 "Tipo de bem". O episteme confere a tabela de cada uma: todo tipo de bem coberto exatamente uma vez, diretamente ou
