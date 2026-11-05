@@ -1,59 +1,47 @@
-# Domínio do financiamento — espaço do problema
+# Domínio do financiamento
 
-> Etapa 1 de modelagem: **entender o problema** antes de decidir a solução. Aqui não há arquitetura, framework,
-> pacotes nem banco de dados. Tudo que está aqui deve fazer sentido para alguém de negócio.
+Modelo de domínio do sistema de financiamento de bens (carro e moto novos e usados, imóvel residencial e comercial
+pronto ou na planta, terreno urbano e rural), no **espaço do problema**: sem arquitetura, tecnologia nem banco.
 
-## Visão
+O modelo é mantido no [episteme](https://github.com/lucasqss/episteme), que guarda cada conceito como um artefato
+com código próprio e rastreia as ligações entre eles.
 
-Um **sistema-modelo de financiamento de bens**, reaproveitável em vários projetos. Ele cobre a jornada desde a
-**proposta** até o **contrato formalizado com a garantia registrada**, para quatro famílias de bens:
-
-| Categoria | Subtipos | Condição |
-|---|---|---|
-| **Veículo** | carro, moto | novo ou usado |
-| **Imóvel** | residencial, comercial | pronto (*) |
-| **Imóvel** | terreno | — |
-
-(*) imóvel na planta está em aberto (ver [questões em aberto](questoes-em-aberto.md)).
-
-O que se repete em todos os tipos é a **jornada**. O que varia é a **regra**: prazo, quanto pode ser financiado,
-documentos, como o bem é avaliado e onde a garantia é registrada.
-
-## Objetivo do sistema
-
-1. Receber e montar uma proposta de financiamento de um bem.
-2. Enquadrar a proposta nas regras do tipo de bem.
-3. Obter a avaliação do bem e a análise de crédito do proponente.
-4. Formalizar o contrato e constituir a garantia (alienação fiduciária) no órgão competente.
-5. Liberar o recurso ao vendedor.
-
-## Atores
-
-| Ator | Papel |
+| Arquivo | O que é |
 |---|---|
-| **Proponente** | quem pede o financiamento e será o devedor |
-| **Coobrigado** (opcional) | compõe renda e responde junto pela dívida |
-| **Vendedor** | concessionária, loja, incorporadora ou particular que vende o bem e recebe o recurso |
-| **Analista** | trata pendências e decide casos fora da alçada automática |
-| **Avaliador** (externo) | laudo do imóvel/terreno; tabela de referência (ex.: FIPE) para veículo usado |
-| **Bureau de crédito** (externo) | score, restrições e endividamento do proponente |
-| **Cartório de Registro de Imóveis** (externo) | registra a alienação fiduciária do imóvel/terreno na matrícula |
-| **Órgão de trânsito / sistema de gravames** (externo) | registra o gravame do veículo |
+| [`especificacao.md`](especificacao.md) | O documento compilado pelo episteme, para ler (com diagramas Mermaid). **Gerado: não edite à mão.** |
+| [`episteme/financiamento.db`](episteme/financiamento.db) | A base do episteme, para abrir e editar na ferramenta. |
+| [`episteme/semear.ts`](episteme/semear.ts) | O script que monta a base e gera o documento. É a fonte do conteúdo. |
 
-## Fora de escopo (por enquanto)
+## O que está modelado
 
-- Vida do contrato depois de formalizado: cobrança, pagamento de parcelas, atraso, renegociação, quitação.
-- Cálculo financeiro detalhado (taxa, CET, PRICE/SAC, seguros). Nesta etapa a parcela é tratada como um valor
-  informado pela simulação, sem modelar como é calculada.
-- Consórcio, leasing, refinanciamento (home/auto equity).
+| Artefato do episteme | Prefixo | Quantos | No modelo |
+|---|---|---|---|
+| Termo do glossário | `GLO` | 45 | linguagem ubíqua: pessoas, bem, condições, jornada |
+| Ator | `ATR` | 12 | proponente, coobrigado, vendedor, correspondente, analista, sistemas externos |
+| Domínio (com visão) | `DOM` / `VIS` | 8 | subdomínios e mapa de contexto: Originação (principal); Crédito, Avaliação, Contratação, Garantia e Desembolso (suporte); Cadastro de pessoas e Documentos (genéricos) |
+| Agregado | `AGR` | 2 | Proposta e Contrato, com composição e invariantes |
+| Ciclo de vida | `CV` | 2 | estados e transições da proposta e do contrato |
+| Evento de domínio | `EVT` | 35 | o que acontece na jornada, quem provoca e o que dispara |
+| Regra de negócio | `RN` | 31 | regras comuns, parâmetros por tipo de bem, regras da jornada |
+| Caso de uso | `UC` | 17 | comandos da jornada, com os eventos que emitem |
+| Questão em aberto | `Q` | 17 | 13 respondidas e 4 ainda abertas (Q-0014 a Q-0017) |
+| Decisão | `DEC` | 13 | as decisões D1–D13 da [entrevista](../definicoes/entrevista-questoes-em-aberto.md) |
 
-## Documentos
+As ligações também são dados: o caso de uso `EMITE` evento, o evento `DISPARA` caso de uso (a política), o agregado
+`USA` regra (invariante) e `EMITE` evento, a decisão `RESPONDE` questão e a visão `DEPENDE_DE` outro domínio.
 
-1. [Linguagem ubíqua](linguagem-ubiqua.md) — o glossário.
-2. [Subdomínios e contextos](subdominios.md) — o que é central, o que é suporte, quem conversa com quem.
-3. [Fluxo e eventos](fluxo-e-eventos.md) — event storming da jornada e ciclos de vida.
-4. [Regras por tipo de bem](regras-por-tipo-de-bem.md) — a matriz do que varia.
-5. [Modelo conceitual](modelo-conceitual.md) — conceitos, agregados candidatos e invariantes.
-6. [Questões em aberto](questoes-em-aberto.md) — o que precisa ser decidido antes de ir à solução.
+## Como alterar
 
-> Os números das regras são **hipotéticos e parametrizáveis**. O modelo existe para ser adaptado por cada projeto.
+O caminho mais simples é editar no episteme e regerar o documento. Para manter o script como fonte única,
+altere o `semear.ts` e rode de dentro de um checkout do episteme (versão com os tipos de modelagem, branch
+`claude/admiring-brahmagupta-mmg3rq` até ir para a principal):
+
+```bash
+cd ../episteme && npm install && npx tsx ../sistema-financiamento/docs/dominio/episteme/semear.ts
+```
+
+O script recria a base do zero, interrompe se houver avisos de citação ou violação dos invariantes do episteme, e regera
+`especificacao.md`.
+
+Para abrir a base no episteme local, copie `financiamento.db` para `~/episteme/bases/` e escolha a base
+`financiamento` na ferramenta.

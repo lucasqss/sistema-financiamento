@@ -2,7 +2,7 @@
 
 - **Data:** 2026-11-05
 - **Objetivo:** responder às questões em aberto levantadas na modelagem do espaço do problema
-  ([`../dominio/questoes-em-aberto.md`](../dominio/questoes-em-aberto.md)), antes de passar ao espaço da solução.
+  ([`../dominio/especificacao.md`](../dominio/especificacao.md) (seção "Questões em aberto")), antes de passar ao espaço da solução.
 - **Formato:** entrevista em 5 rodadas. As 4 primeiras cobrem as 13 questões originais; a 5ª trata dos desdobramentos
   que as respostas abriram. Em cada pergunta estão as opções apresentadas e a resposta (**➜**).
 
@@ -195,4 +195,4 @@ pendência para o analista.
 
 ## Próximo passo
 
-Incorporar as decisões em `docs/dominio/` (linguagem ubíqua, regras por tipo de bem, fluxo e eventos, modelo conceitual).
+Feito: o modelo foi refeito no episteme (`docs/dominio/`) e as decisões viraram artefatos `DEC` que respondem às questões `Q`.
