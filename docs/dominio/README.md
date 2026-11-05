@@ -40,8 +40,7 @@ novo entrar na dimensão, cada regra que não o cobrir passa a ser apontada.
 ## Como alterar
 
 O caminho mais simples é editar no episteme e regerar o documento. Para manter o script como fonte única,
-altere o `semear.ts` e rode de dentro de um checkout do episteme (versão com os tipos de modelagem, branch
-`claude/admiring-brahmagupta-mmg3rq` até ir para a principal):
+altere o `semear.ts` e rode de dentro de um checkout atualizado do episteme:
 
 ```bash
 cd ../episteme && npm install && npx tsx ../sistema-financiamento/docs/dominio/episteme/semear.ts
