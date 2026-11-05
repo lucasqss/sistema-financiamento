@@ -7,6 +7,7 @@ abra a cópia no episteme ou copie-a sobre `../financiamento.db`.
 | Snapshot | Data | Estado do modelo |
 |---|---|---|
 | `financiamento-snapshot-2026-11-05-v1.db` · [`especificacao-2026-11-05-v1.md`](especificacao-2026-11-05-v1.md) | 2026-11-05 | Espaço do problema completo: 8 domínios classificados, 2 agregados, 2 ciclos de vida, 35 eventos, 31 regras (5 parametrizadas pela dimensão "Tipo de bem"), 17 casos de uso, 17 questões todas respondidas por 17 decisões, mapa de contexto gerado. Antes do ciclo de vida verificável. |
+| `financiamento-snapshot-2026-11-05-v2.db` · [`especificacao-2026-11-05-v2.md`](especificacao-2026-11-05-v2.md) | 2026-11-05 | **Definições negociais da fase aprovadas** (252 artefatos, todos "Aprovado"). 8 domínios, 2 agregados, 2 ciclos de vida conferidos, 39 eventos, 24 casos de uso, 33 regras (6 parametrizadas por 2 dimensões), 3 RNFs, 5 fontes normativas, 17 questões respondidas por 17 decisões, 407 ligações. Fora de escopo: cálculo financeiro e vida do contrato após a liberação. |
 
 > Comparar e restaurar seletivamente dentro do episteme ainda não existe: é a pendência
 > [001 · Snapshots da base](https://github.com/lucasqss/episteme/blob/main/docs/pendencias/001-snapshots.md).

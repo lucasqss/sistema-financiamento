@@ -47,9 +47,16 @@ interface Item {
 const itens: Item[] = [];
 const add = (i: Item) => { itens.push(i); return i.chave; };
 
-/** Atalho: item em revisão (padrão do modelo). */
+/**
+ * Situação de todo artefato do modelo. As definições negociais desta fase foram
+ * aprovadas em 2026-11-05 (snapshot v2). Uma mudança futura num artefato aprovado
+ * o rebaixa para "Em revisão" no próprio episteme.
+ */
+const SITUACAO: Situacao = 'APROVADO';
+
+/** Atalho: item com a situação do modelo. */
 const it = (chave: string, pai: string | null, tipo: Tipo, titulo: string, texto: string, extra: Partial<Item> = {}) =>
-  add({ chave, pai, tipo, titulo, texto, situacao: 'EM_REVISAO', ...extra });
+  add({ chave, pai, tipo, titulo, texto, situacao: SITUACAO, ...extra });
 
 // ===== Raiz ================================================================
 
@@ -1047,7 +1054,7 @@ async function main() {
     for (const w of r.warnings || []) avisos.push(`${ref.codigo} (${chave}): ${w}`);
   };
   for (const item of itens) await escrever(item.chave, item.texto, item.exemplo, item.situacao);
-  for (const [dom, texto] of Object.entries(visoes)) await escrever(`${dom}.vis`, texto, undefined, 'EM_REVISAO');
+  for (const [dom, texto] of Object.entries(visoes)) await escrever(`${dom}.vis`, texto, undefined, SITUACAO);
 
   if (avisos.length > 0) throw new Error('Avisos na carga:\n' + avisos.join('\n'));
   const { violacoes } = await verificarInvariantes(db);
