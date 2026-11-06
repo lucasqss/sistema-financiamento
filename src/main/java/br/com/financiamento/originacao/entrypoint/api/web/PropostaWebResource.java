@@ -11,6 +11,8 @@ import br.com.financiamento.originacao.aplicacao.SimularCondicoesService;
 import br.com.financiamento.originacao.aplicacao.SubmeterPropostaService;
 import br.com.financiamento.shared.seguranca.Papeis;
 import jakarta.annotation.security.RolesAllowed;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -22,6 +24,7 @@ import jakarta.ws.rs.core.Response;
 import java.net.URI;
 
 /** Canal web da originação: monta, acompanha, submete e cancela propostas. */
+@Tag(name = "Originação", description = "Proposta de financiamento: montagem, submissão, pendência e contraproposta (DOM-0001).")
 @Path("/web/propostas")
 public class PropostaWebResource {
 
@@ -41,6 +44,7 @@ public class PropostaWebResource {
     @Inject ResolverPendenciaService resolverPendencia;
 
     @POST
+    @Operation(summary = "UC-0001 Iniciar proposta")
     @RolesAllowed({Papeis.PROPONENTE, Papeis.VENDEDOR, Papeis.CORRESPONDENTE})
     public Response iniciar(IniciarPropostaRequest request) {
         iniciarPropostaRequestValidador.validar(request);
@@ -50,6 +54,7 @@ public class PropostaWebResource {
 
     @GET
     @Path("/{id}")
+    @Operation(summary = "Acompanhar a proposta, com as pendências de enquadramento")
     @RolesAllowed({Papeis.PROPONENTE, Papeis.COOBRIGADO, Papeis.VENDEDOR, Papeis.CORRESPONDENTE, Papeis.ANALISTA})
     public DetalhePropostaWebResponse consultar(@PathParam("id") Long id) {
         return DetalhePropostaWebResponse.de(consultar.executar(id));
@@ -57,6 +62,7 @@ public class PropostaWebResource {
 
     @PUT
     @Path("/{id}/participantes")
+    @Operation(summary = "UC-0002 Informar participantes")
     @RolesAllowed({Papeis.PROPONENTE, Papeis.CORRESPONDENTE})
     public DetalhePropostaWebResponse participantes(@PathParam("id") Long id, ParticipantesRequest request) {
         participantesRequestValidador.validar(request);
@@ -65,6 +71,7 @@ public class PropostaWebResource {
 
     @PUT
     @Path("/{id}/bem")
+    @Operation(summary = "UC-0003 Informar bem e vendedor")
     @RolesAllowed({Papeis.PROPONENTE, Papeis.VENDEDOR, Papeis.CORRESPONDENTE})
     public DetalhePropostaWebResponse bem(@PathParam("id") Long id, BemRequest request) {
         bemRequestValidador.validar(request);
@@ -73,6 +80,7 @@ public class PropostaWebResource {
 
     @PUT
     @Path("/{id}/condicoes")
+    @Operation(summary = "UC-0004 Simular e escolher condições (devolve o enquadramento)")
     @RolesAllowed(Papeis.PROPONENTE)
     public DetalhePropostaWebResponse condicoes(@PathParam("id") Long id, CondicoesRequest request) {
         condicoesRequestValidador.validar(request);
@@ -81,6 +89,7 @@ public class PropostaWebResource {
 
     @POST
     @Path("/{id}/submissao")
+    @Operation(summary = "UC-0005 Submeter proposta")
     @RolesAllowed({Papeis.PROPONENTE, Papeis.CORRESPONDENTE})
     public DetalhePropostaWebResponse submeter(@PathParam("id") Long id) {
         return DetalhePropostaWebResponse.de(submeter.executar(id));
@@ -88,6 +97,7 @@ public class PropostaWebResource {
 
     @POST
     @Path("/{id}/cancelamento")
+    @Operation(summary = "UC-0010 Cancelar proposta")
     @RolesAllowed(Papeis.PROPONENTE)
     public DetalhePropostaWebResponse cancelar(@PathParam("id") Long id) {
         return DetalhePropostaWebResponse.de(cancelar.executar(id));
@@ -95,6 +105,7 @@ public class PropostaWebResource {
 
     @POST
     @Path("/{id}/contraproposta/aceite")
+    @Operation(summary = "UC-0009 Aceitar contraproposta")
     @RolesAllowed(Papeis.PROPONENTE)
     public DetalhePropostaWebResponse aceitarContraproposta(@PathParam("id") Long id) {
         return DetalhePropostaWebResponse.de(responderContraproposta.aceitar(id));
@@ -102,6 +113,7 @@ public class PropostaWebResource {
 
     @POST
     @Path("/{id}/contraproposta/recusa")
+    @Operation(summary = "UC-0009 Recusar contraproposta")
     @RolesAllowed(Papeis.PROPONENTE)
     public DetalhePropostaWebResponse recusarContraproposta(@PathParam("id") Long id) {
         return DetalhePropostaWebResponse.de(responderContraproposta.recusar(id));
@@ -109,6 +121,7 @@ public class PropostaWebResource {
 
     @POST
     @Path("/{id}/pendencia/resolucao")
+    @Operation(summary = "UC-0008 Resolver pendência")
     @RolesAllowed({Papeis.PROPONENTE, Papeis.CORRESPONDENTE, Papeis.ANALISTA})
     public DetalhePropostaWebResponse resolverPendencia(@PathParam("id") Long id) {
         return DetalhePropostaWebResponse.de(resolverPendencia.executar(id));

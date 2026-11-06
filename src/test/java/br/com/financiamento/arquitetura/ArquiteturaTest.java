@@ -151,6 +151,8 @@ class ArquiteturaTest {
                         f.getModifiers().containsAll(java.util.Set.of(JavaModifier.STATIC, JavaModifier.FINAL)))
                         && c.getMethods().isEmpty();
                 if (soConstantes) return;
+                // Instanciada pelo framework por reflexão (filtro do contrato OpenAPI): precisa ser pública.
+                if (c.isAnnotatedWith("io.quarkus.smallrye.openapi.OpenApiFilter")) return;
                 boolean usadaFora = c.getDirectDependenciesToSelf().stream()
                         .anyMatch(d -> !d.getOriginClass().getPackageName().equals(c.getPackageName()));
                 if (!usadaFora) {

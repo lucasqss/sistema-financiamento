@@ -7,6 +7,8 @@ import br.com.financiamento.documentos.aplicacao.EnviarDocumentoService.Envio;
 import br.com.financiamento.documentos.dominio.SituacaoDoDocumento;
 import br.com.financiamento.shared.seguranca.Papeis;
 import jakarta.annotation.security.RolesAllowed;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -29,6 +31,7 @@ import java.util.List;
  * Canal web dos documentos: o proponente ou o correspondente enviam os arquivos;
  * o analista (ATR-0005) os confere (UC-0024).
  */
+@Tag(name = "Documentos", description = "Envio e conferência dos documentos da proposta (DOM-0008).")
 @Path("/web/documentos")
 public class DocumentoWebResource {
 
@@ -41,6 +44,7 @@ public class DocumentoWebResource {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Operation(summary = "Enviar documento da proposta (multipart: PDF, JPEG ou PNG, até 10 MB)")
     @RolesAllowed({Papeis.PROPONENTE, Papeis.CORRESPONDENTE})
     public Response enviar(@RestForm Long propostaId, @RestForm String titular, @RestForm String tipo,
                            @RestForm("arquivo") FileUpload arquivo) {
@@ -59,6 +63,7 @@ public class DocumentoWebResource {
 
     /** Os documentos de uma proposta, ou a fila do analista (situacao=ENVIADO). */
     @GET
+    @Operation(summary = "Documentos de uma proposta, ou a fila de conferência")
     @RolesAllowed(Papeis.ANALISTA)
     public List<DocumentoWebResponse> listar(@QueryParam("proposta") Long propostaId,
                                              @QueryParam("situacao") SituacaoDoDocumento situacao) {
@@ -69,6 +74,7 @@ public class DocumentoWebResource {
 
     @GET
     @Path("/{id}/arquivo")
+    @Operation(summary = "Abrir o arquivo do documento")
     @RolesAllowed(Papeis.ANALISTA)
     public Response arquivo(@PathParam("id") Long id) {
         var a = consultar.arquivo(id);
@@ -78,6 +84,7 @@ public class DocumentoWebResource {
 
     @POST
     @Path("/{id}/conferencia")
+    @Operation(summary = "UC-0024 Conferir documento")
     @RolesAllowed(Papeis.ANALISTA)
     public DocumentoWebResponse conferir(@PathParam("id") Long id, ConferenciaRequest r) {
         conferenciaRequestValidador.validar(r);

@@ -5,6 +5,8 @@ import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import br.com.financiamento.desembolso.dominio.ErrosDoDesembolso;
 import br.com.financiamento.shared.seguranca.Papeis;
 import jakarta.annotation.security.RolesAllowed;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -13,12 +15,14 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 /** Acompanhar o desembolso e recompor a entrada com o FGTS negado (UC-0022). */
+@Tag(name = "Desembolso", description = "Liberação do recurso e FGTS da entrada (DOM-0006).")
 @Path("/web/desembolsos")
 public class DesembolsoWebResource {
 
     @Inject LiberarRecursoService liberar;
 
     @GET
+    @Operation(summary = "Desembolso de um contrato")
     @RolesAllowed(Papeis.ANALISTA)
     public DesembolsoWebResponse doContrato(@QueryParam("contrato") Long contratoId) {
         return liberar.doContrato(contratoId).map(DesembolsoWebResponse::de)
@@ -27,6 +31,7 @@ public class DesembolsoWebResource {
 
     @POST
     @Path("/{id}/entrada-recomposta")
+    @Operation(summary = "UC-0022 Recompor a entrada (FGTS negado)")
     @RolesAllowed(Papeis.PROPONENTE)
     public DesembolsoWebResponse entradaRecomposta(@PathParam("id") Long id) {
         return DesembolsoWebResponse.de(liberar.entradaRecomposta(id));

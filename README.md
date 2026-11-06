@@ -16,8 +16,11 @@ Etapa atual:
   - os Documentos: envio dos arquivos e conferência pelo analista, que a aprovação da proposta exige.
 
 - [`docs/dominio`](docs/dominio/README.md): o modelo (documento compilado, base do episteme e script de carga);
+- [`docs/api`](docs/api/README.md): **a API para quem integra**: guia, contrato OpenAPI gerado do código e catálogo de erros;
 - [`docs/arquitetura`](docs/arquitetura/README.md): a arquitetura (características, estilo, módulos e ADRs);
 - [`docs/definicoes`](docs/definicoes/entrevista-questoes-em-aberto.md): a entrevista que respondeu às questões em aberto.
+
+O sistema é **só API**: as telas e os sistemas externos integram por ela. Comece pelo [guia de integração](docs/api/README.md).
 
 ## Como rodar
 

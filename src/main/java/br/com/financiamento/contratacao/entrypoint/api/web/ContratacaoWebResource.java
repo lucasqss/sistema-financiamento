@@ -6,6 +6,8 @@ import br.com.financiamento.contratacao.aplicacao.DetalheDaContratacao;
 import br.com.financiamento.contratacao.aplicacao.EmitirContratoService;
 import br.com.financiamento.shared.seguranca.Papeis;
 import jakarta.annotation.security.RolesAllowed;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -16,6 +18,7 @@ import jakarta.ws.rs.core.Response;
 import java.net.URI;
 
 /** Canal web da contratação: aceite das condições finais e emissão (UC-0014). */
+@Tag(name = "Contratação", description = "Aceite das condições, contrato, assinaturas e prorrogação da obra (DOM-0004).")
 @Path("/web/contratacoes")
 public class ContratacaoWebResource {
 
@@ -26,6 +29,7 @@ public class ContratacaoWebResource {
     @Inject ConsultarContratacaoService consultar;
 
     @POST
+    @Operation(summary = "UC-0014 Aceitar as condições finais")
     @RolesAllowed(Papeis.PROPONENTE)
     public Response aceitar(AceiteRequest r) {
         aceiteRequestValidador.validar(r);
@@ -36,6 +40,7 @@ public class ContratacaoWebResource {
 
     @GET
     @Path("/{id}")
+    @Operation(summary = "Acompanhar a contratação (seguros e emissão)")
     @RolesAllowed({Papeis.PROPONENTE, Papeis.COOBRIGADO, Papeis.VENDEDOR, Papeis.CORRESPONDENTE, Papeis.ANALISTA})
     public ContratacaoWebResponse consultar(@PathParam("id") Long id) {
         return ContratacaoWebResponse.de(consultar.contratacao(id));
@@ -44,6 +49,7 @@ public class ContratacaoWebResource {
     /** Nova tentativa de emissão, depois de resolvido um impedimento. */
     @POST
     @Path("/{id}/emissao")
+    @Operation(summary = "UC-0014 Nova tentativa de emissão")
     @RolesAllowed(Papeis.ANALISTA)
     public Response emitir(@PathParam("id") Long id) {
         var d = emitir.executar(id);

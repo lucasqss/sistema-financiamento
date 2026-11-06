@@ -6,6 +6,8 @@ import br.com.financiamento.contratacao.aplicacao.ConsultarContratacaoService;
 import br.com.financiamento.contratacao.aplicacao.ProrrogarObraService;
 import br.com.financiamento.shared.seguranca.Papeis;
 import jakarta.annotation.security.RolesAllowed;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -13,6 +15,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
 /** Canal web do contrato: acompanhar, assinar (UC-0015) e desistir (UC-0016). */
+@Tag(name = "Contratação", description = "Aceite das condições, contrato, assinaturas e prorrogação da obra (DOM-0004).")
 @Path("/web/contratos")
 public class ContratoWebResource {
 
@@ -28,6 +31,7 @@ public class ContratoWebResource {
 
     @GET
     @Path("/{id}")
+    @Operation(summary = "Acompanhar o contrato")
     @RolesAllowed({Papeis.PROPONENTE, Papeis.COOBRIGADO, Papeis.VENDEDOR, Papeis.CORRESPONDENTE, Papeis.ANALISTA, Papeis.CONJUGE})
     public ContratoWebResponse consultar(@PathParam("id") Long id) {
         return ContratoWebResponse.de(consultar.contrato(id));
@@ -35,6 +39,7 @@ public class ContratoWebResource {
 
     @POST
     @Path("/{id}/assinaturas")
+    @Operation(summary = "UC-0015 Assinar contrato")
     @RolesAllowed({Papeis.PROPONENTE, Papeis.COOBRIGADO, Papeis.VENDEDOR, Papeis.CONJUGE})
     public ContratoWebResponse assinar(@PathParam("id") Long id, AssinaturaRequest r) {
         assinaturaRequestValidador.validar(r);
@@ -43,6 +48,7 @@ public class ContratoWebResource {
 
     @POST
     @Path("/{id}/cancelamento")
+    @Operation(summary = "UC-0016 Cancelar contrato (desistência)")
     @RolesAllowed(Papeis.PROPONENTE)
     public ContratoWebResponse cancelar(@PathParam("id") Long id, CancelamentoRequest r) {
         cancelamentoRequestValidador.validar(r);
@@ -52,6 +58,7 @@ public class ContratoWebResource {
     /** UC-0017: a incorporadora pede nova data para a obra. */
     @POST
     @Path("/{id}/prorrogacoes")
+    @Operation(summary = "UC-0017 Pedir prorrogação do prazo da obra")
     @RolesAllowed(Papeis.VENDEDOR)
     public ContratoWebResponse prorrogar(@PathParam("id") Long id, ProrrogacaoRequest r) {
         prorrogacaoRequestValidador.validar(r);
@@ -61,6 +68,7 @@ public class ContratoWebResource {
     /** RN-0027, acima do limite: o analista decide a prorrogação pendente. */
     @POST
     @Path("/{id}/prorrogacoes/pendente/decisao")
+    @Operation(summary = "RN-0027 Decidir prorrogação acima do limite")
     @RolesAllowed(Papeis.ANALISTA)
     public ContratoWebResponse decidirProrrogacao(@PathParam("id") Long id, DecisaoDeProrrogacaoRequest r) {
         decisaoDeProrrogacaoRequestValidador.validar(r);

@@ -1,0 +1,4332 @@
+{
+  "openapi" : "3.1.0",
+  "tags" : [ {
+    "name" : "Avaliação",
+    "description" : "Avaliação do bem e medição da obra (DOM-0003)."
+  }, {
+    "name" : "Contratação",
+    "description" : "Aceite das condições, contrato, assinaturas e prorrogação da obra (DOM-0004)."
+  }, {
+    "name" : "Crédito",
+    "description" : "Análise de crédito pelo analista (DOM-0002)."
+  }, {
+    "name" : "Desembolso",
+    "description" : "Liberação do recurso e FGTS da entrada (DOM-0006)."
+  }, {
+    "name" : "Documentos",
+    "description" : "Envio e conferência dos documentos da proposta (DOM-0008)."
+  }, {
+    "name" : "Garantia",
+    "description" : "Registro da alienação fiduciária (DOM-0005)."
+  }, {
+    "name" : "Originação",
+    "description" : "Proposta de financiamento: montagem, submissão, pendência e contraproposta (DOM-0001)."
+  }, {
+    "name" : "Retornos de sistemas externos",
+    "description" : "Entradas dos sistemas externos (bureau, avaliador, seguradora, cartório/órgão de trânsito, FGTS, pagamento). Idempotentes pelo protocolo."
+  } ],
+  "components" : {
+    "schemas" : {
+      "AceiteRequest" : {
+        "type" : "object",
+        "properties" : {
+          "propostaId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "segurosOpcionais" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "conjuges" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Conjuge"
+            }
+          },
+          "previsaoDeEntregaDaObra" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }
+      },
+      "AnaliseDeCreditoWebResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "propostaId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "condicoesVersao" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "valorFinanciado" : {
+            "type" : "number"
+          },
+          "prazoMeses" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "parcela" : {
+            "type" : "number"
+          },
+          "resultado" : {
+            "type" : "string"
+          },
+          "decididaPor" : {
+            "type" : "string"
+          },
+          "ressalva" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ApoliceRequest" : {
+        "type" : "object",
+        "properties" : {
+          "seguro" : {
+            "type" : "string"
+          },
+          "apolice" : {
+            "type" : "string"
+          }
+        }
+      },
+      "AssinaturaRequest" : {
+        "type" : "object",
+        "properties" : {
+          "documento" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Avaliacao" : {
+        "type" : "object",
+        "properties" : {
+          "aceitoComoGarantia" : {
+            "type" : "boolean"
+          },
+          "valor" : {
+            "type" : "number"
+          },
+          "fonte" : {
+            "type" : "string"
+          },
+          "avaliadaEm" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "validaAte" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }
+      },
+      "AvaliacaoWebResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "propostaId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "tipoDeBem" : {
+            "type" : "string"
+          },
+          "identificacaoDoBem" : {
+            "type" : "string"
+          },
+          "fonte" : {
+            "type" : "string"
+          },
+          "aceitoComoGarantia" : {
+            "type" : "boolean"
+          },
+          "valor" : {
+            "type" : "number"
+          },
+          "avaliadaEm" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "validaAte" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }
+      },
+      "Bem" : {
+        "type" : "object",
+        "properties" : {
+          "identificacao" : {
+            "type" : "string"
+          },
+          "valorDeCompra" : {
+            "type" : "number"
+          },
+          "valorDeAvaliacao" : {
+            "type" : "number"
+          },
+          "documentoDoVendedor" : {
+            "type" : "string"
+          },
+          "anoModelo" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "construcaoAverbada" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "BemRequest" : {
+        "type" : "object",
+        "properties" : {
+          "identificacao" : {
+            "type" : "string"
+          },
+          "valorDeCompra" : {
+            "type" : "number"
+          },
+          "documentoDoVendedor" : {
+            "type" : "string"
+          },
+          "anoModelo" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "construcaoAverbada" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "CancelamentoRequest" : {
+        "type" : "object",
+        "properties" : {
+          "motivo" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Condicoes" : {
+        "type" : "object",
+        "properties" : {
+          "versao" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "identificacaoDoBem" : {
+            "type" : "string"
+          },
+          "valorDeCompra" : {
+            "type" : "number"
+          },
+          "valorFinanciado" : {
+            "type" : "number"
+          },
+          "entradaPropria" : {
+            "type" : "number"
+          },
+          "entradaFgts" : {
+            "type" : "number"
+          },
+          "prazoMeses" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "parcela" : {
+            "type" : "number"
+          }
+        }
+      },
+      "Condicoes1" : {
+        "type" : "object",
+        "properties" : {
+          "versao" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "entradaPropria" : {
+            "type" : "number"
+          },
+          "entradaFgts" : {
+            "type" : "number"
+          },
+          "prazoMeses" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "parcela" : {
+            "type" : "number"
+          },
+          "valorFinanciado" : {
+            "type" : "number"
+          }
+        }
+      },
+      "CondicoesRequest" : {
+        "type" : "object",
+        "properties" : {
+          "entradaPropria" : {
+            "type" : "number"
+          },
+          "entradaFgts" : {
+            "type" : "number"
+          },
+          "prazoMeses" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "parcela" : {
+            "type" : "number"
+          }
+        }
+      },
+      "CondicoesSugeridas" : {
+        "type" : "object",
+        "properties" : {
+          "entradaPropria" : {
+            "type" : "number"
+          },
+          "entradaFgts" : {
+            "type" : "number"
+          },
+          "prazoMeses" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "parcela" : {
+            "type" : "number"
+          }
+        }
+      },
+      "ConferenciaRequest" : {
+        "type" : "object",
+        "properties" : {
+          "aceito" : {
+            "type" : "boolean"
+          },
+          "motivo" : {
+            "$ref" : "#/components/schemas/MotivoDaRecusa"
+          },
+          "observacao" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Conjuge" : {
+        "type" : "object",
+        "properties" : {
+          "documento" : {
+            "type" : "string"
+          },
+          "nome" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Contraproposta" : {
+        "type" : "object",
+        "properties" : {
+          "entradaPropria" : {
+            "type" : "number"
+          },
+          "entradaFgts" : {
+            "type" : "number"
+          },
+          "prazoMeses" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "parcela" : {
+            "type" : "number"
+          },
+          "ressalva" : {
+            "type" : "string"
+          },
+          "validaAte" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }
+      },
+      "ContratacaoWebResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "propostaId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "seguros" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Seguro"
+            }
+          },
+          "contratoId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "impedimento" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ContratoWebResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "propostaId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "tipoDeBem" : {
+            "type" : "string"
+          },
+          "estado" : {
+            "type" : "string"
+          },
+          "condicoes" : {
+            "$ref" : "#/components/schemas/Condicoes"
+          },
+          "seguros" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Seguro1"
+            }
+          },
+          "signatarios" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Signatario"
+            }
+          },
+          "garantia" : {
+            "$ref" : "#/components/schemas/Garantia"
+          },
+          "obra" : {
+            "$ref" : "#/components/schemas/Obra"
+          }
+        }
+      },
+      "Credito" : {
+        "type" : "object",
+        "properties" : {
+          "resultado" : {
+            "type" : "string"
+          },
+          "condicoesVersao" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "ressalva" : {
+            "type" : "string"
+          }
+        }
+      },
+      "DecisaoDeProrrogacaoRequest" : {
+        "type" : "object",
+        "properties" : {
+          "aprovada" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "DecisaoDoAnalistaRequest" : {
+        "type" : "object",
+        "properties" : {
+          "resultado" : {
+            "$ref" : "#/components/schemas/ResultadoDeCredito"
+          },
+          "ressalva" : {
+            "type" : "string"
+          },
+          "sugeridas" : {
+            "$ref" : "#/components/schemas/CondicoesSugeridas"
+          }
+        }
+      },
+      "DesembolsoWebResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "contratoId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "valorFinanciado" : {
+            "type" : "number"
+          },
+          "totalLiberado" : {
+            "type" : "number"
+          },
+          "forma" : {
+            "type" : "string"
+          },
+          "fgts" : {
+            "type" : "string"
+          },
+          "percentualMedido" : {
+            "type" : "number"
+          },
+          "liberacoes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Liberacao"
+            }
+          }
+        }
+      },
+      "DesfazimentoRequest" : {
+        "type" : "object",
+        "properties" : {
+          "motivo" : {
+            "type" : "string"
+          }
+        }
+      },
+      "DetalhePropostaWebResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "tipoDeBem" : {
+            "type" : "string"
+          },
+          "estado" : {
+            "type" : "string"
+          },
+          "participantes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Participante"
+            }
+          },
+          "bem" : {
+            "$ref" : "#/components/schemas/Bem"
+          },
+          "condicoes" : {
+            "$ref" : "#/components/schemas/Condicoes1"
+          },
+          "documentos" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Documento"
+            }
+          },
+          "enquadrada" : {
+            "type" : "boolean"
+          },
+          "pendenciasDeEnquadramento" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Pendencia"
+            }
+          },
+          "credito" : {
+            "$ref" : "#/components/schemas/Credito"
+          },
+          "avaliacao" : {
+            "$ref" : "#/components/schemas/Avaliacao"
+          },
+          "contraproposta" : {
+            "$ref" : "#/components/schemas/Contraproposta"
+          },
+          "pendencia" : {
+            "type" : "string"
+          },
+          "aprovacaoValidaAte" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }
+      },
+      "Documento" : {
+        "type" : "object",
+        "properties" : {
+          "documentoId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "titular" : {
+            "type" : "string"
+          },
+          "tipo" : {
+            "type" : "string"
+          },
+          "situacao" : {
+            "type" : "string"
+          },
+          "motivo" : {
+            "type" : "string"
+          }
+        }
+      },
+      "DocumentoWebResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "propostaId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "titular" : {
+            "type" : "string"
+          },
+          "tipo" : {
+            "type" : "string"
+          },
+          "nomeDoArquivo" : {
+            "type" : "string"
+          },
+          "tipoDeConteudo" : {
+            "type" : "string"
+          },
+          "tamanho" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "sha256" : {
+            "type" : "string"
+          },
+          "enviadoEm" : {
+            "$ref" : "#/components/schemas/Instant"
+          },
+          "situacao" : {
+            "type" : "string"
+          },
+          "motivo" : {
+            "type" : "string"
+          },
+          "conferidoEm" : {
+            "$ref" : "#/components/schemas/Instant"
+          }
+        }
+      },
+      "FormaDoParticipante" : {
+        "type" : "string",
+        "enum" : [ "PESSOA_FISICA", "PESSOA_JURIDICA" ]
+      },
+      "Garantia" : {
+        "type" : "object",
+        "properties" : {
+          "orgao" : {
+            "type" : "string"
+          },
+          "protocolo" : {
+            "type" : "string"
+          },
+          "situacao" : {
+            "type" : "string"
+          }
+        }
+      },
+      "IniciarPropostaRequest" : {
+        "type" : "object",
+        "properties" : {
+          "tipoDeBem" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Instant" : {
+        "type" : "string",
+        "format" : "date-time",
+        "examples" : [ "2022-03-10T16:15:50Z" ]
+      },
+      "Item" : {
+        "type" : "object",
+        "properties" : {
+          "papel" : {
+            "$ref" : "#/components/schemas/Papel"
+          },
+          "forma" : {
+            "$ref" : "#/components/schemas/FormaDoParticipante"
+          },
+          "documento" : {
+            "type" : "string"
+          },
+          "nome" : {
+            "type" : "string"
+          },
+          "nascimento" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "rendaComprovada" : {
+            "type" : "number"
+          }
+        }
+      },
+      "LaudoRequest" : {
+        "type" : "object",
+        "properties" : {
+          "aceitoComoGarantia" : {
+            "type" : "boolean"
+          },
+          "valor" : {
+            "type" : "number"
+          },
+          "avaliadaEm" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }
+      },
+      "Liberacao" : {
+        "type" : "object",
+        "properties" : {
+          "protocolo" : {
+            "type" : "string"
+          },
+          "valor" : {
+            "type" : "number"
+          },
+          "percentualAte" : {
+            "type" : "number"
+          },
+          "ultima" : {
+            "type" : "boolean"
+          },
+          "pagaEm" : {
+            "$ref" : "#/components/schemas/Instant"
+          }
+        }
+      },
+      "LocalDate" : {
+        "type" : "string",
+        "format" : "date",
+        "examples" : [ "2022-03-10" ]
+      },
+      "MedicaoRequest" : {
+        "type" : "object",
+        "properties" : {
+          "contratoId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "percentualAcumulado" : {
+            "type" : "number"
+          },
+          "medidaEm" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }
+      },
+      "MedicaoWebResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "contratoId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "percentualAcumulado" : {
+            "type" : "number"
+          },
+          "medidaEm" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }
+      },
+      "MotivoDaRecusa" : {
+        "type" : "string",
+        "enum" : [ "ILEGIVEL", "VENCIDO", "DIVERGENTE" ]
+      },
+      "Obra" : {
+        "type" : "object",
+        "properties" : {
+          "previsaoOriginal" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "previsaoAtual" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "diasProrrogados" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "prorrogacaoPendente" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }
+      },
+      "PagamentoRequest" : {
+        "type" : "object",
+        "properties" : {
+          "protocolo" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Papel" : {
+        "type" : "string",
+        "enum" : [ "PROPONENTE", "COOBRIGADO" ]
+      },
+      "Participante" : {
+        "type" : "object",
+        "properties" : {
+          "papel" : {
+            "type" : "string"
+          },
+          "forma" : {
+            "type" : "string"
+          },
+          "documento" : {
+            "type" : "string"
+          },
+          "nome" : {
+            "type" : "string"
+          },
+          "nascimento" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "rendaComprovada" : {
+            "type" : "number"
+          }
+        }
+      },
+      "ParticipantesRequest" : {
+        "type" : "object",
+        "properties" : {
+          "participantes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Item"
+            }
+          }
+        }
+      },
+      "Pendencia" : {
+        "type" : "object",
+        "properties" : {
+          "codigo" : {
+            "type" : "string"
+          },
+          "regra" : {
+            "type" : "string"
+          },
+          "mensagem" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ProrrogacaoRequest" : {
+        "type" : "object",
+        "properties" : {
+          "novaData" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }
+      },
+      "RegistroWebResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "contratoId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "orgao" : {
+            "type" : "string"
+          },
+          "identificacaoDoBem" : {
+            "type" : "string"
+          },
+          "tentativa" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "protocolo" : {
+            "type" : "string"
+          },
+          "situacao" : {
+            "type" : "string"
+          },
+          "observacao" : {
+            "type" : "string"
+          },
+          "retornos" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Retorno"
+            }
+          }
+        }
+      },
+      "ResultadoDeCredito" : {
+        "type" : "string",
+        "enum" : [ "APROVADO", "APROVADO_COM_RESSALVA", "REPROVADO" ]
+      },
+      "ResultadoDoOrgao" : {
+        "type" : "string",
+        "enum" : [ "REGISTRADO", "EXIGENCIA", "RECUSADO" ]
+      },
+      "Retorno" : {
+        "type" : "object",
+        "properties" : {
+          "protocolo" : {
+            "type" : "string"
+          },
+          "resultado" : {
+            "type" : "string"
+          },
+          "identificacaoRegistrada" : {
+            "type" : "string"
+          },
+          "texto" : {
+            "type" : "string"
+          },
+          "recebidoEm" : {
+            "$ref" : "#/components/schemas/Instant"
+          },
+          "efeito" : {
+            "type" : "string"
+          }
+        }
+      },
+      "RetornoDoBureauRequest" : {
+        "type" : "object",
+        "properties" : {
+          "resultado" : {
+            "$ref" : "#/components/schemas/ResultadoDeCredito"
+          },
+          "ressalva" : {
+            "type" : "string"
+          },
+          "sugeridas" : {
+            "$ref" : "#/components/schemas/CondicoesSugeridas"
+          }
+        }
+      },
+      "RetornoDoFgtsRequest" : {
+        "type" : "object",
+        "properties" : {
+          "liberado" : {
+            "type" : "boolean"
+          },
+          "motivo" : {
+            "type" : "string"
+          }
+        }
+      },
+      "RetornoDoOrgaoRequest" : {
+        "type" : "object",
+        "properties" : {
+          "protocolo" : {
+            "type" : "string"
+          },
+          "resultado" : {
+            "$ref" : "#/components/schemas/ResultadoDoOrgao"
+          },
+          "identificacaoRegistrada" : {
+            "type" : "string"
+          },
+          "texto" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Seguro" : {
+        "type" : "object",
+        "properties" : {
+          "nome" : {
+            "type" : "string"
+          },
+          "obrigatorio" : {
+            "type" : "boolean"
+          },
+          "apolice" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Seguro1" : {
+        "type" : "object",
+        "properties" : {
+          "nome" : {
+            "type" : "string"
+          },
+          "obrigatorio" : {
+            "type" : "boolean"
+          },
+          "apolice" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Signatario" : {
+        "type" : "object",
+        "properties" : {
+          "papel" : {
+            "type" : "string"
+          },
+          "documento" : {
+            "type" : "string"
+          },
+          "nome" : {
+            "type" : "string"
+          },
+          "assinadoEm" : {
+            "$ref" : "#/components/schemas/Instant"
+          }
+        }
+      },
+      "SituacaoDoDocumento" : {
+        "type" : "string",
+        "enum" : [ "ENVIADO", "ACEITO", "RECUSADO", "SUBSTITUIDO" ]
+      },
+      "Erro" : {
+        "type" : "object",
+        "description" : "Formato único de erro (ADR 0011).",
+        "properties" : {
+          "tipo" : {
+            "type" : "string",
+            "enum" : [ "ATRIBUTO", "DOMINIO" ]
+          },
+          "falhas" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "description" : "Uma falha, com o código do catálogo de erros (docs/api/catalogo-de-erros.md).",
+              "properties" : {
+                "codigo" : {
+                  "type" : "string",
+                  "description" : "Código estável do catálogo, ex.: ORI-0002, ATR-0001."
+                },
+                "codigoCorporativo" : {
+                  "type" : "string",
+                  "description" : "Código no catálogo corporativo, quando mapeado."
+                },
+                "campo" : {
+                  "type" : "string",
+                  "description" : "O campo com problema, nas falhas de atributo (ex.: participantes[0].nome)."
+                },
+                "regra" : {
+                  "type" : "string",
+                  "description" : "A regra do modelo de negócio (ex.: RN-0009, CV-0001), quando há."
+                },
+                "mensagem" : {
+                  "type" : "string",
+                  "description" : "Mensagem em linguagem de negócio."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "jwt" : {
+        "description" : "JWT do emissor externo (ADR 0012): papéis na claim groups, CPF/CNPJ na claim cpf.",
+        "type" : "http",
+        "scheme" : "bearer",
+        "bearerFormat" : "JWT"
+      }
+    }
+  },
+  "paths" : {
+    "/retornos/avaliador/{avaliacaoId}" : {
+      "post" : {
+        "summary" : "Laudo do avaliador (UC-0012)",
+        "tags" : [ "Retornos de sistemas externos" ],
+        "parameters" : [ {
+          "name" : "avaliacaoId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/LaudoRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "sistema-avaliador" ]
+        } ]
+      }
+    },
+    "/retornos/bureau-de-credito/{analiseId}" : {
+      "post" : {
+        "summary" : "Retorno do bureau de crédito (UC-0011)",
+        "tags" : [ "Retornos de sistemas externos" ],
+        "parameters" : [ {
+          "name" : "analiseId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RetornoDoBureauRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "sistema-bureau" ]
+        } ]
+      }
+    },
+    "/retornos/fgts/{desembolsoId}" : {
+      "post" : {
+        "summary" : "Retorno do sistema do FGTS (UC-0021, UC-0022)",
+        "tags" : [ "Retornos de sistemas externos" ],
+        "parameters" : [ {
+          "name" : "desembolsoId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RetornoDoFgtsRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "sistema-fgts" ]
+        } ]
+      }
+    },
+    "/retornos/orgao-de-registro" : {
+      "post" : {
+        "summary" : "Retorno do cartório ou órgão de trânsito (RN-0029: classificado, nunca recusado)",
+        "tags" : [ "Retornos de sistemas externos" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RetornoDoOrgaoRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "sistema-registro" ]
+        } ]
+      }
+    },
+    "/retornos/pagamento" : {
+      "post" : {
+        "summary" : "Confirmação do pagamento ao vendedor (UC-0021, UC-0023)",
+        "tags" : [ "Retornos de sistemas externos" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PagamentoRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "sistema-pagamento" ]
+        } ]
+      }
+    },
+    "/retornos/seguradora/{contratacaoId}" : {
+      "post" : {
+        "summary" : "Apólice da seguradora (UC-0014)",
+        "tags" : [ "Retornos de sistemas externos" ],
+        "parameters" : [ {
+          "name" : "contratacaoId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ApoliceRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "sistema-seguradora" ]
+        } ]
+      }
+    },
+    "/web/analises-de-credito" : {
+      "get" : {
+        "summary" : "Análises de crédito de uma proposta",
+        "tags" : [ "Crédito" ],
+        "parameters" : [ {
+          "name" : "proposta",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/AnaliseDeCreditoWebResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "analista" ]
+        } ]
+      }
+    },
+    "/web/analises-de-credito/{id}/decisao" : {
+      "post" : {
+        "summary" : "UC-0011 Decisão do analista (fora da alçada automática)",
+        "tags" : [ "Crédito" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DecisaoDoAnalistaRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AnaliseDeCreditoWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "analista" ]
+        } ]
+      }
+    },
+    "/web/avaliacoes" : {
+      "get" : {
+        "summary" : "Avaliações do bem de uma proposta",
+        "tags" : [ "Avaliação" ],
+        "parameters" : [ {
+          "name" : "proposta",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/AvaliacaoWebResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "analista" ]
+        } ]
+      }
+    },
+    "/web/contratacoes" : {
+      "post" : {
+        "summary" : "UC-0014 Aceitar as condições finais",
+        "tags" : [ "Contratação" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AceiteRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente" ]
+        } ]
+      }
+    },
+    "/web/contratacoes/{id}" : {
+      "get" : {
+        "summary" : "Acompanhar a contratação (seguros e emissão)",
+        "tags" : [ "Contratação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContratacaoWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente", "coobrigado", "vendedor", "correspondente", "analista" ]
+        } ]
+      }
+    },
+    "/web/contratacoes/{id}/emissao" : {
+      "post" : {
+        "summary" : "UC-0014 Nova tentativa de emissão",
+        "tags" : [ "Contratação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "analista" ]
+        } ]
+      }
+    },
+    "/web/contratos/{id}" : {
+      "get" : {
+        "summary" : "Acompanhar o contrato",
+        "tags" : [ "Contratação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContratoWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente", "coobrigado", "vendedor", "correspondente", "analista", "conjuge" ]
+        } ]
+      }
+    },
+    "/web/contratos/{id}/assinaturas" : {
+      "post" : {
+        "summary" : "UC-0015 Assinar contrato",
+        "tags" : [ "Contratação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AssinaturaRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContratoWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente", "coobrigado", "vendedor", "conjuge" ]
+        } ]
+      }
+    },
+    "/web/contratos/{id}/cancelamento" : {
+      "post" : {
+        "summary" : "UC-0016 Cancelar contrato (desistência)",
+        "tags" : [ "Contratação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CancelamentoRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContratoWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente" ]
+        } ]
+      }
+    },
+    "/web/contratos/{id}/prorrogacoes" : {
+      "post" : {
+        "summary" : "UC-0017 Pedir prorrogação do prazo da obra",
+        "tags" : [ "Contratação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ProrrogacaoRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContratoWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "vendedor" ]
+        } ]
+      }
+    },
+    "/web/contratos/{id}/prorrogacoes/pendente/decisao" : {
+      "post" : {
+        "summary" : "RN-0027 Decidir prorrogação acima do limite",
+        "tags" : [ "Contratação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DecisaoDeProrrogacaoRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContratoWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "analista" ]
+        } ]
+      }
+    },
+    "/web/desembolsos" : {
+      "get" : {
+        "summary" : "Desembolso de um contrato",
+        "tags" : [ "Desembolso" ],
+        "parameters" : [ {
+          "name" : "contrato",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DesembolsoWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "analista" ]
+        } ]
+      }
+    },
+    "/web/desembolsos/{id}/entrada-recomposta" : {
+      "post" : {
+        "summary" : "UC-0022 Recompor a entrada (FGTS negado)",
+        "tags" : [ "Desembolso" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DesembolsoWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente" ]
+        } ]
+      }
+    },
+    "/web/documentos" : {
+      "get" : {
+        "summary" : "Documentos de uma proposta, ou a fila de conferência",
+        "tags" : [ "Documentos" ],
+        "parameters" : [ {
+          "name" : "proposta",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "situacao",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/SituacaoDoDocumento"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/DocumentoWebResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "analista" ]
+        } ]
+      },
+      "post" : {
+        "summary" : "Enviar documento da proposta (multipart: PDF, JPEG ou PNG, até 10 MB)",
+        "tags" : [ "Documentos" ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "propostaId" : {
+                    "type" : "integer",
+                    "format" : "int64"
+                  },
+                  "titular" : {
+                    "type" : "string"
+                  },
+                  "tipo" : {
+                    "type" : "string"
+                  },
+                  "arquivo" : {
+                    "type" : "string",
+                    "format" : "binary"
+                  }
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente", "correspondente" ]
+        } ]
+      }
+    },
+    "/web/documentos/{id}/arquivo" : {
+      "get" : {
+        "summary" : "Abrir o arquivo do documento",
+        "tags" : [ "Documentos" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "analista" ]
+        } ]
+      }
+    },
+    "/web/documentos/{id}/conferencia" : {
+      "post" : {
+        "summary" : "UC-0024 Conferir documento",
+        "tags" : [ "Documentos" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ConferenciaRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DocumentoWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "analista" ]
+        } ]
+      }
+    },
+    "/web/medicoes" : {
+      "post" : {
+        "summary" : "UC-0013 Medir obra",
+        "tags" : [ "Avaliação" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MedicaoRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MedicaoWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "engenheiro" ]
+        } ]
+      },
+      "get" : {
+        "summary" : "Medições da obra de um contrato",
+        "tags" : [ "Avaliação" ],
+        "parameters" : [ {
+          "name" : "contrato",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/MedicaoWebResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "engenheiro", "analista" ]
+        } ]
+      }
+    },
+    "/web/propostas" : {
+      "post" : {
+        "summary" : "UC-0001 Iniciar proposta",
+        "tags" : [ "Originação" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IniciarPropostaRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente", "vendedor", "correspondente" ]
+        } ]
+      }
+    },
+    "/web/propostas/{id}" : {
+      "get" : {
+        "summary" : "Acompanhar a proposta, com as pendências de enquadramento",
+        "tags" : [ "Originação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DetalhePropostaWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente", "coobrigado", "vendedor", "correspondente", "analista" ]
+        } ]
+      }
+    },
+    "/web/propostas/{id}/bem" : {
+      "put" : {
+        "summary" : "UC-0003 Informar bem e vendedor",
+        "tags" : [ "Originação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BemRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DetalhePropostaWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente", "vendedor", "correspondente" ]
+        } ]
+      }
+    },
+    "/web/propostas/{id}/cancelamento" : {
+      "post" : {
+        "summary" : "UC-0010 Cancelar proposta",
+        "tags" : [ "Originação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DetalhePropostaWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente" ]
+        } ]
+      }
+    },
+    "/web/propostas/{id}/condicoes" : {
+      "put" : {
+        "summary" : "UC-0004 Simular e escolher condições (devolve o enquadramento)",
+        "tags" : [ "Originação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CondicoesRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DetalhePropostaWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente" ]
+        } ]
+      }
+    },
+    "/web/propostas/{id}/contraproposta/aceite" : {
+      "post" : {
+        "summary" : "UC-0009 Aceitar contraproposta",
+        "tags" : [ "Originação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DetalhePropostaWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente" ]
+        } ]
+      }
+    },
+    "/web/propostas/{id}/contraproposta/recusa" : {
+      "post" : {
+        "summary" : "UC-0009 Recusar contraproposta",
+        "tags" : [ "Originação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DetalhePropostaWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente" ]
+        } ]
+      }
+    },
+    "/web/propostas/{id}/participantes" : {
+      "put" : {
+        "summary" : "UC-0002 Informar participantes",
+        "tags" : [ "Originação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ParticipantesRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DetalhePropostaWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente", "correspondente" ]
+        } ]
+      }
+    },
+    "/web/propostas/{id}/pendencia/resolucao" : {
+      "post" : {
+        "summary" : "UC-0008 Resolver pendência",
+        "tags" : [ "Originação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DetalhePropostaWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente", "correspondente", "analista" ]
+        } ]
+      }
+    },
+    "/web/propostas/{id}/submissao" : {
+      "post" : {
+        "summary" : "UC-0005 Submeter proposta",
+        "tags" : [ "Originação" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DetalhePropostaWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "proponente", "correspondente" ]
+        } ]
+      }
+    },
+    "/web/registros" : {
+      "get" : {
+        "summary" : "Registro da garantia de um contrato",
+        "tags" : [ "Garantia" ],
+        "parameters" : [ {
+          "name" : "contrato",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RegistroWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "analista" ]
+        } ]
+      }
+    },
+    "/web/registros/{id}/desfazimento" : {
+      "post" : {
+        "summary" : "UC-0019 Desfazer o contrato sem solução",
+        "tags" : [ "Garantia" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DesfazimentoRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RegistroWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "analista" ]
+        } ]
+      }
+    },
+    "/web/registros/{id}/exigencia-cumprida" : {
+      "post" : {
+        "summary" : "UC-0020 Cumprir exigência",
+        "tags" : [ "Garantia" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RegistroWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "analista" ]
+        } ]
+      }
+    },
+    "/web/registros/{id}/reenvio" : {
+      "post" : {
+        "summary" : "UC-0019 Reenviar registro",
+        "tags" : [ "Garantia" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RegistroWebResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "O que se pede não existe (código do catálogo do módulo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "jwt" : [ "analista" ]
+        } ]
+      }
+    }
+  },
+  "info" : {
+    "title" : "Sistema de financiamento de bens",
+    "version" : "0.1.0",
+    "description" : "API do financiamento de veículos, imóveis e terrenos. Guia de integração em docs/api/README.md; catálogo de erros em docs/api/catalogo-de-erros.md."
+  },
+  "servers" : [ {
+    "url" : "http://localhost:8080",
+    "description" : "Auto generated value"
+  }, {
+    "url" : "http://0.0.0.0:8080",
+    "description" : "Auto generated value"
+  } ]
+}
