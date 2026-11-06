@@ -19,6 +19,11 @@ public class OriginacaoFacade {
         return contratacao.contratabilidade(propostaId);
     }
 
+    /** Quem participa da proposta (ADR 0012): quem a iniciou, os participantes e o vendedor. */
+    public java.util.List<String> documentosEnvolvidos(Long propostaId) {
+        return contratacao.documentosEnvolvidos(propostaId);
+    }
+
     /** UC-0014: o contrato foi emitido; a proposta fica contratada (EVT-0023 no ciclo CV-0001). */
     public void contratoEmitido(Long propostaId, Long contratoId) {
         contratacao.contratoEmitido(propostaId, contratoId);

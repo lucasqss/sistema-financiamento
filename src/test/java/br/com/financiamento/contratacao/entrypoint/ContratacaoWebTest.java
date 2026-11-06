@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Map;
 
+import br.com.financiamento.TokensParaTeste;
+
 import static br.com.financiamento.DocumentosParaTeste.cpf;
 import static br.com.financiamento.JornadaParaTeste.motoUsadaAprovada;
 import static br.com.financiamento.JornadaParaTeste.residencialProntoAprovado;
@@ -48,8 +50,8 @@ class ContratacaoWebTest {
     }
 
     void assinar(long contrato, String documento) {
-        given().contentType(ContentType.JSON).body(Map.of("documento", documento))
-                .post("/web/contratos/" + contrato + "/assinaturas").then().statusCode(200);
+        given().header("Authorization", "Bearer " + TokensParaTeste.signatario(documento)).contentType(ContentType.JSON)
+                .body(Map.of("documento", documento)).post("/web/contratos/" + contrato + "/assinaturas").then().statusCode(200);
     }
 
     @Test
@@ -117,8 +119,8 @@ class ContratacaoWebTest {
         given().contentType(ContentType.JSON).body(Map.of("motivo", "desistência"))
                 .post("/web/contratos/" + contrato + "/cancelamento")
                 .then().statusCode(200).body("estado", equalTo("CANCELADO"));
-        given().contentType(ContentType.JSON).body(Map.of("documento", ANA))
-                .post("/web/contratos/" + contrato + "/assinaturas").then().statusCode(422);
+        given().header("Authorization", "Bearer " + TokensParaTeste.signatario(ANA)).contentType(ContentType.JSON)
+                .body(Map.of("documento", ANA)).post("/web/contratos/" + contrato + "/assinaturas").then().statusCode(422);
     }
 
     @Test

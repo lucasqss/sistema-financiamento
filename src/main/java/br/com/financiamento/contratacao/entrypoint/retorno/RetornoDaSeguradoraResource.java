@@ -1,6 +1,8 @@
 package br.com.financiamento.contratacao.entrypoint.retorno;
 
 import br.com.financiamento.contratacao.aplicacao.RegistrarApoliceService;
+import br.com.financiamento.shared.seguranca.Papeis;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -20,6 +22,7 @@ public class RetornoDaSeguradoraResource {
 
     @POST
     @Path("/{contratacaoId}")
+    @RolesAllowed(Papeis.SISTEMA_SEGURADORA)
     public Response receber(@PathParam("contratacaoId") Long contratacaoId, ApoliceRequest r) {
         apoliceRequestValidador.validar(r);
         registrar.executar(contratacaoId, r.seguro(), r.apolice());

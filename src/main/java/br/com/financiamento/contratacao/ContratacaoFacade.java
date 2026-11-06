@@ -23,6 +23,11 @@ public class ContratacaoFacade {
         return liberacao.paraDesembolso(contratoId);
     }
 
+    /** Quem participa do contrato: signatários, vendedor e quem participou da proposta (ADR 0012). */
+    public java.util.List<String> documentosEnvolvidos(Long contratoId) {
+        return liberacao.documentosEnvolvidos(contratoId);
+    }
+
     /** EVT-0033: o contrato do bem pronto fica formalizado. */
     public void recursoLiberado(Long contratoId) {
         liberacao.recursoLiberado(contratoId);

@@ -1,5 +1,6 @@
 package br.com.financiamento.shared.web;
 
+import br.com.financiamento.shared.seguranca.ErroDeSeguranca;
 import br.com.financiamento.shared.validacao.ErroDeAtributoException;
 import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import br.com.financiamento.shared.validacao.Falha;
@@ -36,6 +37,19 @@ class TratamentoDeErros {
     @ServerExceptionMapper
     Response dominio(ErroDeDominioException e) {
         return Response.status(e.status()).entity(corpo(TipoDeErro.DOMINIO, e.falhas())).build();
+    }
+
+    /** Sem token, token inválido, expirado ou de outro emissor (ADR 0012). */
+    @ServerExceptionMapper({io.quarkus.security.UnauthorizedException.class, io.quarkus.security.AuthenticationFailedException.class})
+    Response naoAutenticado() {
+        return Response.status(401).header("WWW-Authenticate", "Bearer")
+                .entity(corpo(TipoDeErro.DOMINIO, List.of(Falha.de(ErroDeSeguranca.NAO_AUTENTICADO)))).build();
+    }
+
+    /** Autenticado, mas o papel não permite a operação (ADR 0012). */
+    @ServerExceptionMapper(io.quarkus.security.ForbiddenException.class)
+    Response semPapel() {
+        return Response.status(403).entity(corpo(TipoDeErro.DOMINIO, List.of(Falha.de(ErroDeSeguranca.SEM_PAPEL)))).build();
     }
 
     /** JSON malformado ou valor que não cabe no campo (enum desconhecido, número inválido): erro de atributo. */

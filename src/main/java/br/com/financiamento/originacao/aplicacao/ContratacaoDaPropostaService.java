@@ -18,6 +18,9 @@ public class ContratacaoDaPropostaService {
     @Inject
     Propostas propostas;
 
+    @Inject
+    br.com.financiamento.originacao.dominio.PropostaRepository repositorio;
+
     @Transactional
     public Contratabilidade contratabilidade(Long propostaId) {
         var proposta = elos.validar(propostaId);
@@ -28,6 +31,11 @@ public class ContratacaoDaPropostaService {
             return new Contratabilidade(null, impedimento.mensagem(), impedimento.codigo());
         }
         return new Contratabilidade(paraContratar(proposta), null, null);
+    }
+
+    @Transactional
+    public java.util.List<String> documentosEnvolvidos(Long propostaId) {
+        return repositorio.findByIdOptional(propostaId).map(Proposta::documentosEnvolvidos).orElse(java.util.List.of());
     }
 
     @Transactional

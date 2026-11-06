@@ -9,6 +9,8 @@ import br.com.financiamento.originacao.aplicacao.ResolverPendenciaService;
 import br.com.financiamento.originacao.aplicacao.ResponderContrapropostaService;
 import br.com.financiamento.originacao.aplicacao.SimularCondicoesService;
 import br.com.financiamento.originacao.aplicacao.SubmeterPropostaService;
+import br.com.financiamento.shared.seguranca.Papeis;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -39,6 +41,7 @@ public class PropostaWebResource {
     @Inject ResolverPendenciaService resolverPendencia;
 
     @POST
+    @RolesAllowed({Papeis.PROPONENTE, Papeis.VENDEDOR, Papeis.CORRESPONDENTE})
     public Response iniciar(IniciarPropostaRequest request) {
         iniciarPropostaRequestValidador.validar(request);
         var detalhe = DetalhePropostaWebResponse.de(iniciar.executar(request.tipoDeBem()));
@@ -47,12 +50,14 @@ public class PropostaWebResource {
 
     @GET
     @Path("/{id}")
+    @RolesAllowed({Papeis.PROPONENTE, Papeis.COOBRIGADO, Papeis.VENDEDOR, Papeis.CORRESPONDENTE, Papeis.ANALISTA})
     public DetalhePropostaWebResponse consultar(@PathParam("id") Long id) {
         return DetalhePropostaWebResponse.de(consultar.executar(id));
     }
 
     @PUT
     @Path("/{id}/participantes")
+    @RolesAllowed({Papeis.PROPONENTE, Papeis.CORRESPONDENTE})
     public DetalhePropostaWebResponse participantes(@PathParam("id") Long id, ParticipantesRequest request) {
         participantesRequestValidador.validar(request);
         return DetalhePropostaWebResponse.de(informarParticipantes.executar(id, request.comando()));
@@ -60,6 +65,7 @@ public class PropostaWebResource {
 
     @PUT
     @Path("/{id}/bem")
+    @RolesAllowed({Papeis.PROPONENTE, Papeis.VENDEDOR, Papeis.CORRESPONDENTE})
     public DetalhePropostaWebResponse bem(@PathParam("id") Long id, BemRequest request) {
         bemRequestValidador.validar(request);
         return DetalhePropostaWebResponse.de(informarBem.executar(id, request.comando()));
@@ -67,6 +73,7 @@ public class PropostaWebResource {
 
     @PUT
     @Path("/{id}/condicoes")
+    @RolesAllowed(Papeis.PROPONENTE)
     public DetalhePropostaWebResponse condicoes(@PathParam("id") Long id, CondicoesRequest request) {
         condicoesRequestValidador.validar(request);
         return DetalhePropostaWebResponse.de(simularCondicoes.executar(id, request.comando()));
@@ -74,30 +81,35 @@ public class PropostaWebResource {
 
     @POST
     @Path("/{id}/submissao")
+    @RolesAllowed({Papeis.PROPONENTE, Papeis.CORRESPONDENTE})
     public DetalhePropostaWebResponse submeter(@PathParam("id") Long id) {
         return DetalhePropostaWebResponse.de(submeter.executar(id));
     }
 
     @POST
     @Path("/{id}/cancelamento")
+    @RolesAllowed(Papeis.PROPONENTE)
     public DetalhePropostaWebResponse cancelar(@PathParam("id") Long id) {
         return DetalhePropostaWebResponse.de(cancelar.executar(id));
     }
 
     @POST
     @Path("/{id}/contraproposta/aceite")
+    @RolesAllowed(Papeis.PROPONENTE)
     public DetalhePropostaWebResponse aceitarContraproposta(@PathParam("id") Long id) {
         return DetalhePropostaWebResponse.de(responderContraproposta.aceitar(id));
     }
 
     @POST
     @Path("/{id}/contraproposta/recusa")
+    @RolesAllowed(Papeis.PROPONENTE)
     public DetalhePropostaWebResponse recusarContraproposta(@PathParam("id") Long id) {
         return DetalhePropostaWebResponse.de(responderContraproposta.recusar(id));
     }
 
     @POST
     @Path("/{id}/pendencia/resolucao")
+    @RolesAllowed({Papeis.PROPONENTE, Papeis.CORRESPONDENTE, Papeis.ANALISTA})
     public DetalhePropostaWebResponse resolverPendencia(@PathParam("id") Long id) {
         return DetalhePropostaWebResponse.de(resolverPendencia.executar(id));
     }

@@ -5,6 +5,8 @@ import br.com.financiamento.contratacao.ContratacaoFacade;
 import br.com.financiamento.desembolso.dominio.Desembolso;
 import br.com.financiamento.desembolso.dominio.DesembolsoRepository;
 import br.com.financiamento.desembolso.dominio.SituacaoDoFgts;
+import br.com.financiamento.shared.seguranca.ErroDeSeguranca;
+import br.com.financiamento.shared.seguranca.UsuarioAtual;
 import br.com.financiamento.shared.validacao.ContextoDeDominio;
 import br.com.financiamento.desembolso.dominio.ErrosDoDesembolso;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -34,6 +36,9 @@ public class LiberarRecursoService {
     @Inject
     Clock relogio;
 
+    @Inject
+    UsuarioAtual usuarioAtual;
+
     /** GarantiaRegistrada dispara UC-0021 (bem pronto) ou abre a liberação por medição (na planta). */
     @Transactional
     public void garantiaConstituida(Long contratoId) {
@@ -56,8 +61,11 @@ public class LiberarRecursoService {
     /** UC-0022. */
     @Transactional
     public Desembolso entradaRecomposta(Long desembolsoId) {
-        var d = desembolsos.buscar(desembolsoId, ContextoDeDominio.exigir(x -> x.fgts() == SituacaoDoFgts.NEGADO,
-                ErrosDoDesembolso.RECOMPOR_SO_COM_FGTS_NEGADO, x -> new Object[0]));
+        var d = desembolsos.buscar(desembolsoId,
+                ContextoDeDominio.exigir(x -> usuarioAtual.participaDe(contratacao.documentosEnvolvidos(x.contratoId())),
+                        ErroDeSeguranca.NAO_PARTICIPA, x -> new Object[]{"contrato"}),
+                ContextoDeDominio.exigir(x -> x.fgts() == SituacaoDoFgts.NEGADO,
+                        ErrosDoDesembolso.RECOMPOR_SO_COM_FGTS_NEGADO, x -> new Object[0]));
         d.entradaRecomposta(relogio.instant());
         desembolsos.salvar(d);
         return d;

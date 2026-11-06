@@ -2,6 +2,8 @@ package br.com.financiamento.avaliacao.entrypoint.retorno;
 
 import br.com.financiamento.avaliacao.aplicacao.RegistrarLaudoService;
 import br.com.financiamento.avaliacao.aplicacao.RegistrarLaudoService.Laudo;
+import br.com.financiamento.shared.seguranca.Papeis;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -21,6 +23,7 @@ public class RetornoDoAvaliadorResource {
 
     @POST
     @Path("/{avaliacaoId}")
+    @RolesAllowed(Papeis.SISTEMA_AVALIADOR)
     public Response receber(@PathParam("avaliacaoId") Long avaliacaoId, LaudoRequest r) {
         laudoRequestValidador.validar(r);
         registrar.executar(avaliacaoId, new Laudo(r.aceitoComoGarantia(), r.valor(), r.avaliadaEm()));

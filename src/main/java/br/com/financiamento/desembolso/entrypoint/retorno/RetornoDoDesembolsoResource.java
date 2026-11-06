@@ -1,6 +1,8 @@
 package br.com.financiamento.desembolso.entrypoint.retorno;
 
 import br.com.financiamento.desembolso.aplicacao.LiberarRecursoService;
+import br.com.financiamento.shared.seguranca.Papeis;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -21,6 +23,7 @@ public class RetornoDoDesembolsoResource {
 
     @POST
     @Path("/fgts/{desembolsoId}")
+    @RolesAllowed(Papeis.SISTEMA_FGTS)
     public Response fgts(@PathParam("desembolsoId") Long desembolsoId, RetornoDoFgtsRequest r) {
         retornoDoFgtsRequestValidador.validar(r);
         liberar.fgtsRespondido(desembolsoId, r.liberado(), r.motivo());
@@ -29,6 +32,7 @@ public class RetornoDoDesembolsoResource {
 
     @POST
     @Path("/pagamento")
+    @RolesAllowed(Papeis.SISTEMA_PAGAMENTO)
     public Response pagamento(PagamentoRequest r) {
         pagamentoRequestValidador.validar(r);
         liberar.pagamentoConfirmado(r.protocolo());

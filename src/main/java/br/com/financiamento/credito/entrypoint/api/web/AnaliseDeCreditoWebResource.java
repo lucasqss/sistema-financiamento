@@ -4,6 +4,8 @@ import br.com.financiamento.credito.aplicacao.ConsultarAnalisesService;
 import br.com.financiamento.credito.aplicacao.RegistrarDecisaoService;
 import br.com.financiamento.credito.aplicacao.RegistrarDecisaoService.Decisao;
 import br.com.financiamento.credito.dominio.AnaliseDeCredito;
+import br.com.financiamento.shared.seguranca.Papeis;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -23,12 +25,14 @@ public class AnaliseDeCreditoWebResource {
     @Inject RegistrarDecisaoService registrar;
 
     @GET
+    @RolesAllowed(Papeis.ANALISTA)
     public List<AnaliseDeCreditoWebResponse> daProposta(@QueryParam("proposta") Long propostaId) {
         return consultar.daProposta(propostaId).stream().map(AnaliseDeCreditoWebResponse::de).toList();
     }
 
     @POST
     @Path("/{id}/decisao")
+    @RolesAllowed(Papeis.ANALISTA)
     public AnaliseDeCreditoWebResponse decidir(@PathParam("id") Long id, DecisaoDoAnalistaRequest r) {
         decisaoDoAnalistaRequestValidador.validar(r);
         return AnaliseDeCreditoWebResponse.de(registrar.executar(id,

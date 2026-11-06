@@ -3,6 +3,8 @@ package br.com.financiamento.originacao.aplicacao;
 import br.com.financiamento.originacao.dominio.ErrosDaOriginacao;
 import br.com.financiamento.originacao.dominio.Proposta;
 import br.com.financiamento.originacao.dominio.PropostaRepository;
+import br.com.financiamento.shared.seguranca.ErroDeSeguranca;
+import br.com.financiamento.shared.seguranca.UsuarioAtual;
 import br.com.financiamento.shared.validacao.CadeiaDeValidacao;
 import br.com.financiamento.shared.validacao.Elo;
 import br.com.financiamento.shared.validacao.ErroDeDominioException;
@@ -23,11 +25,15 @@ class ElosDaProposta {
     @Inject
     PropostaRepository repositorio;
 
+    @Inject
+    UsuarioAtual usuarioAtual;
+
     /** Roda a cadeia "a proposta existe" seguida dos elos do caso de uso e devolve a proposta carregada. */
     @SafeVarargs
     final Proposta validar(Long propostaId, Elo<ContextoDaProposta>... doCasoDeUso) {
         var elos = new ArrayList<Elo<ContextoDaProposta>>();
         elos.add(existe());
+        elos.add(usuarioParticipa());
         elos.addAll(List.of(doCasoDeUso));
         var contexto = new ContextoDaProposta(propostaId);
         CadeiaDeValidacao.de(elos).validar(contexto);
@@ -39,6 +45,19 @@ class ElosDaProposta {
         return (contexto, proximo) -> {
             contexto.carregou(repositorio.findByIdOptional(contexto.propostaId()).orElseThrow(() ->
                     new ErroDeDominioException(ErrosDaOriginacao.PROPOSTA_NAO_ENCONTRADA, contexto.propostaId())));
+            proximo.seguir(contexto);
+        };
+    }
+
+    /**
+     * ADR 0012: proponente, coobrigado, vendedor e correspondente só agem na proposta de que participam
+     * (403). Analista, engenheiro e sistemas não têm essa restrição.
+     */
+    Elo<ContextoDaProposta> usuarioParticipa() {
+        return (contexto, proximo) -> {
+            if (!usuarioAtual.participaDe(contexto.proposta().documentosEnvolvidos())) {
+                throw new ErroDeDominioException(ErroDeSeguranca.NAO_PARTICIPA, "proposta");
+            }
             proximo.seguir(contexto);
         };
     }

@@ -5,6 +5,8 @@ import br.com.financiamento.documentos.aplicacao.ConsultarDocumentosService;
 import br.com.financiamento.documentos.aplicacao.EnviarDocumentoService;
 import br.com.financiamento.documentos.aplicacao.EnviarDocumentoService.Envio;
 import br.com.financiamento.documentos.dominio.SituacaoDoDocumento;
+import br.com.financiamento.shared.seguranca.Papeis;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -39,6 +41,7 @@ public class DocumentoWebResource {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @RolesAllowed({Papeis.PROPONENTE, Papeis.CORRESPONDENTE})
     public Response enviar(@RestForm Long propostaId, @RestForm String titular, @RestForm String tipo,
                            @RestForm("arquivo") FileUpload arquivo) {
         envioDeDocumentoRequestValidador.validar(new EnvioDeDocumentoRequest(propostaId, titular, tipo,
@@ -56,6 +59,7 @@ public class DocumentoWebResource {
 
     /** Os documentos de uma proposta, ou a fila do analista (situacao=ENVIADO). */
     @GET
+    @RolesAllowed(Papeis.ANALISTA)
     public List<DocumentoWebResponse> listar(@QueryParam("proposta") Long propostaId,
                                              @QueryParam("situacao") SituacaoDoDocumento situacao) {
         var lista = propostaId != null ? consultar.daProposta(propostaId)
@@ -65,6 +69,7 @@ public class DocumentoWebResource {
 
     @GET
     @Path("/{id}/arquivo")
+    @RolesAllowed(Papeis.ANALISTA)
     public Response arquivo(@PathParam("id") Long id) {
         var a = consultar.arquivo(id);
         return Response.ok(a.conteudo(), a.tipoDeConteudo())
@@ -73,6 +78,7 @@ public class DocumentoWebResource {
 
     @POST
     @Path("/{id}/conferencia")
+    @RolesAllowed(Papeis.ANALISTA)
     public DocumentoWebResponse conferir(@PathParam("id") Long id, ConferenciaRequest r) {
         conferenciaRequestValidador.validar(r);
         return DocumentoWebResponse.de(conferir.executar(id, r.aceito(), r.motivo(), r.observacao()));

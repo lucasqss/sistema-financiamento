@@ -91,8 +91,8 @@ public final class JornadaParaTeste {
         }
         long contrato = given().get("/web/contratacoes/" + contratacao).then().extract().jsonPath().getLong("contratoId");
         for (var d : signatarios) {
-            given().contentType(ContentType.JSON).body(Map.of("documento", d))
-                    .post("/web/contratos/" + contrato + "/assinaturas").then().statusCode(200);
+            given().header("Authorization", "Bearer " + TokensParaTeste.signatario(d)).contentType(ContentType.JSON)
+                    .body(Map.of("documento", d)).post("/web/contratos/" + contrato + "/assinaturas").then().statusCode(200);
         }
         return contrato;
     }

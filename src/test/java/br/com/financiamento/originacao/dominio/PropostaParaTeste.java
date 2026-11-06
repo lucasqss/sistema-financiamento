@@ -26,7 +26,7 @@ final class PropostaParaTeste {
     }
 
     static Proposta rascunho(String tipo) {
-        return Proposta.iniciar(TipoDeBem.de(tipo), Instant.parse("2026-11-05T10:00:00Z"));
+        return Proposta.iniciar(TipoDeBem.de(tipo), Instant.parse("2026-11-05T10:00:00Z"), PROPONENTE, "proponente");
     }
 
     static Participante proponentePf(BigDecimal renda) {

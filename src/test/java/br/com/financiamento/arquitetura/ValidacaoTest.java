@@ -120,11 +120,11 @@ class ValidacaoTest {
                 .check(classes);
     }
 
-    /** Cada catálogo fica no domínio do seu módulo (ou em shared.validacao, para os erros de atributo). */
+    /** Cada catálogo fica no domínio do seu módulo, ou em shared para os transversais (atributo, segurança). */
     @Test
     void catalogosNoDominioDoModulo() {
         classes().that().implement(ErroCatalogado.class)
-                .should().resideInAnyPackage("..dominio..", BASE + ".shared.validacao..", BASE + ".bem")
+                .should().resideInAnyPackage("..dominio..", BASE + ".shared..", BASE + ".bem")
                 .check(classes);
     }
 

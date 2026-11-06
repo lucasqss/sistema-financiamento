@@ -35,6 +35,14 @@ Pré-requisito: JDK 25. O Maven vem pelo wrapper.
 - Sem Docker, aponte para um PostgreSQL com `QUARKUS_DATASOURCE_JDBC_URL`, `QUARKUS_DATASOURCE_USERNAME` e `QUARKUS_DATASOURCE_PASSWORD`. As migrações criam os esquemas.
 - A API web da originação fica em `/web/propostas`. Exemplo: `POST /web/propostas` com `{"tipoDeBem": "MOTO_USADA"}`.
 
+A autenticação é delegada a um emissor externo de JWT ([ADR 0012](docs/arquitetura/adr/0012-autenticacao-delegada-e-autorizacao.md)). Configure:
+- `JWT_ISSUER`: o emissor esperado no token;
+- `JWT_JWKS_URL`: as chaves públicas do emissor;
+- `JWT_CLAIM_PAPEIS`: a claim dos papéis (padrão `groups`);
+- `JWT_CLAIM_DOCUMENTO`: a claim do CPF/CNPJ do usuário (padrão `cpf`).
+
+Cada endpoint exige os papéis dos atores do modelo, e cada pessoa só age nas propostas e contratos de que participa.
+
 Toda requisição segue o mesmo fluxo de validação ([ADR 0011](docs/arquitetura/adr/0011-fluxo-comum-de-validacao.md)):
 - a cadeia de atributos do request (400, todos os campos de uma vez);
 - a cadeia de domínio do caso de uso (422, ou 404);

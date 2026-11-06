@@ -31,6 +31,13 @@ public class LiberacaoDoContratoService {
                 COM_GARANTIA.contains(c.estado()));
     }
 
+    /** Quem participa do contrato (ADR 0012). */
+    @Transactional
+    public java.util.List<String> documentosEnvolvidos(Long contratoId) {
+        return contratacoes.seExistir(contratoId).map(contratacoes::documentosEnvolvidos)
+                .orElse(java.util.List.of());
+    }
+
     @Transactional
     public void recursoLiberado(Long contratoId) {
         var c = contratacoes.contrato(contratoId, Contratacoes.aceita("RecursoLiberado"));

@@ -182,7 +182,6 @@ Os retornos externos chegam hoje por REST. Em produção, chegam pela fila ([ADR
 **Próximos passos:**
 - o relay do outbox para a fila (ADR 0006), que tira os pedidos aos externos do banco;
 - RN-0013 (veículo sem restrição) e a elegibilidade do FGTS antes da submissão, que dependem de sistemas externos;
-- autenticação e perfis (proponente, correspondente, analista) e o controle de acesso aos arquivos;
 - o adaptador de armazenamento de objetos para os arquivos (ADR 0010), para mais de uma instância;
 - Cadastro de pessoas, hoje só com a fachada.
 
@@ -224,6 +223,7 @@ Os 6 sistemas externos do modelo têm cada um uma camada anticorrupção no mód
     - cada tipo de bem final de DIM-0001, lido de `docs/dominio/especificacao.md`, tem exatamente um plug-in;
     - os parâmetros conferem com a tabela RN-0010, a fonte e a validade da avaliação com a RN-0023, e os seguros com a RN-0025;
   - `EsquemaPorModuloTest`: entidades, migrações e consultas só no esquema do próprio módulo;
+  - `SegurancaArquiteturaTest`: todo endpoint declara os papéis ([ADR 0012](adr/0012-autenticacao-delegada-e-autorizacao.md));
   - `ValidacaoTest`: o fluxo comum de validação do [ADR 0011](adr/0011-fluxo-comum-de-validacao.md) (validador por request, cadeia de domínio por caso de uso, erros só do catálogo).
 - Os ciclos de vida implementados (`EstadoProposta`, `EstadoContrato`) são conferidos contra os diagramas CV-0001 e CV-0002 do modelo.
 
@@ -242,3 +242,4 @@ Os 6 sistemas externos do modelo têm cada um uma camada anticorrupção no mód
 | [0009](adr/0009-retorno-entre-modulos-por-porta-de-ouvinte.md) | Retorno entre módulos por porta de ouvinte, sem ciclo | evolutividade, confiabilidade |
 | [0010](adr/0010-armazenamento-de-arquivos.md) | Arquivos dos documentos atrás de uma porta: sistema de arquivos agora, armazenamento de objetos em produção | evolutividade, confiabilidade |
 | [0011](adr/0011-fluxo-comum-de-validacao.md) | Fluxo comum de validação: catálogo de erros, cadeia de atributo no request e cadeia de domínio no caso de uso | evolutividade, confiabilidade |
+| [0012](adr/0012-autenticacao-delegada-e-autorizacao.md) | Autenticação delegada (JWT de emissor externo) e autorização por papel e por dono | segurança, evolutividade |

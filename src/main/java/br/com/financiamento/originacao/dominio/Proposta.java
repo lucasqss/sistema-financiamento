@@ -69,6 +69,13 @@ public class Proposta extends PanacheEntityBase {
     @Column(name = "iniciada_em", nullable = false, updatable = false)
     private Instant iniciadaEm;
 
+    /** Quem iniciou (UC-0001): proponente, vendedor ou correspondente, pelo CPF/CNPJ e o papel. */
+    @Column(name = "iniciada_por_documento", updatable = false)
+    private String iniciadaPorDocumento;
+
+    @Column(name = "iniciada_por_papel", updatable = false)
+    private String iniciadaPorPapel;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(schema = "originacao", name = "proposta_participante", joinColumns = @JoinColumn(name = "proposta_id"))
     @OrderColumn(name = "ordem")
@@ -126,10 +133,12 @@ public class Proposta extends PanacheEntityBase {
     }
 
     /** UC-0001: a proposta nasce em rascunho, com o tipo de bem fixado. Emite PropostaIniciada. */
-    public static Proposta iniciar(TipoDeBem tipo, Instant agora) {
+    public static Proposta iniciar(TipoDeBem tipo, Instant agora, String iniciadaPorDocumento, String iniciadaPorPapel) {
         var p = new Proposta();
         p.tipoDeBem = tipo.codigo();
         p.iniciadaEm = agora;
+        p.iniciadaPorDocumento = iniciadaPorDocumento == null ? null : iniciadaPorDocumento.replaceAll("\\D", "");
+        p.iniciadaPorPapel = iniciadaPorPapel;
         p.estado = EstadoProposta.ESTADO_INICIAL;
         p.registrar(EstadoProposta.EVENTO_INICIAL, Map.of("tipoDeBem", tipo.codigo()));
         return p;
@@ -429,6 +438,20 @@ public class Proposta extends PanacheEntityBase {
     public String pendencia() { return pendencia; }
     public LocalDate aprovacaoValidaAte() { return aprovacaoValidaAte; }
     public Long contratoId() { return contratoId; }
+
+    /**
+     * Quem participa da proposta e pode agir sobre ela (ADR 0012): quem a iniciou, os participantes e o vendedor.
+     */
+    public List<String> documentosEnvolvidos() {
+        var docs = new ArrayList<String>();
+        if (iniciadaPorDocumento != null) docs.add(iniciadaPorDocumento);
+        participantes.forEach(x -> docs.add(x.documento()));
+        if (bem != null && bem.documentoDoVendedor() != null) docs.add(bem.documentoDoVendedor());
+        return docs;
+    }
+
+    public String iniciadaPorDocumento() { return iniciadaPorDocumento; }
+    public String iniciadaPorPapel() { return iniciadaPorPapel; }
 
     public Participante proponente() {
         return participantes.stream().filter(Participante::proponente).findFirst().orElse(null);

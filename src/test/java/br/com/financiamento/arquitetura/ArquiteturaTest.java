@@ -145,6 +145,12 @@ class ArquiteturaTest {
             @Override
             public void check(JavaClass c, ConditionEvents events) {
                 if (!c.getModifiers().contains(JavaModifier.PUBLIC)) return;
+                // Classe só de constantes (ex.: Papeis, usada em @RolesAllowed): o compilador copia o valor para
+                // quem usa, e a dependência não aparece no bytecode. Ela é pública porque outros pacotes a usam.
+                boolean soConstantes = !c.getFields().isEmpty() && c.getFields().stream().allMatch(f ->
+                        f.getModifiers().containsAll(java.util.Set.of(JavaModifier.STATIC, JavaModifier.FINAL)))
+                        && c.getMethods().isEmpty();
+                if (soConstantes) return;
                 boolean usadaFora = c.getDirectDependenciesToSelf().stream()
                         .anyMatch(d -> !d.getOriginClass().getPackageName().equals(c.getPackageName()));
                 if (!usadaFora) {

@@ -3,6 +3,8 @@ package br.com.financiamento.desembolso.entrypoint.api.web;
 import br.com.financiamento.desembolso.aplicacao.LiberarRecursoService;
 import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import br.com.financiamento.desembolso.dominio.ErrosDoDesembolso;
+import br.com.financiamento.shared.seguranca.Papeis;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -17,6 +19,7 @@ public class DesembolsoWebResource {
     @Inject LiberarRecursoService liberar;
 
     @GET
+    @RolesAllowed(Papeis.ANALISTA)
     public DesembolsoWebResponse doContrato(@QueryParam("contrato") Long contratoId) {
         return liberar.doContrato(contratoId).map(DesembolsoWebResponse::de)
                 .orElseThrow(() -> new ErroDeDominioException(ErrosDoDesembolso.CONTRATO_SEM_DESEMBOLSO, contratoId));
@@ -24,6 +27,7 @@ public class DesembolsoWebResource {
 
     @POST
     @Path("/{id}/entrada-recomposta")
+    @RolesAllowed(Papeis.PROPONENTE)
     public DesembolsoWebResponse entradaRecomposta(@PathParam("id") Long id) {
         return DesembolsoWebResponse.de(liberar.entradaRecomposta(id));
     }

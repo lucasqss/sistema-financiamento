@@ -1,6 +1,8 @@
 package br.com.financiamento.garantia.entrypoint.retorno;
 
 import br.com.financiamento.garantia.aplicacao.ClassificarRetornoService;
+import br.com.financiamento.shared.seguranca.Papeis;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -19,6 +21,7 @@ public class RetornoDoOrgaoResource {
     @Inject ClassificarRetornoService classificar;
 
     @POST
+    @RolesAllowed(Papeis.SISTEMA_REGISTRO)
     public Response receber(RetornoDoOrgaoRequest r) {
         retornoDoOrgaoRequestValidador.validar(r);
         var efeito = classificar.executar(r.protocolo(), r.resultado(), r.identificacaoRegistrada(), r.texto());
