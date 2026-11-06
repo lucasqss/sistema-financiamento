@@ -12,7 +12,8 @@ Etapa atual:
   - os módulos Crédito e Avaliação, cujos resultados decidem a proposta;
   - a Contratação, do aceite das condições ao contrato assinado;
   - a Garantia, do contrato assinado à alienação fiduciária registrada;
-  - o Desembolso, da garantia constituída ao contrato formalizado, de uma vez ou por medição da obra.
+  - o Desembolso, da garantia constituída ao contrato formalizado, de uma vez ou por medição da obra;
+  - os Documentos: envio dos arquivos e conferência pelo analista, que a aprovação da proposta exige.
 
 - [`docs/dominio`](docs/dominio/README.md): o modelo (documento compilado, base do episteme e script de carga);
 - [`docs/arquitetura`](docs/arquitetura/README.md): a arquitetura (características, estilo, módulos e ADRs);

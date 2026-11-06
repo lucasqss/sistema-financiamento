@@ -46,7 +46,7 @@ import java.util.Map;
  * 3. o estado só muda pelas transições do ciclo de vida CV-0001;
  * 5. para submeter, a proposta está completa e enquadrada (RN-0018);
  * 7. só é aprovada com avaliação válida e crédito aprovado, ambos posteriores
- *    à última versão das condições (RN-0019, RN-0022).
+ *    à última versão das condições, e com os documentos aceitos (RN-0019, RN-0022).
  * As regras que precisam de dados de fora (plug-in do tipo, outras propostas)
  * são aplicadas pelo {@link Enquadrador}.
  */
@@ -154,14 +154,64 @@ public class Proposta extends PanacheEntityBase {
         this.condicoes = new Condicoes(entradaPropria, entradaFgts, prazoMeses, parcela, versao);
     }
 
-    /** RN-0009: o mesmo documento não é entregue duas vezes para o mesmo titular. */
-    public void registrarDocumento(DocumentoEntregue documento) {
+    // --- Documentos (RN-0009, UC-0024) ---
+
+    /**
+     * Um documento foi enviado para a proposta. Só no rascunho ou com pendência
+     * (invariante 2), do bem ou de um participante. Substitui o mesmo documento
+     * ainda não aceito (o recusado, ou o enviado errado antes da conferência).
+     */
+    public void documentoRecebido(Long documentoId, String titular, String tipo) {
         exigirAlteravel();
-        if (documentos.contains(documento)) {
-            throw new RegraVioladaException("RN-0009", "Documento já entregue: " + documento.tipo()
-                    + " (" + documento.titular() + ").");
+        var doTitular = DocumentoEntregue.normalizarTitular(titular);
+        if (!doTitular.equals(DocumentoEntregue.DO_BEM)
+                && participantes.stream().noneMatch(p -> p.documento().equals(doTitular))) {
+            throw new RegraVioladaException("RN-0009", "O titular " + doTitular + " não é o bem nem um participante da proposta.");
         }
-        documentos.add(documento);
+        for (int i = 0; i < documentos.size(); i++) {
+            var atual = documentos.get(i);
+            if (!atual.mesmo(doTitular, tipo)) continue;
+            if (atual.situacao() == DocumentoEntregue.Situacao.ACEITO) {
+                throw new RegraVioladaException("RN-0009", "O documento " + tipo + " (" + doTitular + ") já foi aceito.");
+            }
+            documentos.set(i, new DocumentoEntregue(documentoId, doTitular, tipo));
+            return;
+        }
+        documentos.add(new DocumentoEntregue(documentoId, doTitular, tipo));
+    }
+
+    /**
+     * UC-0024: o resultado da conferência, que acontece depois da submissão.
+     * Recusado com a proposta em análise, a proposta fica com pendência (EVT-0038
+     * dispara EVT-0003); aceito, a decisão pode seguir (EVT-0039 dispara UC-0006).
+     */
+    public void documentoConferido(Long documentoId, boolean aceito, String motivo) {
+        if (estado == EstadoProposta.RASCUNHO || estado == EstadoProposta.APROVADA || !estado.ativa()) {
+            throw new RegraVioladaException("UC-0024", "A conferência é feita na proposta submetida e ainda em análise; esta está "
+                    + nomeDoEstado() + ".");
+        }
+        int i = indiceDoDocumento(documentoId);
+        var conferido = documentos.get(i).conferido(aceito, motivo);
+        documentos.set(i, conferido);
+        if (aceito) return;
+        var descricao = "RN-0009: documento recusado: " + conferido.tipo() + " (" + conferido.titular() + "), " + motivo + ".";
+        if (estado == EstadoProposta.EM_ANALISE) {
+            entrarEmPendencia(descricao);
+        } else if (estado == EstadoProposta.COM_PENDENCIA) {
+            pendencia = pendencia == null ? descricao : pendencia + " " + descricao;
+        }
+    }
+
+    private int indiceDoDocumento(Long documentoId) {
+        for (int i = 0; i < documentos.size(); i++) {
+            if (documentoId.equals(documentos.get(i).documentoId())) return i;
+        }
+        throw new RegraVioladaException("UC-0024", "O documento " + documentoId + " não é o vigente desta proposta.");
+    }
+
+    /** RN-0019: os documentos entregues foram todos conferidos e aceitos? */
+    public boolean documentosAceitos() {
+        return !documentos.isEmpty() && documentos.stream().allMatch(d -> d.situacao() == DocumentoEntregue.Situacao.ACEITO);
     }
 
     /** UC-0005: só submete enquadrada (RN-0018). Emite PropostaSubmetida. */
@@ -224,7 +274,7 @@ public class Proposta extends PanacheEntityBase {
             transicionar(EventoDaProposta.CONTRAPROPOSTA_EMITIDA,
                     Map.of("validaAte", contraproposta.validaAte().toString(), "ressalva", creditoVigente.ressalva()));
         } else if (creditoVigente != null && creditoVigente.resultado() == ResultadoDeCredito.APROVADO
-                && avaliacao != null) {
+                && avaliacao != null && documentosAceitos()) {
             this.aprovadaEm = hoje;
             this.aprovacaoValidaAte = hoje.plusDays(VALIDADE_DA_APROVACAO_DIAS);
             transicionar(EventoDaProposta.PROPOSTA_APROVADA, Map.of("validaAte", aprovacaoValidaAte.toString()));

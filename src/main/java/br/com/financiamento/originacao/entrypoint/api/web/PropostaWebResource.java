@@ -5,7 +5,6 @@ import br.com.financiamento.originacao.aplicacao.ConsultarPropostaService;
 import br.com.financiamento.originacao.aplicacao.InformarBemService;
 import br.com.financiamento.originacao.aplicacao.InformarParticipantesService;
 import br.com.financiamento.originacao.aplicacao.IniciarPropostaService;
-import br.com.financiamento.originacao.aplicacao.RegistrarDocumentoService;
 import br.com.financiamento.originacao.aplicacao.ResolverPendenciaService;
 import br.com.financiamento.originacao.aplicacao.ResponderContrapropostaService;
 import br.com.financiamento.originacao.aplicacao.SimularCondicoesService;
@@ -28,7 +27,6 @@ public class PropostaWebResource {
     @Inject InformarParticipantesService informarParticipantes;
     @Inject InformarBemService informarBem;
     @Inject SimularCondicoesService simularCondicoes;
-    @Inject RegistrarDocumentoService registrarDocumento;
     @Inject SubmeterPropostaService submeter;
     @Inject CancelarPropostaService cancelar;
     @Inject ConsultarPropostaService consultar;
@@ -63,12 +61,6 @@ public class PropostaWebResource {
     @Path("/{id}/condicoes")
     public DetalhePropostaWebResponse condicoes(@PathParam("id") Long id, CondicoesRequest request) {
         return DetalhePropostaWebResponse.de(simularCondicoes.executar(id, request.comando()));
-    }
-
-    @POST
-    @Path("/{id}/documentos")
-    public DetalhePropostaWebResponse documento(@PathParam("id") Long id, DocumentoRequest request) {
-        return DetalhePropostaWebResponse.de(registrarDocumento.executar(id, request.titular(), request.tipo()));
     }
 
     @POST

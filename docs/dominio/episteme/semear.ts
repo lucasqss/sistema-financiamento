@@ -369,7 +369,7 @@ documentos e os resultados da avaliação e do crédito **como chegaram à propo
 4. Bem: [[USA:@rn.bem-unico]].
 5. Para submeter: completa e enquadrada ([[USA:@rn.enquadramento]]).
 6. Toda mudança de valor, entrada, prazo ou avaliação dispara novo enquadramento.
-7. Só é aprovada com avaliação válida ([[USA:@rn.validade-avaliacao]]) e crédito aprovado, ambos posteriores à última versão das condições.
+7. Só é aprovada com avaliação válida ([[USA:@rn.validade-avaliacao]]) e crédito aprovado, ambos posteriores à última versão das condições, e com os documentos exigidos conferidos e aceitos.
 8. Uma proposta gera no máximo um contrato.
 
 **Emite:** [[EMITE:@evt.iniciada]], [[EMITE:@evt.submetida]], [[EMITE:@evt.pendencia]], [[EMITE:@evt.pendencia-resolvida]], [[EMITE:@evt.avaliacao-vencida]], [[EMITE:@evt.aprovada]], [[EMITE:@evt.reprovada]], [[EMITE:@evt.cancelada]], [[EMITE:@evt.expirada]], [[EMITE:@evt.contraproposta-emitida]], [[EMITE:@evt.contraproposta-aceita]], [[EMITE:@evt.contraproposta-recusada]].
@@ -519,7 +519,7 @@ Varia por [[VARIA_POR:@dim.tipo]] e por [[VARIA_POR:@dim.forma]]: cada cruzament
 rn('enquadramento', 'ori.regras.jornada', 'Enquadramento para submeter',
   'Para a [[@t.submissao|submissão]], o [[@t.enquadramento|enquadramento]] exige a proposta completa e respeitando [[INCLUI:@rn.participantes]], [[INCLUI:@rn.pj]], [[INCLUI:@rn.vendedor]], [[INCLUI:@rn.bem-unico]], [[INCLUI:@rn.valor-financiado]], [[INCLUI:@rn.ltv]], [[INCLUI:@rn.prazo]], [[INCLUI:@rn.comprometimento]], [[INCLUI:@rn.documentos]] e as regras do seu tipo de bem: [[INCLUI:@rn.idade-veiculo]], [[INCLUI:@rn.idade-proponente]], [[INCLUI:@rn.restricao-veiculo]], [[INCLUI:@rn.terreno]] e [[INCLUI:@rn.fgts]].');
 rn('aprovacao', 'ori.regras.jornada', 'Aprovação da proposta',
-  'A proposta é aprovada quando há avaliação válida aceita como garantia **e** crédito aprovado, e o enquadramento continua válido com o valor de avaliação. Crédito reprovado ou bem recusado como garantia reprova a proposta.');
+  'A proposta é aprovada quando há avaliação válida aceita como garantia, crédito aprovado **e** os documentos exigidos ([[@rn.documentos]]) conferidos e aceitos, e o enquadramento continua válido com o valor de avaliação. Crédito reprovado ou bem recusado como garantia reprova a proposta; documento recusado deixa a proposta com pendência.');
 rn('contraproposta', 'ori.regras.jornada', 'Contraproposta', `
 Crédito aprovado com [[@t.ressalva|ressalva]] gera uma [[@t.contraproposta|contraproposta]] com validade. Aceita, as
 novas condições são reenquadradas e a proposta segue; recusada ou vencida, a proposta é reprovada.
@@ -582,15 +582,15 @@ uc('submeter', 'ori.ucs', 'Submeter proposta', `
 **Fluxo alternativo:** incompleta ou fora do enquadramento → continua em rascunho, com a lista do que falta.
 `);
 uc('decidir', 'ori.ucs', 'Decidir proposta', `
-**Ator:** nenhum: é automático, disparado pelos resultados da avaliação e do crédito.
+**Ator:** nenhum: é automático, disparado pelos resultados da avaliação, do crédito e da conferência dos documentos.
 
 **Fluxo principal**
-1. Com bem avaliado e crédito aprovado, o sistema confere [[USA:@rn.aprovacao]] e [[USA:@rn.enquadramento]] com o valor de avaliação.
+1. Com bem avaliado, crédito aprovado e documentos aceitos, o sistema confere [[USA:@rn.aprovacao]] e [[USA:@rn.enquadramento]] com o valor de avaliação.
 2. A proposta é aprovada. Emite [[EMITE:@evt.aprovada]].
 
 **Fluxos alternativos**
 - Crédito reprovado ou bem recusado como garantia → a proposta é reprovada. Emite [[EMITE:@evt.reprovada]].
-- Cota estourada com o valor de avaliação → emite [[EMITE:@evt.pendencia]].
+- Cota estourada com o valor de avaliação, ou documento recusado → emite [[EMITE:@evt.pendencia]].
 - Crédito aprovado com ressalva → segue para a contraproposta ([[USA:@rn.contraproposta]]).
 `);
 uc('expirar', 'ori.ucs', 'Expirar proposta', `
@@ -984,14 +984,16 @@ Quais documentos são exigidos é regra da Originação, não deste domínio.
 `;
 it('doc.eventos', 'doc', 'SECAO', 'Eventos', 'Fatos do domínio de documentos.');
 evt('documento-recusado', 'doc.eventos', 'DocumentoRecusado', 'Um documento foi recusado na conferência (ilegível, vencido ou divergente). Dispara [[DISPARA:@evt.pendencia]] na proposta.');
-evt('documento-aceito', 'doc.eventos', 'DocumentoAceito', 'Um documento foi conferido e aceito.');
+evt('documento-aceito', 'doc.eventos', 'DocumentoAceito', 'Um documento foi conferido e aceito. Dispara [[DISPARA:@uc.decidir]].');
 it('doc.ucs', 'doc', 'SECAO', 'Casos de uso', 'Casos de uso de documentos.');
 uc('conferir-documento', 'doc.ucs', 'Conferir documento', `
 **Ator:** [[@a.analista]].
 
+**Pré-condição:** proposta submetida. A conferência acontece depois da [[@t.submissao|submissão]].
+
 **Fluxo principal:** o analista confere o documento enviado contra o que é exigido ([[USA:@rn.documentos]]) e o aceita. Emite [[EMITE:@evt.documento-aceito]].
 
-**Fluxo alternativo:** ilegível, vencido ou divergente → recusa. Emite [[EMITE:@evt.documento-recusado]].
+**Fluxo alternativo:** ilegível, vencido ou divergente → recusa. Emite [[EMITE:@evt.documento-recusado]]. O proponente reenvia o documento com a proposta com [[@t.pendencia|pendência]], que então é resolvida.
 `);
 
 // ---------------------------------------------------------------------------

@@ -180,7 +180,9 @@ final class RegrasDeEnquadramento {
     }
 
     private void exigirDocumento(String titular, String tipo, String de) {
-        if (proposta.documentos().stream().noneMatch(d -> d.mesmo(titular, tipo))) {
+        // Documento recusado na conferência conta como não entregue: precisa ser reenviado.
+        if (proposta.documentos().stream().noneMatch(d -> d.mesmo(titular, tipo)
+                && d.situacao() != DocumentoEntregue.Situacao.RECUSADO)) {
             violar("RN-0009", "Falta o documento " + de + ": " + tipo + ".");
         }
     }

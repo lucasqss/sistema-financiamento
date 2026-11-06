@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import br.com.financiamento.EnvioDeDocumentosParaTeste;
+
 import static br.com.financiamento.DocumentosParaTeste.cnpj;
 import static br.com.financiamento.DocumentosParaTeste.cpf;
 import static io.restassured.RestAssured.given;
@@ -73,13 +75,8 @@ class PropostaWebResourceTest {
         given().when().post("/web/propostas/" + id + "/submissao")
                 .then().statusCode(422).body("violacoes.regra", hasItem("RN-0009"));
 
-        for (var doc : List.of(Map.of("titular", "bem", "tipo", "CRLV"),
-                Map.of("titular", PROPONENTE, "tipo", "identidade"),
-                Map.of("titular", PROPONENTE, "tipo", "comprovante de renda"),
-                Map.of("titular", PROPONENTE, "tipo", "comprovante de residência"))) {
-            given().contentType(ContentType.JSON).body(doc).when().post("/web/propostas/" + id + "/documentos")
-                    .then().statusCode(200);
-        }
+        EnvioDeDocumentosParaTeste.enviarTodos(id, PROPONENTE, List.of("CRLV"),
+                List.of("identidade", "comprovante de renda", "comprovante de residência"));
 
         given().when().post("/web/propostas/" + id + "/submissao")
                 .then().statusCode(200).body("estado", equalTo("EM_ANALISE")).body("enquadrada", equalTo(true));

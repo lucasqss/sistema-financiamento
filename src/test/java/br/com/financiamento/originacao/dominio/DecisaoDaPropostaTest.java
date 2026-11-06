@@ -30,6 +30,7 @@ class DecisaoDaPropostaTest {
     Proposta emAnalise() {
         var p = completa("MOTO_USADA", veiculo, r("20000"), r("7400"), 36, r("900"), 2022, null);
         p.submeter(enquadrar(p, veiculo));
+        aceitarDocumentos(p);
         p.analiseDeCreditoSolicitada();
         p.avaliacaoSolicitada();
         p.retirarEventos();

@@ -4,7 +4,6 @@ import io.restassured.http.ContentType;
 
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -107,13 +106,9 @@ public final class JornadaParaTeste {
                 "documento", proponente, "nome", "Ana", "nascimento", "1990-05-20", "rendaComprovada", 20000))));
         put(id, "bem", bem);
         put(id, "condicoes", condicoes);
-        var documentos = new ArrayList<Map<String, String>>();
-        documentosDoBem.forEach(d -> documentos.add(Map.of("titular", "bem", "tipo", d)));
-        documentosDoProponente.forEach(d -> documentos.add(Map.of("titular", proponente, "tipo", d)));
-        for (var doc : documentos) {
-            given().contentType(ContentType.JSON).body(doc).post("/web/propostas/" + id + "/documentos").then().statusCode(200);
-        }
+        EnvioDeDocumentosParaTeste.enviarTodos(id, proponente, documentosDoBem, documentosDoProponente);
         given().post("/web/propostas/" + id + "/submissao").then().statusCode(200).body("estado", equalTo("EM_ANALISE"));
+        EnvioDeDocumentosParaTeste.aceitarTodos(id); // UC-0024: a aprovação exige os documentos aceitos (RN-0019)
 
         long avaliacao = given().queryParam("proposta", id).get("/web/avaliacoes").then().extract().jsonPath().getLong("[0].id");
         given().contentType(ContentType.JSON)

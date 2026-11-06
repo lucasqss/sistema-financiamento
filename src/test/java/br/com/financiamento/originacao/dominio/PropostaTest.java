@@ -2,7 +2,6 @@ package br.com.financiamento.originacao.dominio;
 
 import br.com.financiamento.bem.CategoriaDeBem;
 import br.com.financiamento.bem.veiculo.VeiculoParaTeste;
-import br.com.financiamento.originacao.dominio.documento.DocumentoEntregue;
 import br.com.financiamento.shared.dominio.RegraVioladaException;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +11,7 @@ import java.util.List;
 import static br.com.financiamento.originacao.dominio.PropostaParaTeste.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Invariantes do agregado AGR-0001. */
@@ -86,11 +86,39 @@ class PropostaTest {
     }
 
     @Test
-    void mesmoDocumentoNaoEEntregueDuasVezes() {
+    void reenvioSubstituiODocumentoAindaNaoAceito_rn0009() {
         var p = enquadrada();
-        var erro = assertThrows(RegraVioladaException.class,
-                () -> p.registrarDocumento(new DocumentoEntregue("bem", "crlv")));
+        int antes = p.documentos().size();
+        p.documentoRecebido(900L, "bem", "crlv");
+        assertEquals(antes, p.documentos().size(), "o reenvio substitui, não duplica");
+        assertTrue(p.documentos().stream().anyMatch(d -> Long.valueOf(900L).equals(d.documentoId())));
+        var erro = assertThrows(RegraVioladaException.class, () -> p.documentoRecebido(901L, "99999999999", "identidade"));
         assertEquals("RN-0009", erro.violacoes().getFirst().regra());
+    }
+
+    @Test
+    void conferenciaSoDepoisDaSubmissaoERecusaDaPendencia_uc0024() {
+        var p = enquadrada();
+        var id = p.documentos().getFirst().documentoId();
+        assertThrows(RegraVioladaException.class, () -> p.documentoConferido(id, true, null), "em rascunho");
+        p.submeter(enquadrar(p, veiculo));
+        p.retirarEventos();
+        p.documentoConferido(id, false, "ilegível");
+        assertEquals(EstadoProposta.COM_PENDENCIA, p.estado());
+        assertTrue(p.pendencia().contains("ilegível"));
+        assertEquals(List.of("PropostaComPendencia"), p.retirarEventos().stream().map(EventoRegistrado::nome).toList());
+        assertTrue(enquadrar(p, veiculo).violacoes().stream().anyMatch(v -> v.regra().equals("RN-0009")),
+                "o recusado conta como não entregue até o reenvio");
+        var recusado = p.documentos().getFirst();
+        p.documentoRecebido(902L, recusado.titular(), recusado.tipo());
+        p.resolverPendencia(enquadrar(p, veiculo));
+        assertEquals(EstadoProposta.EM_ANALISE, p.estado());
+        assertFalse(p.documentosAceitos());
+        aceitarDocumentos(p);
+        assertTrue(p.documentosAceitos());
+        var aceito = p.documentos().getFirst();
+        assertThrows(RegraVioladaException.class, () -> p.documentoRecebido(903L, aceito.titular(), aceito.tipo()),
+                "documento aceito não é reenviado");
     }
 
     @Test

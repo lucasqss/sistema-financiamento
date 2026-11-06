@@ -48,17 +48,26 @@ final class PropostaParaTeste {
     /** Entrega os documentos exigidos que ainda faltam. */
     static void entregarDocumentos(Proposta p, CategoriaDeBem categoria) {
         for (var d : categoria.documentosDoBem(p.tipoDeBem())) {
-            entregar(p, new DocumentoEntregue(DocumentoEntregue.DO_BEM, d));
+            entregar(p, new DocumentoEntregue(null, DocumentoEntregue.DO_BEM, d));
         }
         for (var participante : p.participantes()) {
             for (var d : categoria.documentosDoParticipante(p.tipoDeBem(), participante.forma())) {
-                entregar(p, new DocumentoEntregue(participante.documento(), d));
+                entregar(p, new DocumentoEntregue(null, participante.documento(), d));
             }
         }
     }
 
+    private static final java.util.concurrent.atomic.AtomicLong IDS = new java.util.concurrent.atomic.AtomicLong(1);
+
     private static void entregar(Proposta p, DocumentoEntregue d) {
-        if (!p.documentos().contains(d)) p.registrarDocumento(d);
+        if (p.documentos().stream().noneMatch(x -> x.mesmo(d.titular(), d.tipo()))) {
+            p.documentoRecebido(IDS.getAndIncrement(), d.titular(), d.tipo());
+        }
+    }
+
+    /** UC-0024: aceita todos os documentos entregues (a proposta precisa estar submetida). */
+    static void aceitarDocumentos(Proposta p) {
+        p.documentos().forEach(d -> p.documentoConferido(d.documentoId(), true, null));
     }
 
     static Enquadramento enquadrar(Proposta p, CategoriaDeBem categoria) {

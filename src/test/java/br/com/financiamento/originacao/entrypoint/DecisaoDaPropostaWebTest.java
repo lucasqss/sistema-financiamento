@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import br.com.financiamento.EnvioDeDocumentosParaTeste;
+
 import static br.com.financiamento.DocumentosParaTeste.cpf;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -45,13 +47,10 @@ class DecisaoDaPropostaWebTest {
         put(id, "bem", Map.of("identificacao", "MOTO-" + UUID.randomUUID(), "valorDeCompra", 20000,
                 "documentoDoVendedor", VENDEDOR, "anoModelo", Year.now().getValue() - 2));
         put(id, "condicoes", Map.of("entradaPropria", 7400, "prazoMeses", 36, "parcela", 900));
-        for (var doc : List.of(Map.of("titular", "bem", "tipo", "CRLV"),
-                Map.of("titular", PROPONENTE, "tipo", "identidade"),
-                Map.of("titular", PROPONENTE, "tipo", "comprovante de renda"),
-                Map.of("titular", PROPONENTE, "tipo", "comprovante de residência"))) {
-            given().contentType(ContentType.JSON).body(doc).post("/web/propostas/" + id + "/documentos").then().statusCode(200);
-        }
+        EnvioDeDocumentosParaTeste.enviarTodos(id, PROPONENTE, List.of("CRLV"),
+                List.of("identidade", "comprovante de renda", "comprovante de residência"));
         given().post("/web/propostas/" + id + "/submissao").then().statusCode(200).body("estado", equalTo("EM_ANALISE"));
+        EnvioDeDocumentosParaTeste.aceitarTodos(id);
         return id;
     }
 

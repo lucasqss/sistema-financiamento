@@ -141,6 +141,7 @@ Assim, a regra "outro módulo só pela raiz" já impede o núcleo e os outros m�
 **Passo 3, contratação:** do aceite das condições finais ao contrato assinado, ou à desistência.
 **Passo 4, garantia:** do contrato assinado à garantia constituída, com exigências, recusas e retornos repetidos.
 **Passo 5, desembolso:** da garantia constituída ao contrato formalizado, de uma vez ou por medição da obra, com o FGTS da entrada.
+**Passo 6, documentos (MVP da análise documental):** arquivos de verdade, conferidos pelo analista depois da submissão; a aprovação exige os documentos aceitos.
 
 | Modelo de negócio | Código |
 |---|---|
@@ -172,6 +173,8 @@ Assim, a regra "outro módulo só pela raiz" já impede o núcleo e os outros m�
 | UC-0023 Liberar parcela da obra, RN-0032 | `Desembolso.medicaoRealizada`: parcela = financiado × (acumulado − já liberado); a de 100% é a última e formaliza o contrato |
 | UC-0017 Prorrogar prazo da obra, RN-0027 | `Contrato.pedirProrrogacao` e `/web/contratos/{id}/prorrogacoes`: até 180 dias somados aplica; acima, pendência para o analista decidir |
 | CV-0002 com parcela intermediária (snapshot v3 do modelo) | `EstadoContrato` com mais de um destino por evento: a parcela intermediária fica em obra, a última formaliza |
+| UC-0024 Conferir documento | módulo `documentos`: `Documento` com o arquivo no `ArmazemDeArquivos` ([ADR 0010](adr/0010-armazenamento-de-arquivos.md)); envio em `/web/documentos` (multipart), fila e arquivo para o analista, conferência em `/web/documentos/{id}/conferencia` |
+| RN-0009 com os arquivos, RN-0019 com os documentos aceitos | a Originação ouve os Documentos (`OuvinteDosDocumentos`): o envio só no rascunho ou com pendência, o recusado conta como não entregue e dá pendência, e a aprovação espera todos aceitos |
 | Eventos de toda a jornada, até o contrato formalizado | gravados no outbox (`shared.outbox`) na transação do caso de uso, cada um pelo agregado que o emite no modelo |
 
 Os retornos externos chegam hoje por REST. Em produção, chegam pela fila ([ADR 0006](adr/0006-mensageria-por-fila-gerenciada.md)) para o mesmo serviço, que é idempotente: o mesmo retorno repetido não tem novo efeito, e um retorno diferente do já registrado é recusado.
@@ -179,7 +182,9 @@ Os retornos externos chegam hoje por REST. Em produção, chegam pela fila ([ADR
 **Próximos passos:**
 - o relay do outbox para a fila (ADR 0006), que tira os pedidos aos externos do banco;
 - RN-0013 (veículo sem restrição) e a elegibilidade do FGTS antes da submissão, que dependem de sistemas externos;
-- Cadastro de pessoas e Documentos, hoje só com a fachada.
+- autenticação e perfis (proponente, correspondente, analista) e o controle de acesso aos arquivos;
+- o adaptador de armazenamento de objetos para os arquivos (ADR 0010), para mais de uma instância;
+- Cadastro de pessoas, hoje só com a fachada.
 
 ## 4. Dados e comunicação
 
@@ -234,3 +239,4 @@ Os 6 sistemas externos do modelo têm cada um uma camada anticorrupção no mód
 | [0007](adr/0007-java-25-e-quarkus-3-33.md) | Java 25 e Quarkus 3.33 | evolutividade |
 | [0008](adr/0008-fitness-functions.md) | Fitness functions para as decisões estruturais | as três |
 | [0009](adr/0009-retorno-entre-modulos-por-porta-de-ouvinte.md) | Retorno entre módulos por porta de ouvinte, sem ciclo | evolutividade, confiabilidade |
+| [0010](adr/0010-armazenamento-de-arquivos.md) | Arquivos dos documentos atrás de uma porta: sistema de arquivos agora, armazenamento de objetos em produção | evolutividade, confiabilidade |

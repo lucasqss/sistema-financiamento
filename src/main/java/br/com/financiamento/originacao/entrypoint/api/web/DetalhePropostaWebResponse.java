@@ -46,7 +46,7 @@ public record DetalhePropostaWebResponse(
                             BigDecimal parcela, BigDecimal valorFinanciado) {
     }
 
-    public record Documento(String titular, String tipo) {
+    public record Documento(Long documentoId, String titular, String tipo, String situacao, String motivo) {
     }
 
     public static DetalhePropostaWebResponse de(DetalheProposta d) {
@@ -62,7 +62,7 @@ public record DetalhePropostaWebResponse(
                         b.documentoDoVendedor(), b.anoModelo(), b.construcaoAverbada()),
                 c == null ? null : new Condicoes(c.versao(), c.entradaPropria(), c.entradaFgts(), c.prazoMeses(),
                         c.parcela(), d.valorFinanciado()),
-                d.documentos().stream().map(x -> new Documento(x.titular(), x.tipo())).toList(),
+                d.documentos().stream().map(x -> new Documento(x.documentoId(), x.titular(), x.tipo(), x.situacao().name(), x.motivo())).toList(),
                 d.enquadramento().isEmpty(),
                 d.enquadramento(),
                 d.credito() == null ? null : new Credito(d.credito().resultado().name(), d.credito().condicoesVersao(),

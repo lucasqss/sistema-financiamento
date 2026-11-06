@@ -997,7 +997,7 @@ documentos e os resultados da avaliação e do crédito **como chegaram à propo
 4. Bem: [RN-0004](#rn-0004).
 5. Para submeter: completa e enquadrada ([RN-0018](#rn-0018)).
 6. Toda mudança de valor, entrada, prazo ou avaliação dispara novo enquadramento.
-7. Só é aprovada com avaliação válida ([RN-0022](#rn-0022)) e crédito aprovado, ambos posteriores à última versão das condições.
+7. Só é aprovada com avaliação válida ([RN-0022](#rn-0022)) e crédito aprovado, ambos posteriores à última versão das condições, e com os documentos exigidos conferidos e aceitos.
 8. Uma proposta gera no máximo um contrato.
 
 **Emite:** [EVT-0001](#evt-0001), [EVT-0002](#evt-0002), [EVT-0003](#evt-0003), [EVT-0004](#evt-0004), [EVT-0019](#evt-0019), [EVT-0005](#evt-0005), [EVT-0006](#evt-0006), [EVT-0007](#evt-0007), [EVT-0008](#evt-0008), [EVT-0009](#evt-0009), [EVT-0010](#evt-0010), [EVT-0011](#evt-0011).
@@ -1224,7 +1224,7 @@ Para a [submissão](#glo-0034), o [enquadramento](#glo-0033) exige a proposta co
 
 ##### <a id="rn-0019"></a>1.8.5.3.2 RN-0019 - Aprovação da proposta
 
-A proposta é aprovada quando há avaliação válida aceita como garantia **e** crédito aprovado, e o enquadramento continua válido com o valor de avaliação. Crédito reprovado ou bem recusado como garantia reprova a proposta.
+A proposta é aprovada quando há avaliação válida aceita como garantia, crédito aprovado **e** os documentos exigidos ([RN-0009](#rn-0009)) conferidos e aceitos, e o enquadramento continua válido com o valor de avaliação. Crédito reprovado ou bem recusado como garantia reprova a proposta; documento recusado deixa a proposta com pendência.
 
 ##### <a id="rn-0020"></a>1.8.5.3.3 RN-0020 - Contraproposta
 
@@ -1299,15 +1299,15 @@ Casos de uso da originação.
 
 #### <a id="uc-0006"></a>1.8.6.6 UC-0006 - Decidir proposta
 
-**Ator:** nenhum: é automático, disparado pelos resultados da avaliação e do crédito.
+**Ator:** nenhum: é automático, disparado pelos resultados da avaliação, do crédito e da conferência dos documentos.
 
 **Fluxo principal**
-1. Com bem avaliado e crédito aprovado, o sistema confere [RN-0019](#rn-0019) e [RN-0018](#rn-0018) com o valor de avaliação.
+1. Com bem avaliado, crédito aprovado e documentos aceitos, o sistema confere [RN-0019](#rn-0019) e [RN-0018](#rn-0018) com o valor de avaliação.
 2. A proposta é aprovada. Emite [EVT-0005](#evt-0005).
 
 **Fluxos alternativos**
 - Crédito reprovado ou bem recusado como garantia → a proposta é reprovada. Emite [EVT-0006](#evt-0006).
-- Cota estourada com o valor de avaliação → emite [EVT-0003](#evt-0003).
+- Cota estourada com o valor de avaliação, ou documento recusado → emite [EVT-0003](#evt-0003).
 - Crédito aprovado com ressalva → segue para a contraproposta ([RN-0020](#rn-0020)).
 
 #### <a id="uc-0007"></a>1.8.6.7 UC-0007 - Expirar proposta
@@ -2090,12 +2090,14 @@ flowchart LR
         ATR_0005(["Analista"]):::ator
         EVT_0003["PropostaComPendencia"]:::evento
         EVT_0039["DocumentoAceito"]:::evento
+        UC_0006["Decidir proposta"]:::comando
     end
     UC_0024 --> EVT_0038
     ATR_0005 --- UC_0024
     EVT_0038 ~~~ EVT_0039
     UC_0024 --> EVT_0039
     EVT_0038 -.->|sempre que| EVT_0003
+    EVT_0039 -.->|sempre que| UC_0006
     classDef evento fill:#fdba74,stroke:#c2410c,color:#1c1917
     classDef comando fill:#93c5fd,stroke:#1d4ed8,color:#0c0a09
     classDef ator fill:#fde047,stroke:#a16207,color:#1c1917
@@ -2113,7 +2115,7 @@ Um documento foi recusado na conferência (ilegível, vencido ou divergente). Di
 
 #### <a id="evt-0039"></a>1.15.2.2 EVT-0039 - DocumentoAceito
 
-Um documento foi conferido e aceito.
+Um documento foi conferido e aceito. Dispara [UC-0006](#uc-0006).
 
 ### <a id="s-0021"></a>1.15.3 S-0021 - Casos de uso
 
@@ -2123,6 +2125,8 @@ Casos de uso de documentos.
 
 **Ator:** [ATR-0005](#atr-0005).
 
+**Pré-condição:** proposta submetida. A conferência acontece depois da [submissão](#glo-0034).
+
 **Fluxo principal:** o analista confere o documento enviado contra o que é exigido ([RN-0009](#rn-0009)) e o aceita. Emite [EVT-0039](#evt-0039).
 
-**Fluxo alternativo:** ilegível, vencido ou divergente → recusa. Emite [EVT-0038](#evt-0038).
+**Fluxo alternativo:** ilegível, vencido ou divergente → recusa. Emite [EVT-0038](#evt-0038). O proponente reenvia o documento com a proposta com [pendência](#glo-0038), que então é resolvida.
