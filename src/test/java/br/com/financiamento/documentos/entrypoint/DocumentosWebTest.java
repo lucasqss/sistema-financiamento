@@ -98,7 +98,7 @@ class DocumentosWebTest {
                 .body("estado", equalTo("COM_PENDENCIA"))
                 .body("pendencia", org.hamcrest.Matchers.containsString("ilegível"));
         given().post("/web/propostas/" + id + "/pendencia/resolucao").then().statusCode(422)
-                .body("violacoes.regra", hasItem("RN-0009"));
+                .body("falhas.regra", hasItem("RN-0009"));
 
         long reenviado = enviar(id, "bem", "CRLV");
         given().queryParam("proposta", id).get("/web/documentos").then()
@@ -121,10 +121,10 @@ class DocumentosWebTest {
         long id = montada();
         given().multiPart("propostaId", String.valueOf(id)).multiPart("titular", "bem").multiPart("tipo", "CRLV")
                 .multiPart("arquivo", "crlv.txt", "texto".getBytes(), "text/plain")
-                .post("/web/documentos").then().statusCode(422);
+                .post("/web/documentos").then().statusCode(400).body("falhas[0].campo", equalTo("arquivo.tipo"));
         given().multiPart("propostaId", String.valueOf(id)).multiPart("titular", cpf(699)).multiPart("tipo", "identidade")
                 .multiPart("arquivo", "rg.pdf", PDF, "application/pdf")
-                .post("/web/documentos").then().statusCode(422).body("violacoes[0].regra", equalTo("RN-0009"));
+                .post("/web/documentos").then().statusCode(422).body("falhas[0].regra", equalTo("RN-0009"));
     }
 
     @Test
@@ -133,7 +133,7 @@ class DocumentosWebTest {
         given().post("/web/propostas/" + id + "/submissao").then().statusCode(200);
         given().multiPart("propostaId", String.valueOf(id)).multiPart("titular", "bem").multiPart("tipo", "CRLV")
                 .multiPart("arquivo", "crlv.pdf", PDF, "application/pdf")
-                .post("/web/documentos").then().statusCode(422).body("violacoes[0].regra", equalTo("AGR-0001"));
+                .post("/web/documentos").then().statusCode(422).body("falhas[0].regra", equalTo("AGR-0001"));
     }
 
     @Test

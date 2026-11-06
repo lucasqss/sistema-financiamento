@@ -2,7 +2,7 @@ package br.com.financiamento.desembolso.dominio;
 
 import br.com.financiamento.bem.FormaDeLiberacao;
 import br.com.financiamento.desembolso.dominio.liberacao.Liberacao;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -99,7 +99,7 @@ public class Desembolso extends PanacheEntityBase {
     public static Desembolso abrir(Long contratoId, Long propostaId, BigDecimal valorFinanciado, BigDecimal entradaFgts,
                                    String favorecido, FormaDeLiberacao forma, boolean garantiaConstituida, Instant agora) {
         if (!garantiaConstituida) {
-            throw new RegraVioladaException("RN-0030", "Nenhuma liberação antes de a garantia estar registrada e confirmada.");
+            throw new ErroDeDominioException(ErrosDoDesembolso.SEM_GARANTIA);
         }
         var d = new Desembolso();
         d.contratoId = contratoId;
@@ -134,7 +134,7 @@ public class Desembolso extends PanacheEntityBase {
     /** UC-0022: com o FGTS negado, o proponente paga essa parte com recurso próprio; a liberação segue. */
     public void entradaRecomposta(Instant agora) {
         if (fgts != SituacaoDoFgts.NEGADO) {
-            throw new RegraVioladaException("UC-0022", "Só se recompõe a entrada com o FGTS negado.");
+            throw new ErroDeDominioException(ErrosDoDesembolso.RECOMPOR_SO_COM_FGTS_NEGADO);
         }
         fgts = SituacaoDoFgts.RECOMPOSTO;
         seguir(agora);
@@ -143,7 +143,7 @@ public class Desembolso extends PanacheEntityBase {
     /** UC-0023: nova medição da obra (RN-0024); com a entrada resolvida, pede a parcela (RN-0032). */
     public void medicaoRealizada(BigDecimal percentualAcumulado, Instant agora) {
         if (forma != FormaDeLiberacao.POR_MEDICAO) {
-            throw new RegraVioladaException("UC-0013", "Medição de obra só no imóvel na planta.");
+            throw new ErroDeDominioException(ErrosDoDesembolso.MEDICAO_SO_NA_PLANTA);
         }
         if (percentualAcumulado.compareTo(percentualMedido) > 0) percentualMedido = percentualAcumulado;
         seguir(agora);
@@ -156,7 +156,7 @@ public class Desembolso extends PanacheEntityBase {
      */
     public Optional<Liberacao> pagamentoConfirmado(String protocolo, Instant agora) {
         var liberacao = liberacoes.stream().filter(l -> l.protocolo().equals(protocolo)).findFirst()
-                .orElseThrow(() -> new RegraVioladaException("RN-0031", "Protocolo de liberação desconhecido: " + protocolo + "."));
+                .orElseThrow(() -> new ErroDeDominioException(ErrosDoDesembolso.LIBERACAO_DESCONHECIDA, protocolo));
         if (liberacao.paga()) return Optional.empty();
         liberacao.pagar(agora);
         var dados = Map.<String, Object>of("protocolo", protocolo, "valor", liberacao.valor(), "favorecido", favorecido,
@@ -186,7 +186,7 @@ public class Desembolso extends PanacheEntityBase {
     private void pedir(BigDecimal valor, BigDecimal percentualAte, boolean ultima, Instant agora) {
         // RN-0031: a soma das liberações nunca passa do valor financiado.
         if (totalPedido().add(valor).compareTo(valorFinanciado) > 0) {
-            throw new RegraVioladaException("RN-0031", "A soma das liberações passaria do valor financiado.");
+            throw new ErroDeDominioException(ErrosDoDesembolso.SOMA_EXCEDE_FINANCIADO);
         }
         var protocolo = "LIB-" + contratoId + "-" + (liberacoes.size() + 1);
         liberacoes.add(new Liberacao(protocolo, valor, percentualAte, ultima, agora));

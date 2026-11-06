@@ -23,6 +23,11 @@ import java.net.URI;
 @Path("/web/propostas")
 public class PropostaWebResource {
 
+    @Inject BemRequestValidador bemRequestValidador;
+    @Inject CondicoesRequestValidador condicoesRequestValidador;
+    @Inject IniciarPropostaRequestValidador iniciarPropostaRequestValidador;
+    @Inject ParticipantesRequestValidador participantesRequestValidador;
+
     @Inject IniciarPropostaService iniciar;
     @Inject InformarParticipantesService informarParticipantes;
     @Inject InformarBemService informarBem;
@@ -35,6 +40,7 @@ public class PropostaWebResource {
 
     @POST
     public Response iniciar(IniciarPropostaRequest request) {
+        iniciarPropostaRequestValidador.validar(request);
         var detalhe = DetalhePropostaWebResponse.de(iniciar.executar(request.tipoDeBem()));
         return Response.created(URI.create("/web/propostas/" + detalhe.id())).entity(detalhe).build();
     }
@@ -48,18 +54,21 @@ public class PropostaWebResource {
     @PUT
     @Path("/{id}/participantes")
     public DetalhePropostaWebResponse participantes(@PathParam("id") Long id, ParticipantesRequest request) {
+        participantesRequestValidador.validar(request);
         return DetalhePropostaWebResponse.de(informarParticipantes.executar(id, request.comando()));
     }
 
     @PUT
     @Path("/{id}/bem")
     public DetalhePropostaWebResponse bem(@PathParam("id") Long id, BemRequest request) {
+        bemRequestValidador.validar(request);
         return DetalhePropostaWebResponse.de(informarBem.executar(id, request.comando()));
     }
 
     @PUT
     @Path("/{id}/condicoes")
     public DetalhePropostaWebResponse condicoes(@PathParam("id") Long id, CondicoesRequest request) {
+        condicoesRequestValidador.validar(request);
         return DetalhePropostaWebResponse.de(simularCondicoes.executar(id, request.comando()));
     }
 

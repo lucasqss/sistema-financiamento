@@ -1,6 +1,6 @@
 package br.com.financiamento.contratacao.dominio;
 
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
@@ -36,7 +36,7 @@ public class CronogramaDaObra {
 
     boolean dentroDoLimite(LocalDate novaData) {
         if (!novaData.isAfter(previsaoAtual)) {
-            throw new RegraVioladaException("RN-0027", "A nova data precisa ser posterior à previsão atual (" + previsaoAtual + ").");
+            throw new ErroDeDominioException(ErrosDaContratacao.NOVA_DATA_ANTERIOR, previsaoAtual);
         }
         return diasAlemDoPrevisto(novaData) <= LIMITE_DE_PRORROGACAO_DIAS;
     }

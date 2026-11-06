@@ -2,6 +2,7 @@ package br.com.financiamento.garantia.aplicacao;
 
 import br.com.financiamento.contratacao.ContratacaoFacade;
 import br.com.financiamento.garantia.dominio.Registro;
+import br.com.financiamento.garantia.dominio.ErrosDaGarantia;
 import br.com.financiamento.garantia.dominio.SituacaoDoRegistro;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -20,7 +21,7 @@ public class TratarRegistroService {
     /** UC-0020: cumprida a exigência, o registro é reenviado com novo protocolo. */
     @Transactional
     public Registro cumprirExigencia(Long registroId) {
-        var registro = registros.buscar(registroId);
+        var registro = registros.buscar(registroId, Registros.naSituacao(ErrosDaGarantia.SEM_EXIGENCIA, SituacaoDoRegistro.EM_EXIGENCIA));
         registro.cumprirExigencia();
         registros.salvar(registro);
         contratacao.exigenciaCumprida(registro.contratoId(), registro.protocolo());
@@ -30,7 +31,8 @@ public class TratarRegistroService {
     /** UC-0019: corrigido o motivo da recusa (ou a divergência de identificação), reenvia. */
     @Transactional
     public Registro reenviar(Long registroId) {
-        var registro = registros.buscar(registroId);
+        var registro = registros.buscar(registroId, Registros.naSituacao(ErrosDaGarantia.REENVIO_INVALIDO,
+                SituacaoDoRegistro.RECUSADO, SituacaoDoRegistro.PENDENCIA_DE_IDENTIFICACAO));
         var antes = registro.reenviar();
         registros.salvar(registro);
         if (antes == SituacaoDoRegistro.RECUSADO) {
@@ -42,7 +44,7 @@ public class TratarRegistroService {
     /** UC-0019, fluxo alternativo: sem solução, o contrato é desfeito (UC-0016). */
     @Transactional
     public Registro desfazer(Long registroId, String motivo) {
-        var registro = registros.buscar(registroId);
+        var registro = registros.buscar(registroId, Registros.naSituacao(ErrosDaGarantia.DESFAZER_SO_RECUSADO, SituacaoDoRegistro.RECUSADO));
         registro.desfazer();
         registros.salvar(registro);
         contratacao.cancelarPorRegistroRecusado(registro.contratoId(),

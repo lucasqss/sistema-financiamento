@@ -13,23 +13,26 @@ import jakarta.transaction.Transactional;
 public class ContratacaoDaPropostaService {
 
     @Inject
+    ElosDaProposta elos;
+
+    @Inject
     Propostas propostas;
 
     @Transactional
     public Contratabilidade contratabilidade(Long propostaId) {
-        var proposta = propostas.buscar(propostaId);
+        var proposta = elos.validar(propostaId);
         var impedimento = proposta.impedimentoParaContratar(propostas.hoje());
         if (impedimento != null) {
             if (proposta.precisaDeAvaliacao(propostas.hoje())) propostas.solicitarAnalises(proposta);
             propostas.salvar(proposta);
-            return new Contratabilidade(null, impedimento);
+            return new Contratabilidade(null, impedimento.mensagem(), impedimento.codigo());
         }
-        return new Contratabilidade(paraContratar(proposta), null);
+        return new Contratabilidade(paraContratar(proposta), null, null);
     }
 
     @Transactional
     public void contratoEmitido(Long propostaId, Long contratoId) {
-        var proposta = propostas.buscar(propostaId);
+        var proposta = elos.validar(propostaId);
         proposta.registrarContrato(contratoId, propostas.hoje());
         propostas.salvar(proposta);
     }

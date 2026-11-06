@@ -6,7 +6,6 @@ import br.com.financiamento.documentos.aplicacao.EnviarDocumentoService;
 import br.com.financiamento.documentos.aplicacao.EnviarDocumentoService.Envio;
 import br.com.financiamento.documentos.dominio.SituacaoDoDocumento;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -31,6 +30,9 @@ import java.util.List;
 @Path("/web/documentos")
 public class DocumentoWebResource {
 
+    @Inject ConferenciaRequestValidador conferenciaRequestValidador;
+    @Inject EnvioDeDocumentoRequestValidador envioDeDocumentoRequestValidador;
+
     @Inject EnviarDocumentoService enviar;
     @Inject ConferirDocumentoService conferir;
     @Inject ConsultarDocumentosService consultar;
@@ -39,7 +41,9 @@ public class DocumentoWebResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response enviar(@RestForm Long propostaId, @RestForm String titular, @RestForm String tipo,
                            @RestForm("arquivo") FileUpload arquivo) {
-        if (propostaId == null || arquivo == null) throw new BadRequestException("Informe a proposta e o arquivo.");
+        envioDeDocumentoRequestValidador.validar(new EnvioDeDocumentoRequest(propostaId, titular, tipo,
+                arquivo == null ? null : arquivo.fileName(), arquivo == null ? null : arquivo.contentType(),
+                arquivo == null ? null : arquivo.size()));
         byte[] conteudo;
         try {
             conteudo = Files.readAllBytes(arquivo.uploadedFile());
@@ -70,6 +74,7 @@ public class DocumentoWebResource {
     @POST
     @Path("/{id}/conferencia")
     public DocumentoWebResponse conferir(@PathParam("id") Long id, ConferenciaRequest r) {
+        conferenciaRequestValidador.validar(r);
         return DocumentoWebResponse.de(conferir.executar(id, r.aceito(), r.motivo(), r.observacao()));
     }
 }

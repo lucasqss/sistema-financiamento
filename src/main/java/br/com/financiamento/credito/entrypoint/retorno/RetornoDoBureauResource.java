@@ -16,11 +16,14 @@ import jakarta.ws.rs.core.Response;
 @Path("/retornos/bureau-de-credito")
 public class RetornoDoBureauResource {
 
+    @Inject RetornoDoBureauRequestValidador retornoDoBureauRequestValidador;
+
     @Inject RegistrarDecisaoService registrar;
 
     @POST
     @Path("/{analiseId}")
     public Response receber(@PathParam("analiseId") Long analiseId, RetornoDoBureauRequest r) {
+        retornoDoBureauRequestValidador.validar(r);
         registrar.executar(analiseId, new Decisao(r.resultado(), r.ressalva(), r.sugeridas(), AnaliseDeCredito.Origem.BUREAU));
         return Response.accepted().build();
     }

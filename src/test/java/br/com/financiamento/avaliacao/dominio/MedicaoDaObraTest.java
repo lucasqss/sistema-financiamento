@@ -1,6 +1,6 @@
 package br.com.financiamento.avaliacao.dominio;
 
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -19,8 +19,8 @@ class MedicaoDaObraTest {
         var primeira = MedicaoDaObra.medir(1L, new BigDecimal("30"), HOJE, null);
         var segunda = MedicaoDaObra.medir(1L, new BigDecimal("30"), HOJE, primeira);
         assertEquals(0, new BigDecimal("30").compareTo(segunda.percentualAcumulado()));
-        var erro = assertThrows(RegraVioladaException.class, () -> MedicaoDaObra.medir(1L, new BigDecimal("25"), HOJE, segunda));
-        assertEquals("RN-0024", erro.violacoes().getFirst().regra());
-        assertThrows(RegraVioladaException.class, () -> MedicaoDaObra.medir(1L, new BigDecimal("101"), HOJE, null));
+        var erro = assertThrows(ErroDeDominioException.class, () -> MedicaoDaObra.medir(1L, new BigDecimal("25"), HOJE, segunda));
+        assertEquals("RN-0024", erro.falhas().getFirst().regra());
+        assertThrows(ErroDeDominioException.class, () -> MedicaoDaObra.medir(1L, new BigDecimal("101"), HOJE, null));
     }
 }

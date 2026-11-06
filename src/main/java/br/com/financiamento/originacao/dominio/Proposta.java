@@ -9,7 +9,8 @@ import br.com.financiamento.originacao.dominio.resultado.AvaliacaoDaProposta;
 import br.com.financiamento.originacao.dominio.resultado.Contraproposta;
 import br.com.financiamento.originacao.dominio.resultado.CreditoDaProposta;
 import br.com.financiamento.credito.ResultadoDeCredito;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
+import br.com.financiamento.shared.validacao.Falha;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -166,13 +167,13 @@ public class Proposta extends PanacheEntityBase {
         var doTitular = DocumentoEntregue.normalizarTitular(titular);
         if (!doTitular.equals(DocumentoEntregue.DO_BEM)
                 && participantes.stream().noneMatch(p -> p.documento().equals(doTitular))) {
-            throw new RegraVioladaException("RN-0009", "O titular " + doTitular + " não é o bem nem um participante da proposta.");
+            throw new ErroDeDominioException(ErrosDaOriginacao.TITULAR_DESCONHECIDO, doTitular);
         }
         for (int i = 0; i < documentos.size(); i++) {
             var atual = documentos.get(i);
             if (!atual.mesmo(doTitular, tipo)) continue;
             if (atual.situacao() == DocumentoEntregue.Situacao.ACEITO) {
-                throw new RegraVioladaException("RN-0009", "O documento " + tipo + " (" + doTitular + ") já foi aceito.");
+                throw new ErroDeDominioException(ErrosDaOriginacao.DOCUMENTO_JA_ACEITO, tipo, doTitular);
             }
             documentos.set(i, new DocumentoEntregue(documentoId, doTitular, tipo));
             return;
@@ -187,8 +188,7 @@ public class Proposta extends PanacheEntityBase {
      */
     public void documentoConferido(Long documentoId, boolean aceito, String motivo) {
         if (estado == EstadoProposta.RASCUNHO || estado == EstadoProposta.APROVADA || !estado.ativa()) {
-            throw new RegraVioladaException("UC-0024", "A conferência é feita na proposta submetida e ainda em análise; esta está "
-                    + nomeDoEstado() + ".");
+            throw new ErroDeDominioException(ErrosDaOriginacao.CONFERENCIA_FORA_DA_ANALISE, nomeDoEstado());
         }
         int i = indiceDoDocumento(documentoId);
         var conferido = documentos.get(i).conferido(aceito, motivo);
@@ -206,7 +206,7 @@ public class Proposta extends PanacheEntityBase {
         for (int i = 0; i < documentos.size(); i++) {
             if (documentoId.equals(documentos.get(i).documentoId())) return i;
         }
-        throw new RegraVioladaException("UC-0024", "O documento " + documentoId + " não é o vigente desta proposta.");
+        throw new ErroDeDominioException(ErrosDaOriginacao.DOCUMENTO_NAO_VIGENTE, documentoId);
     }
 
     /** RN-0019: os documentos entregues foram todos conferidos e aceitos? */
@@ -216,7 +216,7 @@ public class Proposta extends PanacheEntityBase {
 
     /** UC-0005: só submete enquadrada (RN-0018). Emite PropostaSubmetida. */
     public void submeter(Enquadramento enquadramento) {
-        if (!enquadramento.enquadrada()) throw new RegraVioladaException(enquadramento.violacoes());
+        if (!enquadramento.enquadrada()) throw new ErroDeDominioException(enquadramento.falhas());
         transicionar(EventoDaProposta.PROPOSTA_SUBMETIDA, Map.of("condicoesVersao", condicoes.versao()));
     }
 
@@ -264,7 +264,7 @@ public class Proposta extends PanacheEntityBase {
         } else if (avaliacao != null && !avaliacao.aceitoComoGarantia()) {
             transicionar(EventoDaProposta.PROPOSTA_REPROVADA, Map.of("motivo", "bem recusado como garantia"));
         } else if (!enquadramento.enquadrada()) {
-            entrarEmPendencia(enquadramento.violacoes().stream().map(Object::toString)
+            entrarEmPendencia(enquadramento.falhas().stream().map(Object::toString)
                     .reduce((a, b) -> a + "; " + b).orElse(""));
         } else if (avaliacao != null && avaliacao.vencidaEm(hoje)) {
             entrarEmPendencia("RN-0022: avaliação vencida; o bem precisa ser reavaliado.");
@@ -300,7 +300,7 @@ public class Proposta extends PanacheEntityBase {
     /** UC-0008: quem agiu resolveu; a proposta volta à análise, reenquadrada (RN-0018). */
     public void resolverPendencia(Enquadramento enquadramento) {
         exigirTransicao(EventoDaProposta.PENDENCIA_RESOLVIDA);
-        if (!enquadramento.enquadrada()) throw new RegraVioladaException(enquadramento.violacoes());
+        if (!enquadramento.enquadrada()) throw new ErroDeDominioException(enquadramento.falhas());
         this.pendencia = null;
         transicionar(EventoDaProposta.PENDENCIA_RESOLVIDA, Map.of("condicoesVersao", condicoes.versao()));
     }
@@ -334,17 +334,17 @@ public class Proposta extends PanacheEntityBase {
      * quando o impedimento é um fato do tempo: a validade vencida a expira
      * (RN-0021) e a avaliação vencida a põe em pendência (RN-0022).
      */
-    public String impedimentoParaContratar(LocalDate hoje) {
-        if (estado != EstadoProposta.APROVADA) return "A proposta está " + nomeDoEstado() + "; só a aprovada é contratada.";
-        if (expirarSeVencida(hoje)) return "RN-0021: a proposta passou da validade de 30 dias e expirou.";
-        if (pendenciaSeAvaliacaoVencida(hoje)) return "RN-0022: a avaliação do bem venceu; a proposta ficou com pendência para reavaliar.";
+    public Falha impedimentoParaContratar(LocalDate hoje) {
+        if (estado != EstadoProposta.APROVADA) return Falha.de(ErrosDaOriginacao.PROPOSTA_NAO_APROVADA, nomeDoEstado());
+        if (expirarSeVencida(hoje)) return Falha.de(ErrosDaOriginacao.PROPOSTA_EXPIROU);
+        if (pendenciaSeAvaliacaoVencida(hoje)) return Falha.de(ErrosDaOriginacao.AVALIACAO_VENCIDA);
         return null;
     }
 
     /** O contrato foi emitido: a proposta fica contratada e não gera outro (invariante 8). */
     public void registrarContrato(Long contratoId, LocalDate hoje) {
         var impedimento = impedimentoParaContratar(hoje);
-        if (impedimento != null) throw new RegraVioladaException("UC-0014", impedimento);
+        if (impedimento != null) throw new ErroDeDominioException(java.util.List.of(impedimento));
         this.contratoId = contratoId;
         transicionar(EventoDaProposta.CONTRATO_EMITIDO, Map.of("contratoId", contratoId));
     }
@@ -380,14 +380,13 @@ public class Proposta extends PanacheEntityBase {
 
     private void exigirTransicao(EventoDaProposta evento) {
         if (estado.apos(evento).isEmpty()) {
-            throw new RegraVioladaException("CV-0001",
-                    "A proposta " + nomeDoEstado() + " não aceita " + evento.nomeNoModelo() + ".");
+            throw new ErroDeDominioException(ErrosDaOriginacao.TRANSICAO_INVALIDA, nomeDoEstado(), evento.nomeNoModelo());
         }
     }
 
     private void transicionar(EventoDaProposta evento, Map<String, Object> dados) {
-        this.estado = estado.apos(evento).orElseThrow(() -> new RegraVioladaException("CV-0001",
-                "A proposta " + nomeDoEstado() + " não aceita " + evento.nomeNoModelo() + "."));
+        this.estado = estado.apos(evento).orElseThrow(() -> new ErroDeDominioException(
+                ErrosDaOriginacao.TRANSICAO_INVALIDA, nomeDoEstado(), evento.nomeNoModelo()));
         registrar(evento, dados);
     }
 
@@ -400,8 +399,7 @@ public class Proposta extends PanacheEntityBase {
 
     private void exigirAlteravel() {
         if (!estado.aceitaAlteracao()) {
-            throw new RegraVioladaException("AGR-0001",
-                    "Só o rascunho e a proposta com pendência aceitam alteração; esta está " + nomeDoEstado() + ".");
+            throw new ErroDeDominioException(ErrosDaOriginacao.NAO_ACEITA_ALTERACAO, nomeDoEstado());
         }
     }
 

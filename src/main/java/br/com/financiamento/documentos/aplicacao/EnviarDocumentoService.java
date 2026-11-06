@@ -5,6 +5,7 @@ import br.com.financiamento.documentos.OuvinteDosDocumentos;
 import br.com.financiamento.documentos.dominio.ArmazemDeArquivos;
 import br.com.financiamento.documentos.dominio.Documento;
 import br.com.financiamento.documentos.dominio.DocumentoRepository;
+import br.com.financiamento.shared.validacao.CadeiaDeValidacao;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
@@ -41,7 +42,11 @@ public class EnviarDocumentoService {
 
     @Transactional
     public Documento executar(Envio e) {
-        Documento.validar(e.tipo(), e.tipoDeConteudo(), e.conteudo());
+        // Cadeia de domínio (ADR 0011): o conteúdo do arquivo é íntegro e do tipo declarado (ADR 0010).
+        CadeiaDeValidacao.<Envio>de((envio, proximo) -> {
+            Documento.validar(envio.tipo(), envio.tipoDeConteudo(), envio.conteudo());
+            proximo.seguir(envio);
+        }).validar(e);
         var titular = Documento.titularNormalizado(e.titular());
         documentos.vigentes(e.propostaId(), titular, e.tipo()).forEach(Documento::substituir);
         var chave = armazem.guardar(e.conteudo());

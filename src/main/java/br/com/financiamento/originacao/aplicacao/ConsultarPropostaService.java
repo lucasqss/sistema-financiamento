@@ -10,6 +10,9 @@ import jakarta.transaction.Transactional;
 public class ConsultarPropostaService {
 
     @Inject
+    ElosDaProposta elos;
+
+    @Inject
     Propostas propostas;
 
     @Inject
@@ -17,7 +20,7 @@ public class ConsultarPropostaService {
 
     @Transactional
     public DetalheProposta executar(Long propostaId) {
-        var proposta = propostas.buscar(propostaId);
+        var proposta = elos.validar(propostaId);
         return DetalheProposta.de(proposta, enquadrador.enquadrar(proposta));
     }
 }

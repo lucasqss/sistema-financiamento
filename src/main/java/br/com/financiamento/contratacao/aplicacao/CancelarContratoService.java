@@ -16,7 +16,7 @@ public class CancelarContratoService {
 
     @Transactional
     public DetalheDoContrato executar(Long contratoId, String motivo) {
-        var contrato = contratacoes.contrato(contratoId);
+        var contrato = contratacoes.contrato(contratoId, Contratacoes.aceita("ContratoCancelado"));
         contrato.cancelar(motivo == null || motivo.isBlank() ? "desistência" : motivo);
         contratacoes.salvar(contrato);
         return DetalheDoContrato.de(contrato);

@@ -75,6 +75,6 @@ final class PropostaParaTeste {
     }
 
     static List<String> regras(Enquadramento e) {
-        return e.violacoes().stream().map(v -> v.regra()).distinct().sorted().toList();
+        return e.falhas().stream().map(v -> v.regra()).distinct().sorted().toList();
     }
 }

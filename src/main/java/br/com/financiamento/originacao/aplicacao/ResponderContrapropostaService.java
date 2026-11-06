@@ -9,12 +9,15 @@ import jakarta.transaction.Transactional;
 public class ResponderContrapropostaService {
 
     @Inject
+    ElosDaProposta elos;
+
+    @Inject
     Propostas propostas;
 
     /** Aceita: as novas condições são reenquadradas e a proposta segue para a decisão. */
     @Transactional
     public DetalheProposta aceitar(Long propostaId) {
-        var proposta = propostas.buscar(propostaId);
+        var proposta = elos.validar(propostaId, elos.aceita("ContrapropostaAceita"));
         proposta.aceitarContraproposta();
         propostas.solicitarAnalises(proposta);
         return propostas.salvar(proposta, propostas.decidir(proposta));
@@ -23,7 +26,7 @@ public class ResponderContrapropostaService {
     /** Recusa: a proposta é reprovada. */
     @Transactional
     public DetalheProposta recusar(Long propostaId) {
-        var proposta = propostas.buscar(propostaId);
+        var proposta = elos.validar(propostaId, elos.aceita("ContrapropostaRecusada"));
         proposta.recusarContraproposta(false);
         return propostas.salvar(proposta);
     }

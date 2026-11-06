@@ -5,7 +5,8 @@ import br.com.financiamento.avaliacao.ResultadoDeAvaliacao;
 import br.com.financiamento.avaliacao.dominio.Avaliacao;
 import br.com.financiamento.avaliacao.dominio.AvaliacaoRepository;
 import br.com.financiamento.bem.BemFacade;
-import br.com.financiamento.shared.dominio.NaoEncontradoException;
+import br.com.financiamento.shared.validacao.ContextoDeDominio;
+import br.com.financiamento.avaliacao.dominio.ErrosDaAvaliacao;
 import br.com.financiamento.shared.outbox.Outbox;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
@@ -43,8 +44,9 @@ public class RegistrarLaudoService {
 
     @Transactional
     public Avaliacao executar(Long avaliacaoId, Laudo laudo) {
-        var avaliacao = avaliacoes.findByIdOptional(avaliacaoId)
-                .orElseThrow(() -> new NaoEncontradoException("Avaliação " + avaliacaoId + " não encontrada."));
+        // Cadeia de domínio (ADR 0011): a avaliação existe (o laudo repetido é tratado no agregado, sem efeito).
+        var avaliacao = ContextoDeDominio.validar(avaliacaoId,
+                ContextoDeDominio.carregar(avaliacoes::findByIdOptional, ErrosDaAvaliacao.AVALIACAO_NAO_ENCONTRADA));
         var tipo = avaliacao.tipoDeBem();
         var validaAte = bens.categoria(tipo).validadeDaAvaliacao(tipo, laudo.avaliadaEm());
         if (!avaliacao.concluir(laudo.aceitoComoGarantia(), laudo.valor(), laudo.avaliadaEm(), validaAte)) {

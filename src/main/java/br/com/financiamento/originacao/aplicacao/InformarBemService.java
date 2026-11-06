@@ -12,6 +12,9 @@ import java.util.Set;
 @ApplicationScoped
 public class InformarBemService {
 
+    @Inject
+    ElosDaProposta elos;
+
     public record NovoBem(String identificacao, BigDecimal valorDeCompra, String documentoDoVendedor,
                           Integer anoModelo, Boolean construcaoAverbada) {
     }
@@ -21,7 +24,7 @@ public class InformarBemService {
 
     @Transactional
     public DetalheProposta executar(Long propostaId, NovoBem bem) {
-        var proposta = propostas.buscar(propostaId);
+        var proposta = elos.validar(propostaId, elos.aceitaAlteracao());
         proposta.informarBem(new BemDaProposta(bem.identificacao(), bem.valorDeCompra(), bem.documentoDoVendedor(),
                 bem.anoModelo(), bem.construcaoAverbada()));
         var enquadramento = propostas.exigirRegras(proposta, Set.of("RN-0003", "RN-0004"));

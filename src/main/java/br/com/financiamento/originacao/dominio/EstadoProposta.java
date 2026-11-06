@@ -59,6 +59,11 @@ public enum EstadoProposta {
         return Collections.unmodifiableMap(TRANSICOES.getOrDefault(this, Map.of()));
     }
 
+    /** O estado aceita o evento do modelo (ex.: "PropostaSubmetida")? Usado pelas cadeias de domínio (ADR 0011). */
+    public boolean aceitaEvento(String nomeNoModelo) {
+        return transicoes().keySet().stream().anyMatch(e -> e.nomeNoModelo().equals(nomeNoModelo));
+    }
+
     public boolean finalizado() {
         return transicoes().isEmpty();
     }

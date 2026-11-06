@@ -6,7 +6,8 @@ import br.com.financiamento.bem.ParametrosDoTipo;
 import br.com.financiamento.originacao.dominio.documento.DocumentoEntregue;
 import br.com.financiamento.originacao.dominio.participante.Participante;
 import br.com.financiamento.shared.dominio.DocumentoFiscal;
-import br.com.financiamento.shared.dominio.Violacao;
+import br.com.financiamento.shared.validacao.ErroCatalogado;
+import br.com.financiamento.shared.validacao.Falha;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -31,7 +32,7 @@ final class RegrasDeEnquadramento {
     private final CategoriaDeBem categoria;
     private final ParametrosDoTipo parametros;
     private final LocalDate hoje;
-    private final List<Violacao> violacoes = new ArrayList<>();
+    private final List<Falha> falhas = new ArrayList<>();
 
     private RegrasDeEnquadramento(Proposta proposta, CategoriaDeBem categoria, LocalDate hoje) {
         this.proposta = proposta;
@@ -47,31 +48,31 @@ final class RegrasDeEnquadramento {
         r.participantes();
         r.pessoaJuridica();
         r.vendedor();
-        if (bemEmOutraPropostaAtiva) r.violar("RN-0004", "O bem já está em outra proposta ativa.");
+        if (bemEmOutraPropostaAtiva) r.violar(ErrosDaOriginacao.BEM_EM_OUTRA_PROPOSTA);
         r.condicoes();
         r.documentos();
-        r.violacoes.addAll(categoria.verificarRegrasProprias(r.dadosParaOPlugin()));
-        return new Enquadramento(r.violacoes);
+        r.falhas.addAll(categoria.verificarRegrasProprias(r.dadosParaOPlugin()));
+        return new Enquadramento(r.falhas);
     }
 
-    private void violar(String regra, String mensagem) {
-        violacoes.add(new Violacao(regra, mensagem));
+    private void violar(ErroCatalogado erro, Object... parametros) {
+        falhas.add(Falha.de(erro, parametros));
     }
 
     /** RN-0018: a proposta completa. */
     private void completude() {
-        if (proposta.proponente() == null) violar("RN-0018", "Informe o proponente.");
+        if (proposta.proponente() == null) violar(ErrosDaOriginacao.FALTA_PROPONENTE);
         var bem = proposta.bem();
         if (bem == null || bem.identificacao() == null || bem.identificacao().isBlank()) {
-            violar("RN-0018", "Informe a identificação do bem.");
+            violar(ErrosDaOriginacao.FALTA_IDENTIFICACAO_DO_BEM);
         }
         if (bem == null || bem.valorDeCompra() == null || bem.valorDeCompra().signum() <= 0) {
-            violar("RN-0018", "Informe o valor de compra do bem.");
+            violar(ErrosDaOriginacao.FALTA_VALOR_DE_COMPRA);
         }
         if (bem == null || bem.documentoDoVendedor() == null || bem.documentoDoVendedor().isBlank()) {
-            violar("RN-0018", "Informe o vendedor.");
+            violar(ErrosDaOriginacao.FALTA_VENDEDOR);
         }
-        if (proposta.condicoes() == null) violar("RN-0018", "Informe entrada, prazo e parcela.");
+        if (proposta.condicoes() == null) violar(ErrosDaOriginacao.FALTAM_CONDICOES);
     }
 
     /** RN-0001 e RN-0033. */
@@ -79,20 +80,20 @@ final class RegrasDeEnquadramento {
         var lista = proposta.participantes();
         if (lista.isEmpty()) return;
         if (lista.size() > MAXIMO_DE_PARTICIPANTES) {
-            violar("RN-0001", "A proposta tem " + lista.size() + " participantes; o máximo é 5 (1 proponente e até 4 coobrigados).");
+            violar(ErrosDaOriginacao.PARTICIPANTES_DEMAIS, lista.size());
         }
         long proponentes = lista.stream().filter(Participante::proponente).count();
-        if (proponentes != 1) violar("RN-0001", "A proposta tem " + proponentes + " proponentes; deve ter exatamente 1.");
+        if (proponentes != 1) violar(ErrosDaOriginacao.QUANTIDADE_DE_PROPONENTES, proponentes);
         var documentos = new HashSet<String>();
         for (var p : lista) {
-            if (!documentos.add(p.documento())) violar("RN-0001", "Participante repetido: " + p.documento() + ".");
+            if (!documentos.add(p.documento())) violar(ErrosDaOriginacao.PARTICIPANTE_REPETIDO, p.documento());
             if (!p.documentoValido()) {
-                violar("RN-0033", (p.pessoaFisica() ? "CPF" : "CNPJ") + " inválido: " + p.documento() + ".");
+                violar(ErrosDaOriginacao.DOCUMENTO_FISCAL_INVALIDO, p.pessoaFisica() ? "CPF" : "CNPJ", p.documento());
             }
             if (p.pessoaFisica()) {
-                if (p.nascimento() == null) violar("RN-0001", "Informe a data de nascimento de " + p.nome() + ".");
+                if (p.nascimento() == null) violar(ErrosDaOriginacao.FALTA_NASCIMENTO, p.nome());
                 else if (Period.between(p.nascimento(), hoje).getYears() < MAIORIDADE) {
-                    violar("RN-0001", p.nome() + " não é maior de idade.");
+                    violar(ErrosDaOriginacao.MENOR_DE_IDADE, p.nome());
                 }
             }
         }
@@ -103,10 +104,10 @@ final class RegrasDeEnquadramento {
         var proponente = proposta.proponente();
         if (proponente == null) return;
         if (!proponente.pessoaFisica() && !parametros.aceitaPessoaJuridica()) {
-            violar("RN-0002", "Este tipo de bem não aceita pessoa jurídica como proponente.");
+            violar(ErrosDaOriginacao.PJ_NAO_ACEITA);
         }
         if (proponente.pessoaFisica() && proposta.participantes().stream().anyMatch(p -> !p.pessoaFisica())) {
-            violar("RN-0002", "Coobrigado pessoa jurídica só em proposta de proponente pessoa jurídica.");
+            violar(ErrosDaOriginacao.COOBRIGADO_PJ);
         }
     }
 
@@ -116,11 +117,11 @@ final class RegrasDeEnquadramento {
         if (bem == null || bem.documentoDoVendedor() == null || bem.documentoDoVendedor().isBlank()) return;
         var doc = bem.documentoDoVendedor();
         if (!DocumentoFiscal.cpfValido(doc) && !DocumentoFiscal.cnpjValido(doc)) {
-            violar("RN-0003", "CPF ou CNPJ do vendedor inválido: " + doc + ".");
+            violar(ErrosDaOriginacao.VENDEDOR_INVALIDO, doc);
         }
         var proponente = proposta.proponente();
         if (proponente != null && proponente.documento().equals(doc)) {
-            violar("RN-0003", "O vendedor não pode ser o proponente.");
+            violar(ErrosDaOriginacao.VENDEDOR_E_PROPONENTE);
         }
     }
 
@@ -131,38 +132,34 @@ final class RegrasDeEnquadramento {
         if (c == null) return;
 
         if (c.prazoMeses() < parametros.prazoMinimoMeses() || c.prazoMeses() > parametros.prazoMaximoMeses()) {
-            violar("RN-0007", "Prazo de " + c.prazoMeses() + " meses fora da faixa do tipo: "
-                    + parametros.prazoMinimoMeses() + " a " + parametros.prazoMaximoMeses() + ".");
+            violar(ErrosDaOriginacao.PRAZO_FORA_DA_FAIXA, c.prazoMeses(), parametros.prazoMinimoMeses(), parametros.prazoMaximoMeses());
         }
 
         if (c.entradaFgts().signum() > 0) {
             var proponente = proposta.proponente();
             if (!parametros.aceitaFgtsNaEntrada() || proponente == null || !proponente.pessoaFisica()) {
-                violar("RN-0015", "Só imóvel residencial de proponente pessoa física aceita FGTS na entrada.");
+                violar(ErrosDaOriginacao.FGTS_NAO_ACEITO);
             }
         }
 
         var renda = proposta.participantes().stream().map(Participante::rendaComprovada)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         if (c.parcela() == null || c.parcela().signum() <= 0) {
-            violar("RN-0018", "Informe a parcela simulada.");
+            violar(ErrosDaOriginacao.FALTA_PARCELA);
         } else if (c.parcela().compareTo(renda.multiply(COMPROMETIMENTO_MAXIMO)) > 0) {
-            violar("RN-0008", "Parcela de " + c.parcela() + " passa de 30% da renda comprovada somada ("
-                    + renda.multiply(COMPROMETIMENTO_MAXIMO).setScale(2, RoundingMode.HALF_UP) + ").");
+            violar(ErrosDaOriginacao.COMPROMETIMENTO_DE_RENDA, c.parcela(), renda.multiply(COMPROMETIMENTO_MAXIMO).setScale(2, RoundingMode.HALF_UP));
         }
 
         if (bem == null || bem.valorDeCompra() == null) return;
         var financiado = c.valorFinanciado(bem.valorDeCompra());
         if (financiado.signum() <= 0) {
-            violar("RN-0005", "O valor financiado precisa ser maior que zero.");
+            violar(ErrosDaOriginacao.VALOR_FINANCIADO);
             return;
         }
         var limite = parametros.cotaMaxima().multiply(bem.valorDeReferencia());
         if (financiado.compareTo(limite) > 0) {
             var entradaMinima = bem.valorDeCompra().subtract(limite).setScale(2, RoundingMode.HALF_UP);
-            violar("RN-0006", "Valor financiado de " + financiado + " passa da cota máxima de "
-                    + parametros.cotaMaxima().movePointRight(2).stripTrailingZeros().toPlainString()
-                    + "% do valor de referência (" + bem.valorDeReferencia() + "). A entrada mínima é " + entradaMinima + ".");
+            violar(ErrosDaOriginacao.COTA_EXCEDIDA, financiado, parametros.cotaMaxima().movePointRight(2).stripTrailingZeros().toPlainString(), bem.valorDeReferencia(), entradaMinima);
         }
     }
 
@@ -183,7 +180,7 @@ final class RegrasDeEnquadramento {
         // Documento recusado na conferência conta como não entregue: precisa ser reenviado.
         if (proposta.documentos().stream().noneMatch(d -> d.mesmo(titular, tipo)
                 && d.situacao() != DocumentoEntregue.Situacao.RECUSADO)) {
-            violar("RN-0009", "Falta o documento " + de + ": " + tipo + ".");
+            violar(ErrosDaOriginacao.DOCUMENTO_FALTANDO, de, tipo);
         }
     }
 

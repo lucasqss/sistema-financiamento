@@ -14,10 +14,13 @@ import jakarta.ws.rs.core.Response;
 @Path("/retornos/orgao-de-registro")
 public class RetornoDoOrgaoResource {
 
+    @Inject RetornoDoOrgaoRequestValidador retornoDoOrgaoRequestValidador;
+
     @Inject ClassificarRetornoService classificar;
 
     @POST
     public Response receber(RetornoDoOrgaoRequest r) {
+        retornoDoOrgaoRequestValidador.validar(r);
         var efeito = classificar.executar(r.protocolo(), r.resultado(), r.identificacaoRegistrada(), r.texto());
         return Response.accepted(new RetornoDoOrgaoResponse(r.protocolo(), efeito.name())).build();
     }

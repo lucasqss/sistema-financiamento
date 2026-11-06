@@ -5,7 +5,8 @@ import br.com.financiamento.bem.DadosDoEnquadramento;
 import br.com.financiamento.bem.FormaDoParticipante;
 import br.com.financiamento.bem.ParametrosDoTipo;
 import br.com.financiamento.bem.TipoDeBem;
-import br.com.financiamento.shared.dominio.Violacao;
+import br.com.financiamento.bem.ErrosDoBem;
+import br.com.financiamento.shared.validacao.Falha;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.LocalDate;
@@ -88,15 +89,15 @@ class Imovel implements CategoriaDeBem {
     }
 
     @Override
-    public List<Violacao> verificarRegrasProprias(DadosDoEnquadramento dados) {
-        var violacoes = new ArrayList<Violacao>();
+    public List<Falha> verificarRegrasProprias(DadosDoEnquadramento dados) {
+        var violacoes = new ArrayList<Falha>();
         verificarIdadeDoProponente(dados, violacoes);
         if (TERRENOS.contains(dados.tipo())) verificarTerrenoSemConstrucao(dados, violacoes);
         return violacoes;
     }
 
     /** RN-0012. */
-    private void verificarIdadeDoProponente(DadosDoEnquadramento dados, List<Violacao> violacoes) {
+    private void verificarIdadeDoProponente(DadosDoEnquadramento dados, List<Falha> violacoes) {
         if (dados.formaDoProponente() != FormaDoParticipante.PESSOA_FISICA
                 || dados.nascimentoDoProponente() == null || dados.prazoMeses() == null) {
             return;
@@ -105,17 +106,16 @@ class Imovel implements CategoriaDeBem {
         int idadeEmMeses = (int) idade.toTotalMonths();
         if (idadeEmMeses + dados.prazoMeses() > IDADE_MAXIMA_FINAL_MESES) {
             int prazoMaximo = Math.max(0, IDADE_MAXIMA_FINAL_MESES - idadeEmMeses);
-            violacoes.add(new Violacao("RN-0012", "Idade do proponente somada ao prazo passa de 80 anos e 6 meses; "
-                    + "o prazo máximo possível é de " + prazoMaximo + " meses."));
+            violacoes.add(Falha.de(ErrosDoBem.IDADE_DO_PROPONENTE, prazoMaximo));
         }
     }
 
     /** RN-0014. Os documentos do terreno rural (CCIR, ITR, CAR) estão em RN-0016. */
-    private void verificarTerrenoSemConstrucao(DadosDoEnquadramento dados, List<Violacao> violacoes) {
+    private void verificarTerrenoSemConstrucao(DadosDoEnquadramento dados, List<Falha> violacoes) {
         if (dados.construcaoAverbada() == null) {
-            violacoes.add(new Violacao("RN-0014", "Informe se há construção averbada na matrícula do terreno."));
+            violacoes.add(Falha.de(ErrosDoBem.CONSTRUCAO_NAO_INFORMADA));
         } else if (dados.construcaoAverbada()) {
-            violacoes.add(new Violacao("RN-0014", "Terreno com construção averbada não é financiado como terreno."));
+            violacoes.add(Falha.de(ErrosDoBem.TERRENO_COM_CONSTRUCAO));
         }
     }
 

@@ -17,6 +17,8 @@ import java.util.List;
 @Path("/web/analises-de-credito")
 public class AnaliseDeCreditoWebResource {
 
+    @Inject DecisaoDoAnalistaRequestValidador decisaoDoAnalistaRequestValidador;
+
     @Inject ConsultarAnalisesService consultar;
     @Inject RegistrarDecisaoService registrar;
 
@@ -28,6 +30,7 @@ public class AnaliseDeCreditoWebResource {
     @POST
     @Path("/{id}/decisao")
     public AnaliseDeCreditoWebResponse decidir(@PathParam("id") Long id, DecisaoDoAnalistaRequest r) {
+        decisaoDoAnalistaRequestValidador.validar(r);
         return AnaliseDeCreditoWebResponse.de(registrar.executar(id,
                 new Decisao(r.resultado(), r.ressalva(), r.sugeridas(), AnaliseDeCredito.Origem.ANALISTA)));
     }

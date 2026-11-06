@@ -4,7 +4,9 @@ import br.com.financiamento.contratacao.dominio.Contrato;
 import br.com.financiamento.contratacao.dominio.ContratoRepository;
 import br.com.financiamento.contratacao.dominio.PreparoDoContrato;
 import br.com.financiamento.contratacao.dominio.PreparoDoContratoRepository;
-import br.com.financiamento.shared.dominio.NaoEncontradoException;
+import br.com.financiamento.shared.validacao.ContextoDeDominio;
+import br.com.financiamento.shared.validacao.Elo;
+import br.com.financiamento.contratacao.dominio.ErrosDaContratacao;
 import br.com.financiamento.shared.outbox.Outbox;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -22,14 +24,24 @@ class Contratacoes {
     @Inject
     Outbox outbox;
 
-    PreparoDoContrato preparo(Long id) {
-        return preparos.findByIdOptional(id)
-                .orElseThrow(() -> new NaoEncontradoException("Contratação " + id + " não encontrada."));
+    /** Cadeia de domínio (ADR 0011): a contratação existe, depois os elos do caso de uso. */
+    @SafeVarargs
+    final PreparoDoContrato preparo(Long id, Elo<ContextoDeDominio<Long, PreparoDoContrato>>... doCasoDeUso) {
+        return ContextoDeDominio.validar(id, ContextoDeDominio.carregar(preparos::findByIdOptional,
+                ErrosDaContratacao.CONTRATACAO_NAO_ENCONTRADA), doCasoDeUso);
     }
 
-    Contrato contrato(Long id) {
-        return contratos.findByIdOptional(id)
-                .orElseThrow(() -> new NaoEncontradoException("Contrato " + id + " não encontrado."));
+    /** Cadeia de domínio (ADR 0011): o contrato existe, depois os elos do caso de uso. */
+    @SafeVarargs
+    final Contrato contrato(Long id, Elo<ContextoDeDominio<Long, Contrato>>... doCasoDeUso) {
+        return ContextoDeDominio.validar(id, ContextoDeDominio.carregar(contratos::findByIdOptional,
+                ErrosDaContratacao.CONTRATO_NAO_ENCONTRADO), doCasoDeUso);
+    }
+
+    /** CV-0002: o estado do contrato aceita o evento do caso de uso. */
+    static Elo<ContextoDeDominio<Long, Contrato>> aceita(String eventoNoModelo) {
+        return ContextoDeDominio.exigir(c -> c.estado().aceitaEvento(eventoNoModelo), ErrosDaContratacao.TRANSICAO_INVALIDA,
+                c -> new Object[]{c.estado().name().toLowerCase().replace('_', ' '), eventoNoModelo});
     }
 
     void salvar(PreparoDoContrato preparo) {

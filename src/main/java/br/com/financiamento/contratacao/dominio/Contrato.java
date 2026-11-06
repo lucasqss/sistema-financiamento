@@ -4,7 +4,7 @@ import br.com.financiamento.bem.TipoDeBem;
 import br.com.financiamento.contratacao.dominio.assinatura.Signatario;
 import br.com.financiamento.contratacao.dominio.condicoes.CondicoesFinais;
 import br.com.financiamento.contratacao.dominio.seguro.Seguro;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -105,9 +105,9 @@ public class Contrato extends PanacheEntityBase {
                                   List<Seguro> seguros, List<Signatario> signatarios, CronogramaDaObra cronograma,
                                   Instant agora) {
         if (seguros.stream().filter(Seguro::obrigatorio).anyMatch(s -> !s.contratado())) {
-            throw new RegraVioladaException("RN-0025", "O contrato só é emitido com os seguros exigidos contratados.");
+            throw new ErroDeDominioException(ErrosDaContratacao.SEGUROS_EXIGIDOS);
         }
-        if (signatarios.isEmpty()) throw new RegraVioladaException("RN-0026", "O contrato precisa de signatários.");
+        if (signatarios.isEmpty()) throw new ErroDeDominioException(ErrosDaContratacao.SEM_SIGNATARIOS);
         var c = new Contrato();
         c.propostaId = propostaId;
         c.tipoDeBem = tipo.codigo();
@@ -131,7 +131,7 @@ public class Contrato extends PanacheEntityBase {
         exigirTransicao(EventoDoContrato.CONTRATO_ASSINADO);
         var digitos = documento == null ? "" : documento.replaceAll("\\D", "");
         var signatario = signatarios.stream().filter(s -> s.documento().equals(digitos)).findFirst()
-                .orElseThrow(() -> new RegraVioladaException("RN-0026", "Quem não é signatário exigido não assina o contrato."));
+                .orElseThrow(() -> new ErroDeDominioException(ErrosDaContratacao.NAO_E_SIGNATARIO));
         if (signatario.assinou()) return false;
         signatario.assinar(agora);
         if (signatarios.stream().allMatch(Signatario::assinou)) {
@@ -224,7 +224,7 @@ public class Contrato extends PanacheEntityBase {
     /** RN-0027, acima do limite: o analista (ATR-0005) aprova ou nega a prorrogação pendente. */
     public void decidirProrrogacao(boolean aprovada) {
         var pendente = cronograma.pendente();
-        if (pendente == null) throw new RegraVioladaException("RN-0027", "Não há prorrogação pendente.");
+        if (pendente == null) throw new ErroDeDominioException(ErrosDaContratacao.SEM_PRORROGACAO_PENDENTE);
         if (aprovada) aplicarProrrogacao(pendente);
         else cronograma.negarPendente();
     }
@@ -243,8 +243,7 @@ public class Contrato extends PanacheEntityBase {
 
     private void exigirTransicao(EventoDoContrato evento) {
         if (!estado.aceita(evento)) {
-            throw new RegraVioladaException("CV-0002",
-                    "O contrato " + nomeDoEstado() + " não aceita " + evento.nomeNoModelo() + ".");
+            throw new ErroDeDominioException(ErrosDaContratacao.TRANSICAO_INVALIDA, nomeDoEstado(), evento.nomeNoModelo());
         }
     }
 
@@ -256,8 +255,7 @@ public class Contrato extends PanacheEntityBase {
 
     private void transicionarPara(EventoDoContrato evento, EstadoContrato destino, Map<String, Object> dados) {
         if (!estado.aceita(evento, destino)) {
-            throw new RegraVioladaException("CV-0002", "O contrato " + nomeDoEstado() + " não vai para "
-                    + destino.name().toLowerCase().replace('_', ' ') + " com " + evento.nomeNoModelo() + ".");
+            throw new ErroDeDominioException(ErrosDaContratacao.DESTINO_INVALIDO, nomeDoEstado(), destino.name().toLowerCase().replace('_', ' '), evento.nomeNoModelo());
         }
         this.estado = destino;
         registrar(evento, dados);

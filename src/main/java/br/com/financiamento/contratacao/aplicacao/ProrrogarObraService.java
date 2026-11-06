@@ -1,5 +1,7 @@
 package br.com.financiamento.contratacao.aplicacao;
 
+import br.com.financiamento.contratacao.dominio.ErrosDaContratacao;
+import br.com.financiamento.shared.validacao.ContextoDeDominio;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -18,7 +20,7 @@ public class ProrrogarObraService {
 
     @Transactional
     public DetalheDoContrato pedir(Long contratoId, LocalDate novaData) {
-        var c = contratacoes.contrato(contratoId);
+        var c = contratacoes.contrato(contratoId, Contratacoes.aceita("PrazoDaObraProrrogado"));
         c.pedirProrrogacao(novaData);
         contratacoes.salvar(c);
         return DetalheDoContrato.de(c);
@@ -26,7 +28,9 @@ public class ProrrogarObraService {
 
     @Transactional
     public DetalheDoContrato decidir(Long contratoId, boolean aprovada) {
-        var c = contratacoes.contrato(contratoId);
+        var c = contratacoes.contrato(contratoId, ContextoDeDominio.exigir(
+                x -> x.cronograma() != null && x.cronograma().pendente() != null,
+                ErrosDaContratacao.SEM_PRORROGACAO_PENDENTE, x -> new Object[0]));
         c.decidirProrrogacao(aprovada);
         contratacoes.salvar(c);
         return DetalheDoContrato.de(c);

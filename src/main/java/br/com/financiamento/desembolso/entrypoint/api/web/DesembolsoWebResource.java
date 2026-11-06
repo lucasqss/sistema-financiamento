@@ -1,7 +1,8 @@
 package br.com.financiamento.desembolso.entrypoint.api.web;
 
 import br.com.financiamento.desembolso.aplicacao.LiberarRecursoService;
-import br.com.financiamento.shared.dominio.NaoEncontradoException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
+import br.com.financiamento.desembolso.dominio.ErrosDoDesembolso;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -18,7 +19,7 @@ public class DesembolsoWebResource {
     @GET
     public DesembolsoWebResponse doContrato(@QueryParam("contrato") Long contratoId) {
         return liberar.doContrato(contratoId).map(DesembolsoWebResponse::de)
-                .orElseThrow(() -> new NaoEncontradoException("O contrato " + contratoId + " ainda não tem desembolso."));
+                .orElseThrow(() -> new ErroDeDominioException(ErrosDoDesembolso.CONTRATO_SEM_DESEMBOLSO, contratoId));
     }
 
     @POST

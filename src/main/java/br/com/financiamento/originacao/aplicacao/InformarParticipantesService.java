@@ -16,6 +16,9 @@ import java.util.Set;
 @ApplicationScoped
 public class InformarParticipantesService {
 
+    @Inject
+    ElosDaProposta elos;
+
     public record NovoParticipante(Papel papel, FormaDoParticipante forma, String documento, String nome,
                                    LocalDate nascimento, BigDecimal rendaComprovada) {
     }
@@ -25,7 +28,7 @@ public class InformarParticipantesService {
 
     @Transactional
     public DetalheProposta executar(Long propostaId, List<NovoParticipante> participantes) {
-        var proposta = propostas.buscar(propostaId);
+        var proposta = elos.validar(propostaId, elos.aceitaAlteracao());
         proposta.informarParticipantes(participantes.stream()
                 .map(p -> new Participante(p.papel(), p.forma(), p.documento(), p.nome(), p.nascimento(), p.rendaComprovada()))
                 .toList());

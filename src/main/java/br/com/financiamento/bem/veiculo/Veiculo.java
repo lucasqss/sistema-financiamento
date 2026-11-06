@@ -5,7 +5,8 @@ import br.com.financiamento.bem.DadosDoEnquadramento;
 import br.com.financiamento.bem.FormaDoParticipante;
 import br.com.financiamento.bem.ParametrosDoTipo;
 import br.com.financiamento.bem.TipoDeBem;
-import br.com.financiamento.shared.dominio.Violacao;
+import br.com.financiamento.bem.ErrosDoBem;
+import br.com.financiamento.shared.validacao.Falha;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.LocalDate;
@@ -70,18 +71,17 @@ class Veiculo implements CategoriaDeBem {
 
     /** RN-0011: idade máxima do veículo usado ao fim do contrato, contada do ano-modelo. */
     @Override
-    public List<Violacao> verificarRegrasProprias(DadosDoEnquadramento dados) {
+    public List<Falha> verificarRegrasProprias(DadosDoEnquadramento dados) {
         Integer idadeMaxima = parametros(dados.tipo()).idadeMaximaDoBem();
         if (idadeMaxima == null) return List.of();
         if (dados.anoModelo() == null) {
-            return List.of(new Violacao("RN-0011", "Informe o ano-modelo do veículo usado."));
+            return List.of(Falha.de(ErrosDoBem.ANO_MODELO_FALTANDO));
         }
         if (dados.prazoMeses() == null) return List.of();
         int anoFinal = dados.dataDeReferencia().plusMonths(dados.prazoMeses()).getYear();
         int idadeFinal = anoFinal - dados.anoModelo();
         if (idadeFinal > idadeMaxima) {
-            return List.of(new Violacao("RN-0011", "O veículo terá " + idadeFinal + " anos ao fim do contrato ("
-                    + anoFinal + "); o máximo é " + idadeMaxima + "."));
+            return List.of(Falha.de(ErrosDoBem.VEICULO_ANTIGO_DEMAIS, idadeFinal, anoFinal, idadeMaxima));
         }
         return List.of();
     }

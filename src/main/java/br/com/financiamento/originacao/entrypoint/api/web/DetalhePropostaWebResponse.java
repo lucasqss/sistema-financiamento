@@ -1,7 +1,6 @@
 package br.com.financiamento.originacao.entrypoint.api.web;
 
 import br.com.financiamento.originacao.aplicacao.DetalheProposta;
-import br.com.financiamento.shared.dominio.Violacao;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,12 +15,16 @@ public record DetalhePropostaWebResponse(
         Condicoes condicoes,
         List<Documento> documentos,
         boolean enquadrada,
-        List<Violacao> pendenciasDeEnquadramento,
+        List<Pendencia> pendenciasDeEnquadramento,
         Credito credito,
         Avaliacao avaliacao,
         Contraproposta contraproposta,
         String pendencia,
         LocalDate aprovacaoValidaAte) {
+
+    /** O que falta para enquadrar, com o código do catálogo e a regra do modelo. */
+    public record Pendencia(String codigo, String regra, String mensagem) {
+    }
 
     public record Credito(String resultado, int condicoesVersao, String ressalva) {
     }
@@ -64,7 +67,7 @@ public record DetalhePropostaWebResponse(
                         c.parcela(), d.valorFinanciado()),
                 d.documentos().stream().map(x -> new Documento(x.documentoId(), x.titular(), x.tipo(), x.situacao().name(), x.motivo())).toList(),
                 d.enquadramento().isEmpty(),
-                d.enquadramento(),
+                d.enquadramento().stream().map(f -> new Pendencia(f.codigo(), f.regra(), f.mensagem())).toList(),
                 d.credito() == null ? null : new Credito(d.credito().resultado().name(), d.credito().condicoesVersao(),
                         d.credito().ressalva()),
                 d.avaliacao() == null ? null : new Avaliacao(d.avaliacao().aceitoComoGarantia(), d.avaliacao().valor(),

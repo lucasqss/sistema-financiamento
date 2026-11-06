@@ -1,7 +1,7 @@
 package br.com.financiamento.desembolso.dominio;
 
 import br.com.financiamento.bem.FormaDeLiberacao;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -29,9 +29,9 @@ class DesembolsoTest {
 
     @Test
     void nadaAntesDaGarantiaConstituida_rn0030() {
-        var erro = assertThrows(RegraVioladaException.class, () -> Desembolso.abrir(9L, 3L, r("1000"), r("0"),
+        var erro = assertThrows(ErroDeDominioException.class, () -> Desembolso.abrir(9L, 3L, r("1000"), r("0"),
                 "12345678909", FormaDeLiberacao.UNICA, false, AGORA));
-        assertEquals("RN-0030", erro.violacoes().getFirst().regra());
+        assertEquals("RN-0030", erro.falhas().getFirst().regra());
     }
 
     @Test
@@ -86,6 +86,6 @@ class DesembolsoTest {
     @Test
     void medicaoSoNoImovelNaPlanta() {
         var d = abrir("1000", "0", FormaDeLiberacao.UNICA);
-        assertThrows(RegraVioladaException.class, () -> d.medicaoRealizada(r("50"), AGORA));
+        assertThrows(ErroDeDominioException.class, () -> d.medicaoRealizada(r("50"), AGORA));
     }
 }

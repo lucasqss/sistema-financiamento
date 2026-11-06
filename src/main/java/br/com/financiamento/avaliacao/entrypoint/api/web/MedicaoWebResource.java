@@ -13,10 +13,13 @@ import java.util.List;
 @Path("/web/medicoes")
 public class MedicaoWebResource {
 
+    @Inject MedicaoRequestValidador medicaoRequestValidador;
+
     @Inject MedirObraService medir;
 
     @POST
     public MedicaoWebResponse medir(MedicaoRequest r) {
+        medicaoRequestValidador.validar(r);
         return MedicaoWebResponse.de(medir.executar(r.contratoId(), r.percentualAcumulado(), r.medidaEm()));
     }
 

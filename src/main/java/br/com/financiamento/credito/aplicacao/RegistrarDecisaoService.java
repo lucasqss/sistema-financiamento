@@ -6,7 +6,8 @@ import br.com.financiamento.credito.OuvinteDoCredito;
 import br.com.financiamento.credito.ResultadoDeCredito;
 import br.com.financiamento.credito.dominio.AnaliseDeCredito;
 import br.com.financiamento.credito.dominio.AnaliseDeCreditoRepository;
-import br.com.financiamento.shared.dominio.NaoEncontradoException;
+import br.com.financiamento.shared.validacao.ContextoDeDominio;
+import br.com.financiamento.credito.dominio.ErrosDoCredito;
 import br.com.financiamento.shared.outbox.Outbox;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
@@ -44,8 +45,11 @@ public class RegistrarDecisaoService {
 
     @Transactional
     public AnaliseDeCredito executar(Long analiseId, Decisao d) {
-        var analise = analises.findByIdOptional(analiseId)
-                .orElseThrow(() -> new NaoEncontradoException("Análise de crédito " + analiseId + " não encontrada."));
+        // Cadeia de domínio (ADR 0011): a análise existe e não foi decidida de outro jeito (UC-0011).
+        var analise = ContextoDeDominio.validar(analiseId,
+                ContextoDeDominio.carregar(analises::findByIdOptional, ErrosDoCredito.ANALISE_NAO_ENCONTRADA),
+                ContextoDeDominio.exigir(a -> a.resultado() == null || a.resultado() == d.resultado(),
+                        ErrosDoCredito.ANALISE_JA_DECIDIDA, a -> new Object[]{a.id(), a.resultado()}));
         if (!analise.decidir(d.resultado(), d.ressalva(), d.sugeridas(), d.origem(), relogio.instant())) {
             return analise; // retorno repetido: nenhum novo efeito
         }

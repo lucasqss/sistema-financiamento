@@ -1,6 +1,6 @@
 package br.com.financiamento.documentos.dominio;
 
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -112,14 +112,14 @@ public class Documento extends PanacheEntityBase {
 
     /** Antes de guardar: o que o armazém recebe já passou por estas regras. */
     public static void validar(String tipo, String tipoDeConteudo, byte[] conteudo) {
-        if (tipo == null || tipo.isBlank()) throw new RegraVioladaException("RN-0009", "Informe qual documento é.");
-        if (conteudo == null || conteudo.length == 0) throw new RegraVioladaException("UC-0024", "O arquivo está vazio.");
-        if (conteudo.length > TAMANHO_MAXIMO) throw new RegraVioladaException("UC-0024", "O arquivo passa de 10 MB.");
+        if (tipo == null || tipo.isBlank()) throw new ErroDeDominioException(ErrosDosDocumentos.TIPO_DE_DOCUMENTO_OBRIGATORIO);
+        if (conteudo == null || conteudo.length == 0) throw new ErroDeDominioException(ErrosDosDocumentos.ARQUIVO_VAZIO);
+        if (conteudo.length > TAMANHO_MAXIMO) throw new ErroDeDominioException(ErrosDosDocumentos.ARQUIVO_GRANDE_DEMAIS);
         var assinatura = ASSINATURAS.get(tipoDeConteudo);
-        if (assinatura == null) throw new RegraVioladaException("UC-0024", "Envie PDF, JPEG ou PNG.");
+        if (assinatura == null) throw new ErroDeDominioException(ErrosDosDocumentos.TIPO_DE_ARQUIVO);
         for (int i = 0; i < assinatura.length; i++) {
             if (conteudo.length <= i || conteudo[i] != assinatura[i]) {
-                throw new RegraVioladaException("UC-0024", "O conteúdo do arquivo não é " + tipoDeConteudo + ".");
+                throw new ErroDeDominioException(ErrosDosDocumentos.CONTEUDO_DIVERGENTE, tipoDeConteudo);
             }
         }
     }
@@ -132,11 +132,10 @@ public class Documento extends PanacheEntityBase {
         var resultado = aceito ? SituacaoDoDocumento.ACEITO : SituacaoDoDocumento.RECUSADO;
         if (situacao == resultado && (aceito || this.motivo == motivo)) return false;
         if (situacao != SituacaoDoDocumento.ENVIADO) {
-            throw new RegraVioladaException("UC-0024", "O documento " + id + " está " + situacao.name().toLowerCase()
-                    + " e não pode ser conferido de novo.");
+            throw new ErroDeDominioException(ErrosDosDocumentos.JA_CONFERIDO, id, situacao.name().toLowerCase());
         }
         if (!aceito && motivo == null) {
-            throw new RegraVioladaException("UC-0024", "Informe o motivo da recusa: ilegível, vencido ou divergente.");
+            throw new ErroDeDominioException(ErrosDosDocumentos.MOTIVO_OBRIGATORIO);
         }
         this.situacao = resultado;
         this.motivo = aceito ? null : motivo;
@@ -147,7 +146,7 @@ public class Documento extends PanacheEntityBase {
 
     public void substituir() {
         if (situacao == SituacaoDoDocumento.ACEITO) {
-            throw new RegraVioladaException("RN-0009", "O documento " + tipo + " já foi aceito.");
+            throw new ErroDeDominioException(ErrosDosDocumentos.DOCUMENTO_JA_ACEITO, tipo);
         }
         this.situacao = SituacaoDoDocumento.SUBSTITUIDO;
     }

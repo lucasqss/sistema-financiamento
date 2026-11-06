@@ -2,7 +2,8 @@ package br.com.financiamento.garantia.entrypoint.api.web;
 
 import br.com.financiamento.garantia.aplicacao.ConsultarRegistrosService;
 import br.com.financiamento.garantia.aplicacao.TratarRegistroService;
-import br.com.financiamento.shared.dominio.NaoEncontradoException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
+import br.com.financiamento.garantia.dominio.ErrosDaGarantia;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -14,13 +15,15 @@ import jakarta.ws.rs.QueryParam;
 @Path("/web/registros")
 public class RegistroWebResource {
 
+    @Inject DesfazimentoRequestValidador desfazimentoRequestValidador;
+
     @Inject ConsultarRegistrosService consultar;
     @Inject TratarRegistroService tratar;
 
     @GET
     public RegistroWebResponse doContrato(@QueryParam("contrato") Long contratoId) {
         return consultar.doContrato(contratoId).map(RegistroWebResponse::de)
-                .orElseThrow(() -> new NaoEncontradoException("O contrato " + contratoId + " não tem registro de garantia."));
+                .orElseThrow(() -> new ErroDeDominioException(ErrosDaGarantia.CONTRATO_SEM_REGISTRO, contratoId));
     }
 
     @POST
@@ -38,6 +41,7 @@ public class RegistroWebResource {
     @POST
     @Path("/{id}/desfazimento")
     public RegistroWebResponse desfazer(@PathParam("id") Long id, DesfazimentoRequest r) {
+        desfazimentoRequestValidador.validar(r);
         return RegistroWebResponse.de(tratar.desfazer(id, r == null ? null : r.motivo()));
     }
 }

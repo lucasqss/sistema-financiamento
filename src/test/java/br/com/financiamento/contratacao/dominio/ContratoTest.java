@@ -4,7 +4,7 @@ import br.com.financiamento.bem.TipoDeBem;
 import br.com.financiamento.contratacao.dominio.assinatura.Signatario;
 import br.com.financiamento.contratacao.dominio.condicoes.CondicoesFinais;
 import br.com.financiamento.contratacao.dominio.seguro.Seguro;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -49,8 +49,8 @@ class ContratoTest {
         assertTrue(p.registrarApolice("DFI", "AP-2"));
         assertTrue(p.retirarEventos().isEmpty(), "falta o prestamista escolhido");
         assertFalse(p.registrarApolice("mip", "AP-1"), "a mesma apólice repetida não tem efeito");
-        assertThrows(RegraVioladaException.class, () -> p.registrarApolice("MIP", "AP-9"));
-        assertThrows(RegraVioladaException.class, () -> p.registrarApolice("seguro do bem", "AP-3"));
+        assertThrows(ErroDeDominioException.class, () -> p.registrarApolice("MIP", "AP-9"));
+        assertThrows(ErroDeDominioException.class, () -> p.registrarApolice("seguro do bem", "AP-3"));
         p.registrarApolice("prestamista", "AP-4");
         assertTrue(p.segurosContratados());
         assertEquals("SegurosContratados", p.retirarEventos().getFirst().nome());
@@ -58,10 +58,10 @@ class ContratoTest {
 
     @Test
     void naoEmiteSemOsSegurosExigidos_rn0025() {
-        var erro = assertThrows(RegraVioladaException.class, () -> Contrato.emitir(10L, TipoDeBem.de("CARRO_NOVO"),
+        var erro = assertThrows(ErroDeDominioException.class, () -> Contrato.emitir(10L, TipoDeBem.de("CARRO_NOVO"),
                 VENDEDOR, condicoes(), List.of(new Seguro("seguro do bem", true)),
                 List.of(new Signatario("PROPONENTE", ANA, "Ana")), null, AGORA));
-        assertEquals("RN-0025", erro.violacoes().getFirst().regra());
+        assertEquals("RN-0025", erro.falhas().getFirst().regra());
     }
 
     @Test
@@ -79,8 +79,8 @@ class ContratoTest {
 
     @Test
     void quemNaoESignatarioNaoAssina() {
-        var erro = assertThrows(RegraVioladaException.class, () -> emitido().assinar(cpf(99), AGORA));
-        assertEquals("RN-0026", erro.violacoes().getFirst().regra());
+        var erro = assertThrows(ErroDeDominioException.class, () -> emitido().assinar(cpf(99), AGORA));
+        assertEquals("RN-0026", erro.falhas().getFirst().regra());
     }
 
     @Test
@@ -91,8 +91,8 @@ class ContratoTest {
 
         var assinado = emitido();
         List.of(ANA, VENDEDOR, BRUNO).forEach(d -> assinado.assinar(d, AGORA));
-        var erro = assertThrows(RegraVioladaException.class, () -> assinado.cancelar("desistência"));
-        assertEquals("CV-0002", erro.violacoes().getFirst().regra());
+        var erro = assertThrows(ErroDeDominioException.class, () -> assinado.cancelar("desistência"));
+        assertEquals("CV-0002", erro.falhas().getFirst().regra());
     }
 
     @Test
@@ -112,7 +112,7 @@ class ContratoTest {
         assertEquals(EstadoContrato.GARANTIA_CONSTITUIDA, c.estado());
         assertEquals("GAR-1-3", c.protocoloDaGarantia());
         assertTrue(c.retirarEventos().isEmpty(), "EVT-0027 a EVT-0031 são da Garantia");
-        assertThrows(RegraVioladaException.class, () -> c.garantiaRegistrada("GAR-1-3"), "CV-0002");
+        assertThrows(ErroDeDominioException.class, () -> c.garantiaRegistrada("GAR-1-3"), "CV-0002");
     }
 
     /** Contrato na planta, com a garantia já constituída. */
@@ -146,7 +146,7 @@ class ContratoTest {
     void prorrogacaoDaObra_exemploDoModelo_rn0027() {
         var c = naPlantaComGarantia(java.time.LocalDate.of(2027, 6, 30));
         c.parcelaDaObraLiberada(false);
-        assertThrows(RegraVioladaException.class, () -> naPlantaComGarantia(java.time.LocalDate.of(2027, 6, 30))
+        assertThrows(ErroDeDominioException.class, () -> naPlantaComGarantia(java.time.LocalDate.of(2027, 6, 30))
                 .pedirProrrogacao(java.time.LocalDate.of(2027, 7, 30)), "fora de obra não prorroga (CV-0002)");
 
         assertTrue(c.pedirProrrogacao(java.time.LocalDate.of(2027, 6, 30).plusDays(90)));
@@ -159,6 +159,6 @@ class ContratoTest {
         assertEquals(195, c.cronograma().diasProrrogados());
         assertEquals(List.of("PrazoDaObraProrrogado", "PrazoDaObraProrrogado", "PrazoDaObraProrrogado"),
                 c.retirarEventos().stream().map(EventoRegistrado::nome).toList());
-        assertThrows(RegraVioladaException.class, () -> c.decidirProrrogacao(true), "nada pendente");
+        assertThrows(ErroDeDominioException.class, () -> c.decidirProrrogacao(true), "nada pendente");
     }
 }

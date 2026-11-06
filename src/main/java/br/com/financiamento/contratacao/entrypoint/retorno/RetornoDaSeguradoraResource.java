@@ -14,11 +14,14 @@ import jakarta.ws.rs.core.Response;
 @Path("/retornos/seguradora")
 public class RetornoDaSeguradoraResource {
 
+    @Inject ApoliceRequestValidador apoliceRequestValidador;
+
     @Inject RegistrarApoliceService registrar;
 
     @POST
     @Path("/{contratacaoId}")
     public Response receber(@PathParam("contratacaoId") Long contratacaoId, ApoliceRequest r) {
+        apoliceRequestValidador.validar(r);
         registrar.executar(contratacaoId, r.seguro(), r.apolice());
         return Response.accepted().build();
     }

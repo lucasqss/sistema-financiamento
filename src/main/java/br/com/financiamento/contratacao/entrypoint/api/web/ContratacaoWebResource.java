@@ -17,12 +17,15 @@ import java.net.URI;
 @Path("/web/contratacoes")
 public class ContratacaoWebResource {
 
+    @Inject AceiteRequestValidador aceiteRequestValidador;
+
     @Inject AceitarCondicoesService aceitar;
     @Inject EmitirContratoService emitir;
     @Inject ConsultarContratacaoService consultar;
 
     @POST
     public Response aceitar(AceiteRequest r) {
+        aceiteRequestValidador.validar(r);
         var d = aceitar.executar(r.propostaId(), r.segurosOpcionais(), r.conjuges(), r.previsaoDeEntregaDaObra());
         if (d.id() == null) return impedida(d);
         return Response.created(URI.create("/web/contratacoes/" + d.id())).entity(ContratacaoWebResponse.de(d)).build();

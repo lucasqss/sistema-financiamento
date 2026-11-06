@@ -1,6 +1,6 @@
 package br.com.financiamento.documentos.dominio;
 
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -28,11 +28,11 @@ class DocumentoTest {
 
     @Test
     void soPdfJpegOuPngConferidosPeloConteudo() {
-        assertThrows(RegraVioladaException.class, () -> Documento.validar("identidade", "text/plain", PDF));
-        assertThrows(RegraVioladaException.class, () -> Documento.validar("identidade", "image/png", PDF),
+        assertThrows(ErroDeDominioException.class, () -> Documento.validar("identidade", "text/plain", PDF));
+        assertThrows(ErroDeDominioException.class, () -> Documento.validar("identidade", "image/png", PDF),
                 "o conteúdo é PDF, não PNG");
-        assertThrows(RegraVioladaException.class, () -> Documento.validar("identidade", "application/pdf", new byte[0]));
-        assertThrows(RegraVioladaException.class, () -> Documento.validar("identidade", "application/pdf",
+        assertThrows(ErroDeDominioException.class, () -> Documento.validar("identidade", "application/pdf", new byte[0]));
+        assertThrows(ErroDeDominioException.class, () -> Documento.validar("identidade", "application/pdf",
                 new byte[(int) Documento.TAMANHO_MAXIMO + 1]));
     }
 
@@ -42,14 +42,14 @@ class DocumentoTest {
         assertTrue(d.conferir(false, MotivoDaRecusa.ILEGIVEL, "foto tremida", AGORA));
         assertEquals("ilegível: foto tremida", d.motivoDescrito());
         assertFalse(d.conferir(false, MotivoDaRecusa.ILEGIVEL, "foto tremida", AGORA));
-        assertThrows(RegraVioladaException.class, () -> d.conferir(true, null, null, AGORA));
+        assertThrows(ErroDeDominioException.class, () -> d.conferir(true, null, null, AGORA));
     }
 
     @Test
     void recusaPedeMotivoEAceitoNaoESubstituido() {
         var d = enviado();
-        assertThrows(RegraVioladaException.class, () -> d.conferir(false, null, null, AGORA));
+        assertThrows(ErroDeDominioException.class, () -> d.conferir(false, null, null, AGORA));
         d.conferir(true, null, null, AGORA);
-        assertThrows(RegraVioladaException.class, d::substituir);
+        assertThrows(ErroDeDominioException.class, d::substituir);
     }
 }

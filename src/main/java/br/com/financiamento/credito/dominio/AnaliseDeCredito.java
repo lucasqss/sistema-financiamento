@@ -2,7 +2,7 @@ package br.com.financiamento.credito.dominio;
 
 import br.com.financiamento.credito.CondicoesSugeridas;
 import br.com.financiamento.credito.ResultadoDeCredito;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -100,13 +100,11 @@ public class AnaliseDeCredito extends PanacheEntityBase {
                            Origem origem, Instant agora) {
         if (this.resultado != null) {
             if (this.resultado == resultado) return false;
-            throw new RegraVioladaException("UC-0011",
-                    "A análise " + id + " já foi decidida como " + this.resultado + ".");
+            throw new ErroDeDominioException(ErrosDoCredito.ANALISE_JA_DECIDIDA, id, this.resultado);
         }
         if (resultado == ResultadoDeCredito.APROVADO_COM_RESSALVA) {
             if (sugeridas == null || ressalva == null || ressalva.isBlank()) {
-                throw new RegraVioladaException("RN-0020",
-                        "Aprovação com ressalva precisa da ressalva e das condições sugeridas.");
+                throw new ErroDeDominioException(ErrosDoCredito.RESSALVA_INCOMPLETA);
             }
             this.ressalva = ressalva;
             this.sugeridaEntradaPropria = sugeridas.entradaPropria();

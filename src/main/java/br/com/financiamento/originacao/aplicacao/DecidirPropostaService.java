@@ -16,11 +16,14 @@ import jakarta.transaction.Transactional;
 public class DecidirPropostaService {
 
     @Inject
+    ElosDaProposta elos;
+
+    @Inject
     Propostas propostas;
 
     @Transactional
     public void creditoDecidido(DecisaoDeCredito d) {
-        var proposta = propostas.buscar(d.propostaId());
+        var proposta = elos.validar(d.propostaId());
         if (!proposta.registrarCredito(new CreditoDaProposta(d.resultado(), d.condicoesVersao(), d.ressalva(), d.sugeridas()))) {
             return;
         }
@@ -29,7 +32,7 @@ public class DecidirPropostaService {
 
     @Transactional
     public void bemAvaliado(ResultadoDeAvaliacao r) {
-        var proposta = propostas.buscar(r.propostaId());
+        var proposta = elos.validar(r.propostaId());
         if (!proposta.registrarAvaliacao(new AvaliacaoDaProposta(r.aceitoComoGarantia(), r.valor(), r.fonte(),
                 r.avaliadaEm(), r.validaAte()))) {
             return;

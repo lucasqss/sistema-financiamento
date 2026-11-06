@@ -13,6 +13,9 @@ import java.math.BigDecimal;
 @ApplicationScoped
 public class SimularCondicoesService {
 
+    @Inject
+    ElosDaProposta elos;
+
     public record NovasCondicoes(BigDecimal entradaPropria, BigDecimal entradaFgts, int prazoMeses, BigDecimal parcela) {
     }
 
@@ -21,7 +24,7 @@ public class SimularCondicoesService {
 
     @Transactional
     public DetalheProposta executar(Long propostaId, NovasCondicoes c) {
-        var proposta = propostas.buscar(propostaId);
+        var proposta = elos.validar(propostaId, elos.aceitaAlteracao());
         proposta.informarCondicoes(c.entradaPropria(), c.entradaFgts(), c.prazoMeses(), c.parcela());
         return propostas.salvar(proposta);
     }

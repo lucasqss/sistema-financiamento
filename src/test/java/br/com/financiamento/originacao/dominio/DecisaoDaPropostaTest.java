@@ -6,7 +6,7 @@ import br.com.financiamento.credito.CondicoesSugeridas;
 import br.com.financiamento.credito.ResultadoDeCredito;
 import br.com.financiamento.originacao.dominio.resultado.AvaliacaoDaProposta;
 import br.com.financiamento.originacao.dominio.resultado.CreditoDaProposta;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -100,7 +100,7 @@ class DecisaoDaPropostaTest {
         assertEquals(COM_PENDENCIA, p.estado());
         assertTrue(p.pendencia().contains("RN-0006") && p.pendencia().contains("9500.00"), p.pendencia());
 
-        assertThrows(RegraVioladaException.class, () -> p.resolverPendencia(enquadrar(p, veiculo)),
+        assertThrows(ErroDeDominioException.class, () -> p.resolverPendencia(enquadrar(p, veiculo)),
                 "sem recompor a entrada, continua fora do enquadramento");
 
         p.informarCondicoes(r("9500"), BigDecimal.ZERO, 36, r("700")); // UC-0008: entrada recomposta
@@ -190,14 +190,14 @@ class DecisaoDaPropostaTest {
         p.registrarContrato(77L, HOJE);
         assertEquals(CONTRATADA, p.estado());
         assertEquals(77L, p.contratoId());
-        assertThrows(RegraVioladaException.class, () -> p.registrarContrato(78L, HOJE), "um contrato por proposta");
+        assertThrows(ErroDeDominioException.class, () -> p.registrarContrato(78L, HOJE), "um contrato por proposta");
 
         var expirada = aprovada();
-        assertTrue(expirada.impedimentoParaContratar(HOJE.plusDays(31)).startsWith("RN-0021"));
+        assertEquals("RN-0021", expirada.impedimentoParaContratar(HOJE.plusDays(31)).regra());
         assertEquals(EXPIRADA, expirada.estado());
 
         var vencida = aprovada();
-        assertTrue(vencida.impedimentoParaContratar(LocalDate.of(2026, 12, 1)).startsWith("RN-0022"));
+        assertEquals("RN-0022", vencida.impedimentoParaContratar(LocalDate.of(2026, 12, 1)).regra());
         assertEquals(COM_PENDENCIA, vencida.estado());
     }
 }

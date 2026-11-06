@@ -34,14 +34,14 @@ class RegrasDeEnquadramentoTest {
     @Test
     void propostaCompletaEnquadra() {
         var e = enquadrar(motoUsada("20000", "7400"), veiculo);
-        assertTrue(e.enquadrada(), e.violacoes().toString());
+        assertTrue(e.enquadrada(), e.falhas().toString());
     }
 
     @Test
     void rascunhoVazioListaOQueFaltaPelaRN0018() {
         var e = enquadrar(rascunho("CARRO_NOVO"), veiculo);
         assertEquals(List.of("RN-0009", "RN-0018"), regras(e));
-        assertEquals(5, e.violacoes().stream().filter(v -> v.regra().equals("RN-0018")).count());
+        assertEquals(5, e.falhas().stream().filter(v -> v.regra().equals("RN-0018")).count());
     }
 
     @Test
@@ -50,7 +50,7 @@ class RegrasDeEnquadramentoTest {
         p.informarBem(p.bem().comAvaliacao(r("18000")));
         var e = enquadrar(p, veiculo);
         assertEquals(List.of("RN-0006"), regras(e));
-        assertTrue(e.violacoes().getFirst().mensagem().contains("entrada mínima é 7400.00"), e.violacoes().toString());
+        assertTrue(e.falhas().getFirst().mensagem().contains("entrada mínima é 7400.00"), e.falhas().toString());
 
         p.informarCondicoes(r("7400"), BigDecimal.ZERO, 36, r("900"));
         assertTrue(enquadrar(p, veiculo).enquadrada());
@@ -85,7 +85,7 @@ class RegrasDeEnquadramentoTest {
         p.informarCondicoes(r("7400"), BigDecimal.ZERO, 36, r("900"));
         var e = enquadrar(p, veiculo);
         assertEquals(List.of("RN-0009"), regras(e));
-        assertEquals(4, e.violacoes().size()); // CRLV e os 3 documentos da pessoa física
+        assertEquals(4, e.falhas().size()); // CRLV e os 3 documentos da pessoa física
     }
 
     @Test
@@ -101,8 +101,8 @@ class RegrasDeEnquadramentoTest {
 
         p.informarParticipantes(List.of(proponentePf(r("20000")), proponentePf(r("1"))));
         var e = enquadrar(p, veiculo);
-        assertTrue(e.violacoes().stream().anyMatch(v -> v.mensagem().contains("repetido")));
-        assertTrue(e.violacoes().stream().anyMatch(v -> v.mensagem().contains("2 proponentes")));
+        assertTrue(e.falhas().stream().anyMatch(v -> v.mensagem().contains("repetido")));
+        assertTrue(e.falhas().stream().anyMatch(v -> v.mensagem().contains("2 proponentes")));
     }
 
     @Test
@@ -131,7 +131,7 @@ class RegrasDeEnquadramentoTest {
         var nova = completa("MOTO_NOVA", veiculo, r("20000"), r("2000"), 36, r("900"), null, null);
         nova.informarParticipantes(List.of(pj));
         entregarDocumentos(nova, veiculo);
-        assertTrue(enquadrar(nova, veiculo).enquadrada(), enquadrar(nova, veiculo).violacoes().toString());
+        assertTrue(enquadrar(nova, veiculo).enquadrada(), enquadrar(nova, veiculo).falhas().toString());
     }
 
     @Test
@@ -159,7 +159,7 @@ class RegrasDeEnquadramentoTest {
     void rn0015_fgtsSoNoResidencialDePessoaFisica() {
         var residencial = completa("RESIDENCIAL_PRONTO", imovel, r("500000"), r("100000"), 360, r("4000"), null, null);
         residencial.informarCondicoes(r("50000"), r("50000"), 360, r("4000"));
-        assertTrue(enquadrar(residencial, imovel).enquadrada(), enquadrar(residencial, imovel).violacoes().toString());
+        assertTrue(enquadrar(residencial, imovel).enquadrada(), enquadrar(residencial, imovel).falhas().toString());
 
         var comercial = completa("COMERCIAL_PRONTO", imovel, r("500000"), r("150000"), 240, r("4000"), null, null);
         comercial.informarCondicoes(r("100000"), r("50000"), 240, r("4000"));

@@ -1,6 +1,6 @@
 package br.com.financiamento.bem;
 
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
@@ -26,8 +26,7 @@ public class BemFacade {
         return categorias.stream()
                 .filter(c -> c.tipos().contains(tipo))
                 .findFirst()
-                .orElseThrow(() -> new RegraVioladaException("DIM-0001",
-                        "Tipo de bem não financiado: " + tipo + ". Tipos aceitos: " + tiposAtendidos()));
+                .orElseThrow(() -> new ErroDeDominioException(ErrosDoBem.TIPO_NAO_FINANCIADO, tipo, tiposAtendidos()));
     }
 
     public Set<TipoDeBem> tiposAtendidos() {

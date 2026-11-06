@@ -3,7 +3,10 @@ package br.com.financiamento.avaliacao.aplicacao;
 import br.com.financiamento.avaliacao.MedicaoRealizada;
 import br.com.financiamento.avaliacao.OuvinteDaAvaliacao;
 import br.com.financiamento.avaliacao.dominio.MedicaoDaObra;
+import br.com.financiamento.avaliacao.dominio.ErrosDaAvaliacao;
 import br.com.financiamento.avaliacao.dominio.MedicaoDaObraRepository;
+import br.com.financiamento.shared.validacao.CadeiaDeValidacao;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import br.com.financiamento.shared.outbox.Outbox;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
@@ -36,8 +39,16 @@ public class MedirObraService {
 
     @Transactional
     public MedicaoDaObra executar(Long contratoId, BigDecimal percentualAcumulado, LocalDate medidaEm) {
-        var medicao = MedicaoDaObra.medir(contratoId, percentualAcumulado, medidaEm,
-                medicoes.ultimaDoContrato(contratoId).orElse(null));
+        // Cadeia de domínio (ADR 0011): o acumulado nunca diminui em relação à última medição (RN-0024).
+        var anterior = medicoes.ultimaDoContrato(contratoId).orElse(null);
+        CadeiaDeValidacao.<MedicaoDaObra>de((ultima, proximo) -> {
+            if (ultima != null && percentualAcumulado.compareTo(ultima.percentualAcumulado()) < 0) {
+                throw new ErroDeDominioException(ErrosDaAvaliacao.MEDICAO_DIMINUIU,
+                        ultima.percentualAcumulado().stripTrailingZeros().toPlainString());
+            }
+            proximo.seguir(ultima);
+        }).validar(anterior);
+        var medicao = MedicaoDaObra.medir(contratoId, percentualAcumulado, medidaEm, anterior);
         medicoes.persistAndFlush(medicao);
         outbox.registrar("MedicaoDaObra", medicao.id(), "MedicaoRealizada", Map.of("contratoId", contratoId,
                 "percentualAcumulado", percentualAcumulado, "medidaEm", medidaEm.toString()));

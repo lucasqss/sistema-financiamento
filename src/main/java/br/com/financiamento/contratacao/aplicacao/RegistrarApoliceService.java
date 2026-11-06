@@ -1,5 +1,7 @@
 package br.com.financiamento.contratacao.aplicacao;
 
+import br.com.financiamento.contratacao.dominio.ErrosDaContratacao;
+import br.com.financiamento.shared.validacao.ContextoDeDominio;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -19,7 +21,9 @@ public class RegistrarApoliceService {
 
     @Transactional
     public DetalheDaContratacao executar(Long preparoId, String seguro, String apolice) {
-        var preparo = contratacoes.preparo(preparoId);
+        var preparo = contratacoes.preparo(preparoId, ContextoDeDominio.exigir(
+                p -> p.seguros().stream().anyMatch(s -> s.nome().equalsIgnoreCase(seguro)),
+                ErrosDaContratacao.SEGURO_FORA_DA_CONTRATACAO, p -> new Object[]{seguro}));
         if (!preparo.registrarApolice(seguro, apolice)) return DetalheDaContratacao.de(preparo);
         contratacoes.salvar(preparo);
         if (preparo.segurosContratados() && !preparo.emitido()) return emissao.emitir(preparo);

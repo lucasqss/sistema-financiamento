@@ -73,7 +73,7 @@ class PropostaWebResourceTest {
 
         // Sem documentos, não submete (RN-0009) e continua em rascunho.
         given().when().post("/web/propostas/" + id + "/submissao")
-                .then().statusCode(422).body("violacoes.regra", hasItem("RN-0009"));
+                .then().statusCode(422).body("falhas.regra", hasItem("RN-0009"));
 
         EnvioDeDocumentosParaTeste.enviarTodos(id, PROPONENTE, List.of("CRLV"),
                 List.of("identidade", "comprovante de renda", "comprovante de residência"));
@@ -84,7 +84,7 @@ class PropostaWebResourceTest {
         // Em análise, não aceita alteração nem cancelamento (AGR-0001, CV-0001).
         put(id, "condicoes", Map.of("entradaPropria", 8000, "prazoMeses", 36, "parcela", 900), 422);
         given().when().post("/web/propostas/" + id + "/cancelamento")
-                .then().statusCode(422).body("violacoes.regra", hasItem("CV-0001"));
+                .then().statusCode(422).body("falhas.regra", hasItem("CV-0001"));
 
         assertEquals(List.of("PropostaIniciada", "PropostaSubmetida"), eventosNoOutbox(id));
     }
@@ -98,7 +98,7 @@ class PropostaWebResourceTest {
         long segunda = iniciar("MOTO_USADA");
         given().contentType(ContentType.JSON).body(bem(identificacao))
                 .when().put("/web/propostas/" + segunda + "/bem")
-                .then().statusCode(422).body("violacoes.regra", hasItem("RN-0004"));
+                .then().statusCode(422).body("falhas.regra", hasItem("RN-0004"));
 
         // Cancelada a primeira, o bem fica livre.
         given().when().post("/web/propostas/" + primeira + "/cancelamento").then().statusCode(200)
@@ -114,14 +114,14 @@ class PropostaWebResourceTest {
                 "nome", "Empresa", "rendaComprovada", 50000);
         given().contentType(ContentType.JSON).body(Map.of("participantes", List.of(pj)))
                 .when().put("/web/propostas/" + id + "/participantes")
-                .then().statusCode(422).body("violacoes.regra", hasItem("RN-0002"));
+                .then().statusCode(422).body("falhas.regra", hasItem("RN-0002"));
     }
 
     @Test
     void tipoDeBemForaDoModeloERecusado() {
         given().contentType(ContentType.JSON).body(Map.of("tipoDeBem", "BARCO_NOVO"))
                 .when().post("/web/propostas")
-                .then().statusCode(422).body("violacoes.regra", hasItem("DIM-0001"));
+                .then().statusCode(422).body("falhas.regra", hasItem("DIM-0001"));
     }
 
     @Test

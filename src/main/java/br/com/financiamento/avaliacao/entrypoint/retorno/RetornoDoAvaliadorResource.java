@@ -15,11 +15,14 @@ import jakarta.ws.rs.core.Response;
 @Path("/retornos/avaliador")
 public class RetornoDoAvaliadorResource {
 
+    @Inject LaudoRequestValidador laudoRequestValidador;
+
     @Inject RegistrarLaudoService registrar;
 
     @POST
     @Path("/{avaliacaoId}")
     public Response receber(@PathParam("avaliacaoId") Long avaliacaoId, LaudoRequest r) {
+        laudoRequestValidador.validar(r);
         registrar.executar(avaliacaoId, new Laudo(r.aceitoComoGarantia(), r.valor(), r.avaliadaEm()));
         return Response.accepted().build();
     }

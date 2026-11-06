@@ -1,6 +1,6 @@
 package br.com.financiamento.bem;
 
-import br.com.financiamento.shared.dominio.Violacao;
+import br.com.financiamento.shared.validacao.Falha;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -32,7 +32,7 @@ public interface CategoriaDeBem {
     List<String> documentosDoParticipante(TipoDeBem tipo, FormaDoParticipante forma);
 
     /** Regras próprias da categoria (ex.: RN-0011, RN-0012, RN-0014). Vazio quando enquadra. */
-    List<Violacao> verificarRegrasProprias(DadosDoEnquadramento dados);
+    List<Falha> verificarRegrasProprias(DadosDoEnquadramento dados);
 
     /** RN-0023: de onde vem o valor de avaliação. */
     String fonteDaAvaliacao(TipoDeBem tipo);

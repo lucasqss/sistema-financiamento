@@ -14,6 +14,11 @@ import jakarta.ws.rs.PathParam;
 @Path("/web/contratos")
 public class ContratoWebResource {
 
+    @Inject AssinaturaRequestValidador assinaturaRequestValidador;
+    @Inject CancelamentoRequestValidador cancelamentoRequestValidador;
+    @Inject DecisaoDeProrrogacaoRequestValidador decisaoDeProrrogacaoRequestValidador;
+    @Inject ProrrogacaoRequestValidador prorrogacaoRequestValidador;
+
     @Inject ConsultarContratacaoService consultar;
     @Inject AssinarContratoService assinar;
     @Inject CancelarContratoService cancelar;
@@ -28,12 +33,14 @@ public class ContratoWebResource {
     @POST
     @Path("/{id}/assinaturas")
     public ContratoWebResponse assinar(@PathParam("id") Long id, AssinaturaRequest r) {
+        assinaturaRequestValidador.validar(r);
         return ContratoWebResponse.de(assinar.executar(id, r.documento()));
     }
 
     @POST
     @Path("/{id}/cancelamento")
     public ContratoWebResponse cancelar(@PathParam("id") Long id, CancelamentoRequest r) {
+        cancelamentoRequestValidador.validar(r);
         return ContratoWebResponse.de(cancelar.executar(id, r == null ? null : r.motivo()));
     }
 
@@ -41,6 +48,7 @@ public class ContratoWebResource {
     @POST
     @Path("/{id}/prorrogacoes")
     public ContratoWebResponse prorrogar(@PathParam("id") Long id, ProrrogacaoRequest r) {
+        prorrogacaoRequestValidador.validar(r);
         return ContratoWebResponse.de(prorrogar.pedir(id, r.novaData()));
     }
 
@@ -48,6 +56,7 @@ public class ContratoWebResource {
     @POST
     @Path("/{id}/prorrogacoes/pendente/decisao")
     public ContratoWebResponse decidirProrrogacao(@PathParam("id") Long id, DecisaoDeProrrogacaoRequest r) {
+        decisaoDeProrrogacaoRequestValidador.validar(r);
         return ContratoWebResponse.de(prorrogar.decidir(id, r.aprovada()));
     }
 }

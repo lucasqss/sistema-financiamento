@@ -10,8 +10,7 @@ import br.com.financiamento.originacao.dominio.Enquadramento;
 import br.com.financiamento.originacao.dominio.Proposta;
 import br.com.financiamento.originacao.dominio.PropostaRepository;
 import br.com.financiamento.originacao.dominio.participante.Participante;
-import br.com.financiamento.shared.dominio.NaoEncontradoException;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import br.com.financiamento.shared.outbox.Outbox;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -80,16 +79,11 @@ class Propostas {
         }
     }
 
-    Proposta buscar(Long id) {
-        return repositorio.findByIdOptional(id)
-                .orElseThrow(() -> new NaoEncontradoException("Proposta " + id + " não encontrada."));
-    }
-
     /** Recusa a operação se o enquadramento violar alguma das regras que o caso de uso confere na hora. */
     Enquadramento exigirRegras(Proposta proposta, Set<String> regras) {
         var e = enquadrador.enquadrar(proposta);
-        var violadas = e.violacoes().stream().filter(v -> regras.contains(v.regra())).toList();
-        if (!violadas.isEmpty()) throw new RegraVioladaException(violadas);
+        var violadas = e.falhas().stream().filter(v -> regras.contains(v.regra())).toList();
+        if (!violadas.isEmpty()) throw new ErroDeDominioException(violadas);
         return e;
     }
 

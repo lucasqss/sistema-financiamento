@@ -14,11 +14,15 @@ import jakarta.ws.rs.core.Response;
 @Path("/retornos")
 public class RetornoDoDesembolsoResource {
 
+    @Inject PagamentoRequestValidador pagamentoRequestValidador;
+    @Inject RetornoDoFgtsRequestValidador retornoDoFgtsRequestValidador;
+
     @Inject LiberarRecursoService liberar;
 
     @POST
     @Path("/fgts/{desembolsoId}")
     public Response fgts(@PathParam("desembolsoId") Long desembolsoId, RetornoDoFgtsRequest r) {
+        retornoDoFgtsRequestValidador.validar(r);
         liberar.fgtsRespondido(desembolsoId, r.liberado(), r.motivo());
         return Response.accepted().build();
     }
@@ -26,6 +30,7 @@ public class RetornoDoDesembolsoResource {
     @POST
     @Path("/pagamento")
     public Response pagamento(PagamentoRequest r) {
+        pagamentoRequestValidador.validar(r);
         liberar.pagamentoConfirmado(r.protocolo());
         return Response.accepted().build();
     }

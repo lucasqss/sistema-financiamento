@@ -10,7 +10,7 @@ import br.com.financiamento.originacao.dominio.participante.Participante;
 import br.com.financiamento.originacao.dominio.resultado.AvaliacaoDaProposta;
 import br.com.financiamento.originacao.dominio.resultado.Contraproposta;
 import br.com.financiamento.originacao.dominio.resultado.CreditoDaProposta;
-import br.com.financiamento.shared.dominio.Violacao;
+import br.com.financiamento.shared.validacao.Falha;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,7 +26,7 @@ public record DetalheProposta(
         Condicoes condicoes,
         BigDecimal valorFinanciado,
         List<DocumentoEntregue> documentos,
-        List<Violacao> enquadramento,
+        List<Falha> enquadramento,
         CreditoDaProposta credito,
         AvaliacaoDaProposta avaliacao,
         Contraproposta contraproposta,
@@ -37,7 +37,7 @@ public record DetalheProposta(
         var financiado = p.condicoes() == null || p.bem() == null || p.bem().valorDeCompra() == null
                 ? null : p.condicoes().valorFinanciado(p.bem().valorDeCompra());
         return new DetalheProposta(p.id(), p.tipoDeBem().codigo(), p.estado(), p.participantes(), p.bem(),
-                p.condicoes(), financiado, p.documentos(), e.violacoes(), p.credito(), p.avaliacao(),
+                p.condicoes(), financiado, p.documentos(), e.falhas(), p.credito(), p.avaliacao(),
                 p.contraproposta(), p.pendencia(), p.aprovacaoValidaAte());
     }
 }

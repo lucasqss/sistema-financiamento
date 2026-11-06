@@ -2,7 +2,9 @@ package br.com.financiamento.desembolso.aplicacao;
 
 import br.com.financiamento.desembolso.dominio.Desembolso;
 import br.com.financiamento.desembolso.dominio.DesembolsoRepository;
-import br.com.financiamento.shared.dominio.NaoEncontradoException;
+import br.com.financiamento.shared.validacao.ContextoDeDominio;
+import br.com.financiamento.shared.validacao.Elo;
+import br.com.financiamento.desembolso.dominio.ErrosDoDesembolso;
 import br.com.financiamento.shared.outbox.Outbox;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -17,9 +19,23 @@ class Desembolsos {
     @Inject
     Outbox outbox;
 
-    Desembolso buscar(Long id) {
-        return repositorio.findByIdOptional(id)
-                .orElseThrow(() -> new NaoEncontradoException("Desembolso " + id + " não encontrado."));
+    /** Cadeia de domínio (ADR 0011): o desembolso existe, depois os elos do caso de uso. */
+    @SafeVarargs
+    final Desembolso buscar(Long id, Elo<ContextoDeDominio<Long, Desembolso>>... doCasoDeUso) {
+        return ContextoDeDominio.validar(id, ContextoDeDominio.carregar(repositorio::findByIdOptional,
+                ErrosDoDesembolso.DESEMBOLSO_NAO_ENCONTRADO), doCasoDeUso);
+    }
+
+    /** Cadeia de domínio do pagamento: o protocolo de liberação é nosso. */
+    Desembolso doProtocolo(String protocolo) {
+        return ContextoDeDominio.<String, Desembolso>validar(protocolo, ContextoDeDominio.carregar(
+                p -> Desembolso.contratoDoProtocolo(p).flatMap(repositorio::doContrato), ErrosDoDesembolso.PROTOCOLO_DESCONHECIDO));
+    }
+
+    /** Cadeia de domínio da medição (UC-0013): o contrato tem desembolso, isto é, garantia constituída. */
+    Desembolso doContratoComGarantia(Long contratoId) {
+        return ContextoDeDominio.<Long, Desembolso>validar(contratoId, ContextoDeDominio.carregar(
+                repositorio::doContrato, ErrosDoDesembolso.MEDICAO_SEM_GARANTIA));
     }
 
     void salvar(Desembolso desembolso) {

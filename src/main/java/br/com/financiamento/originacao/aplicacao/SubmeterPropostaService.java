@@ -14,6 +14,9 @@ import jakarta.transaction.Transactional;
 public class SubmeterPropostaService {
 
     @Inject
+    ElosDaProposta elos;
+
+    @Inject
     Propostas propostas;
 
     @Inject
@@ -21,7 +24,7 @@ public class SubmeterPropostaService {
 
     @Transactional
     public DetalheProposta executar(Long propostaId) {
-        var proposta = propostas.buscar(propostaId);
+        var proposta = elos.validar(propostaId, elos.aceita("PropostaSubmetida"));
         var enquadramento = enquadrador.enquadrar(proposta);
         proposta.submeter(enquadramento);
         propostas.solicitarAnalises(proposta);

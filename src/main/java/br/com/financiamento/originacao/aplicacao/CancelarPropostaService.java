@@ -9,11 +9,14 @@ import jakarta.transaction.Transactional;
 public class CancelarPropostaService {
 
     @Inject
+    ElosDaProposta elos;
+
+    @Inject
     Propostas propostas;
 
     @Transactional
     public DetalheProposta executar(Long propostaId) {
-        var proposta = propostas.buscar(propostaId);
+        var proposta = elos.validar(propostaId, elos.aceita("PropostaCancelada"));
         proposta.cancelar();
         return propostas.salvar(proposta);
     }

@@ -5,7 +5,9 @@ import br.com.financiamento.documentos.OuvinteDosDocumentos;
 import br.com.financiamento.documentos.dominio.Documento;
 import br.com.financiamento.documentos.dominio.DocumentoRepository;
 import br.com.financiamento.documentos.dominio.MotivoDaRecusa;
-import br.com.financiamento.shared.dominio.NaoEncontradoException;
+import br.com.financiamento.documentos.dominio.SituacaoDoDocumento;
+import br.com.financiamento.shared.validacao.ContextoDeDominio;
+import br.com.financiamento.documentos.dominio.ErrosDosDocumentos;
 import br.com.financiamento.shared.outbox.Outbox;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
@@ -39,7 +41,12 @@ public class ConferirDocumentoService {
 
     @Transactional
     public Documento executar(Long documentoId, boolean aceito, MotivoDaRecusa motivo, String observacao) {
-        var documento = buscar(documentoId);
+        // Cadeia de domínio (ADR 0011): o documento existe e ainda pode ser conferido, ou é a mesma conferência.
+        var documento = ContextoDeDominio.validar(documentoId,
+                ContextoDeDominio.carregar(documentos::findByIdOptional, ErrosDosDocumentos.DOCUMENTO_NAO_ENCONTRADO),
+                ContextoDeDominio.exigir(x -> x.situacao() == SituacaoDoDocumento.ENVIADO
+                                || x.situacao() == (aceito ? SituacaoDoDocumento.ACEITO : SituacaoDoDocumento.RECUSADO),
+                        ErrosDosDocumentos.JA_CONFERIDO, x -> new Object[]{x.id(), x.situacao().name().toLowerCase()}));
         if (!documento.conferir(aceito, motivo, observacao, relogio.instant())) return documento;
         var dados = new HashMap<String, Object>();
         dados.put("propostaId", documento.propostaId());
@@ -54,8 +61,4 @@ public class ConferirDocumentoService {
         return documento;
     }
 
-    Documento buscar(Long id) {
-        return documentos.findByIdOptional(id)
-                .orElseThrow(() -> new NaoEncontradoException("Documento " + id + " não encontrado."));
-    }
 }

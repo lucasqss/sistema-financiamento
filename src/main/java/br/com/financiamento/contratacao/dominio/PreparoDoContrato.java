@@ -3,7 +3,7 @@ package br.com.financiamento.contratacao.dominio;
 import br.com.financiamento.bem.TipoDeBem;
 import br.com.financiamento.contratacao.dominio.assinatura.Signatario;
 import br.com.financiamento.contratacao.dominio.seguro.Seguro;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -102,11 +102,10 @@ public class PreparoDoContrato extends PanacheEntityBase {
      */
     public boolean registrarApolice(String nomeDoSeguro, String apolice) {
         var seguro = seguros.stream().filter(s -> s.nome().equalsIgnoreCase(nomeDoSeguro)).findFirst()
-                .orElseThrow(() -> new RegraVioladaException("RN-0025",
-                        "O seguro " + nomeDoSeguro + " não faz parte desta contratação."));
+                .orElseThrow(() -> new ErroDeDominioException(ErrosDaContratacao.SEGURO_FORA_DA_CONTRATACAO, nomeDoSeguro));
         if (seguro.contratado()) {
             if (seguro.apolice().equals(apolice)) return false;
-            throw new RegraVioladaException("RN-0025", "O seguro " + seguro.nome() + " já tem a apólice " + seguro.apolice() + ".");
+            throw new ErroDeDominioException(ErrosDaContratacao.SEGURO_JA_TEM_APOLICE, seguro.nome(), seguro.apolice());
         }
         seguro.contratar(apolice);
         if (segurosContratados()) {

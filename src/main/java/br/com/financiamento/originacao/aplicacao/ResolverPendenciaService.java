@@ -14,6 +14,9 @@ import jakarta.transaction.Transactional;
 public class ResolverPendenciaService {
 
     @Inject
+    ElosDaProposta elos;
+
+    @Inject
     Propostas propostas;
 
     @Inject
@@ -21,7 +24,7 @@ public class ResolverPendenciaService {
 
     @Transactional
     public DetalheProposta executar(Long propostaId) {
-        var proposta = propostas.buscar(propostaId);
+        var proposta = elos.validar(propostaId, elos.aceita("PendenciaResolvida"));
         proposta.resolverPendencia(enquadrador.enquadrar(proposta));
         propostas.solicitarAnalises(proposta);
         return propostas.salvar(proposta, propostas.decidir(proposta));

@@ -134,7 +134,7 @@ class ContratacaoWebTest {
         long proposta = motoUsadaAprovada(ANA, VENDEDOR);
         given().contentType(ContentType.JSON)
                 .body(Map.of("propostaId", proposta, "conjuges", List.of(Map.of("documento", CONJUGE, "nome", "Bruno"))))
-                .post("/web/contratacoes").then().statusCode(422).body("violacoes[0].regra", equalTo("RN-0026"));
+                .post("/web/contratacoes").then().statusCode(422).body("falhas[0].regra", equalTo("RN-0026"));
     }
 
     @SuppressWarnings("unchecked")

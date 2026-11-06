@@ -3,7 +3,7 @@ package br.com.financiamento.garantia.dominio;
 import br.com.financiamento.bem.TipoDeBem;
 import br.com.financiamento.garantia.dominio.retorno.ResultadoDoOrgao;
 import br.com.financiamento.garantia.dominio.retorno.RetornoRecebido;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -160,7 +160,7 @@ public class Registro extends PanacheEntityBase {
 
     /** UC-0020: o analista cumpriu a exigência; reenvia com novo protocolo. Emite ExigenciaCumprida. */
     public void cumprirExigencia() {
-        exigir(SituacaoDoRegistro.EM_EXIGENCIA, "Só há exigência a cumprir no registro em exigência.");
+        exigir(SituacaoDoRegistro.EM_EXIGENCIA, ErrosDaGarantia.SEM_EXIGENCIA);
         registrar("ExigenciaCumprida", Map.of("protocolo", protocolo));
         novaTentativa();
     }
@@ -172,7 +172,7 @@ public class Registro extends PanacheEntityBase {
     public SituacaoDoRegistro reenviar() {
         var antes = situacao;
         if (antes != SituacaoDoRegistro.RECUSADO && antes != SituacaoDoRegistro.PENDENCIA_DE_IDENTIFICACAO) {
-            throw new RegraVioladaException("UC-0019", "Só se reenvia o registro recusado ou com divergência de identificação.");
+            throw new ErroDeDominioException(ErrosDaGarantia.REENVIO_INVALIDO);
         }
         novaTentativa();
         return antes;
@@ -180,7 +180,7 @@ public class Registro extends PanacheEntityBase {
 
     /** UC-0019, fluxo alternativo: recusado sem solução, o contrato é desfeito (UC-0016). */
     public void desfazer() {
-        exigir(SituacaoDoRegistro.RECUSADO, "Só se desfaz o contrato com o registro recusado.");
+        exigir(SituacaoDoRegistro.RECUSADO, ErrosDaGarantia.DESFAZER_SO_RECUSADO);
         situacao = SituacaoDoRegistro.DESFEITO;
     }
 
@@ -193,8 +193,8 @@ public class Registro extends PanacheEntityBase {
                 "identificacaoDoBem", identificacaoDoBem, "tentativa", tentativa));
     }
 
-    private void exigir(SituacaoDoRegistro esperada, String mensagem) {
-        if (situacao != esperada) throw new RegraVioladaException("UC-0019", mensagem);
+    private void exigir(SituacaoDoRegistro esperada, ErrosDaGarantia erro) {
+        if (situacao != esperada) throw new ErroDeDominioException(erro);
     }
 
     private static String normalizar(String identificacao) {

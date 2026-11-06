@@ -1,7 +1,7 @@
 package br.com.financiamento.garantia.dominio;
 
 import br.com.financiamento.bem.TipoDeBem;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -80,10 +80,10 @@ class RegistroTest {
     @Test
     void recusadoSemSolucaoEDesfeito_uc0019() {
         var r = solicitado();
-        assertThrows(RegraVioladaException.class, r::desfazer);
+        assertThrows(ErroDeDominioException.class, r::desfazer);
         r.classificar("GAR-7-1", ResultadoDoOrgao.RECUSADO, null, "vendedor sem poderes", AGORA);
         r.desfazer();
         assertEquals(SituacaoDoRegistro.DESFEITO, r.situacao());
-        assertThrows(RegraVioladaException.class, r::reenviar);
+        assertThrows(ErroDeDominioException.class, r::reenviar);
     }
 }

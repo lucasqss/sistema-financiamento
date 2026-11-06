@@ -6,7 +6,9 @@ import br.com.financiamento.contratacao.dominio.PreparoDoContrato;
 import br.com.financiamento.contratacao.dominio.PreparoDoContratoRepository;
 import br.com.financiamento.contratacao.dominio.assinatura.Signatario;
 import br.com.financiamento.originacao.OriginacaoFacade;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.CadeiaDeValidacao;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
+import br.com.financiamento.contratacao.dominio.ErrosDaContratacao;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -44,9 +46,11 @@ public class AceitarCondicoesService {
     @Transactional
     public DetalheDaContratacao executar(Long propostaId, List<String> segurosOpcionais, List<Conjuge> conjuges,
                                          LocalDate previsaoDeEntregaDaObra) {
-        if (preparos.daProposta(propostaId).isPresent()) {
-            throw new RegraVioladaException("AGR-0001", "As condições desta proposta já foram aceitas: uma proposta gera no máximo um contrato.");
-        }
+        // Cadeia de domínio (ADR 0011): uma proposta gera no máximo um contrato (invariante 8 do AGR-0001).
+        CadeiaDeValidacao.<Long>de((id, proximo) -> {
+            if (preparos.daProposta(id).isPresent()) throw new ErroDeDominioException(ErrosDaContratacao.CONDICOES_JA_ACEITAS);
+            proximo.seguir(id);
+        }).validar(propostaId);
         var contratabilidade = originacao.contratabilidade(propostaId);
         if (!contratabilidade.contratavel()) return DetalheDaContratacao.impedida(propostaId, contratabilidade.impedimento());
 
@@ -55,19 +59,19 @@ public class AceitarCondicoesService {
         var opcionais = segurosOpcionais == null ? List.<String>of() : segurosOpcionais;
         for (var s : opcionais) {
             if (!categoria.segurosOpcionais(proposta.tipoDeBem()).contains(s)) {
-                throw new RegraVioladaException("RN-0025", "Seguro opcional não oferecido para este tipo de bem: " + s + ".");
+                throw new ErroDeDominioException(ErrosDaContratacao.SEGURO_OPCIONAL_NAO_OFERECIDO, s);
             }
         }
         var listaDeConjuges = conjuges == null ? List.<Conjuge>of() : conjuges;
         if (!listaDeConjuges.isEmpty() && !categoria.vendedorEConjugesAssinam(proposta.tipoDeBem())) {
-            throw new RegraVioladaException("RN-0026", "Cônjuges assinam só no imóvel e no terreno.");
+            throw new ErroDeDominioException(ErrosDaContratacao.CONJUGE_SO_NO_IMOVEL);
         }
         boolean naPlanta = categoria.parametros(proposta.tipoDeBem()).liberacao() == FormaDeLiberacao.POR_MEDICAO;
         if (naPlanta && previsaoDeEntregaDaObra == null) {
-            throw new RegraVioladaException("UC-0014", "No imóvel na planta, informe a previsão de entrega da obra.");
+            throw new ErroDeDominioException(ErrosDaContratacao.PREVISAO_DA_OBRA_OBRIGATORIA);
         }
         if (!naPlanta && previsaoDeEntregaDaObra != null) {
-            throw new RegraVioladaException("UC-0014", "Previsão de entrega da obra só no imóvel na planta.");
+            throw new ErroDeDominioException(ErrosDaContratacao.PREVISAO_SO_NA_PLANTA);
         }
         var preparo = PreparoDoContrato.aceitar(propostaId, proposta.tipoDeBem(), proposta.condicoesVersao(),
                 categoria.segurosExigidos(proposta.tipoDeBem()), opcionais,

@@ -33,14 +33,14 @@ public class LiberacaoDoContratoService {
 
     @Transactional
     public void recursoLiberado(Long contratoId) {
-        var c = contratacoes.contrato(contratoId);
+        var c = contratacoes.contrato(contratoId, Contratacoes.aceita("RecursoLiberado"));
         c.recursoLiberado();
         contratacoes.salvar(c);
     }
 
     @Transactional
     public void parcelaDaObraLiberada(Long contratoId, boolean ultima) {
-        var c = contratacoes.contrato(contratoId);
+        var c = contratacoes.contrato(contratoId, Contratacoes.aceita("ParcelaDaObraLiberada"));
         c.parcelaDaObraLiberada(ultima);
         contratacoes.salvar(c);
     }

@@ -4,7 +4,8 @@ import br.com.financiamento.documentos.dominio.ArmazemDeArquivos;
 import br.com.financiamento.documentos.dominio.Documento;
 import br.com.financiamento.documentos.dominio.DocumentoRepository;
 import br.com.financiamento.documentos.dominio.SituacaoDoDocumento;
-import br.com.financiamento.shared.dominio.NaoEncontradoException;
+import br.com.financiamento.shared.validacao.ContextoDeDominio;
+import br.com.financiamento.documentos.dominio.ErrosDosDocumentos;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -36,8 +37,8 @@ public class ConsultarDocumentosService {
 
     @Transactional
     public Arquivo arquivo(Long documentoId) {
-        var d = documentos.findByIdOptional(documentoId)
-                .orElseThrow(() -> new NaoEncontradoException("Documento " + documentoId + " não encontrado."));
+        var d = ContextoDeDominio.validar(documentoId,
+                ContextoDeDominio.carregar(documentos::findByIdOptional, ErrosDosDocumentos.DOCUMENTO_NAO_ENCONTRADO));
         var conteudo = armazem.ler(d.chaveNoArmazem());
         if (!Documento.sha256(conteudo).equals(d.sha256())) {
             throw new IllegalStateException("O arquivo do documento " + documentoId + " não confere com o recebido.");

@@ -2,7 +2,7 @@ package br.com.financiamento.originacao.dominio;
 
 import br.com.financiamento.bem.CategoriaDeBem;
 import br.com.financiamento.bem.veiculo.VeiculoParaTeste;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -46,8 +46,8 @@ class PropostaTest {
     @Test
     void naoSubmeteForaDoEnquadramentoEContinuaEmRascunho() {
         var p = rascunho("CARRO_NOVO");
-        var erro = assertThrows(RegraVioladaException.class, () -> p.submeter(enquadrar(p, veiculo)));
-        assertEquals("RN-0018", erro.violacoes().getFirst().regra());
+        var erro = assertThrows(ErroDeDominioException.class, () -> p.submeter(enquadrar(p, veiculo)));
+        assertEquals("RN-0018", erro.falhas().getFirst().regra());
         assertEquals(EstadoProposta.RASCUNHO, p.estado());
     }
 
@@ -55,17 +55,17 @@ class PropostaTest {
     void emAnaliseNaoAceitaAlteracao() {
         var p = enquadrada();
         p.submeter(enquadrar(p, veiculo));
-        var erro = assertThrows(RegraVioladaException.class,
+        var erro = assertThrows(ErroDeDominioException.class,
                 () -> p.informarCondicoes(BigDecimal.ONE, BigDecimal.ZERO, 36, BigDecimal.ONE));
-        assertEquals("AGR-0001", erro.violacoes().getFirst().regra());
+        assertEquals("AGR-0001", erro.falhas().getFirst().regra());
     }
 
     @Test
     void emAnaliseNaoPodeSerCanceladaPeloCicloDeVida() {
         var p = enquadrada();
         p.submeter(enquadrar(p, veiculo));
-        var erro = assertThrows(RegraVioladaException.class, p::cancelar);
-        assertEquals("CV-0001", erro.violacoes().getFirst().regra());
+        var erro = assertThrows(ErroDeDominioException.class, p::cancelar);
+        assertEquals("CV-0001", erro.falhas().getFirst().regra());
     }
 
     @Test
@@ -92,22 +92,22 @@ class PropostaTest {
         p.documentoRecebido(900L, "bem", "crlv");
         assertEquals(antes, p.documentos().size(), "o reenvio substitui, não duplica");
         assertTrue(p.documentos().stream().anyMatch(d -> Long.valueOf(900L).equals(d.documentoId())));
-        var erro = assertThrows(RegraVioladaException.class, () -> p.documentoRecebido(901L, "99999999999", "identidade"));
-        assertEquals("RN-0009", erro.violacoes().getFirst().regra());
+        var erro = assertThrows(ErroDeDominioException.class, () -> p.documentoRecebido(901L, "99999999999", "identidade"));
+        assertEquals("RN-0009", erro.falhas().getFirst().regra());
     }
 
     @Test
     void conferenciaSoDepoisDaSubmissaoERecusaDaPendencia_uc0024() {
         var p = enquadrada();
         var id = p.documentos().getFirst().documentoId();
-        assertThrows(RegraVioladaException.class, () -> p.documentoConferido(id, true, null), "em rascunho");
+        assertThrows(ErroDeDominioException.class, () -> p.documentoConferido(id, true, null), "em rascunho");
         p.submeter(enquadrar(p, veiculo));
         p.retirarEventos();
         p.documentoConferido(id, false, "ilegível");
         assertEquals(EstadoProposta.COM_PENDENCIA, p.estado());
         assertTrue(p.pendencia().contains("ilegível"));
         assertEquals(List.of("PropostaComPendencia"), p.retirarEventos().stream().map(EventoRegistrado::nome).toList());
-        assertTrue(enquadrar(p, veiculo).violacoes().stream().anyMatch(v -> v.regra().equals("RN-0009")),
+        assertTrue(enquadrar(p, veiculo).falhas().stream().anyMatch(v -> v.regra().equals("RN-0009")),
                 "o recusado conta como não entregue até o reenvio");
         var recusado = p.documentos().getFirst();
         p.documentoRecebido(902L, recusado.titular(), recusado.tipo());
@@ -117,7 +117,7 @@ class PropostaTest {
         aceitarDocumentos(p);
         assertTrue(p.documentosAceitos());
         var aceito = p.documentos().getFirst();
-        assertThrows(RegraVioladaException.class, () -> p.documentoRecebido(903L, aceito.titular(), aceito.tipo()),
+        assertThrows(ErroDeDominioException.class, () -> p.documentoRecebido(903L, aceito.titular(), aceito.tipo()),
                 "documento aceito não é reenviado");
     }
 

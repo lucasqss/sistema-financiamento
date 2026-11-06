@@ -8,7 +8,8 @@ import br.com.financiamento.contratacao.dominio.assinatura.Signatario;
 import br.com.financiamento.contratacao.dominio.condicoes.CondicoesFinais;
 import br.com.financiamento.originacao.OriginacaoFacade;
 import br.com.financiamento.originacao.PropostaParaContratar;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
+import br.com.financiamento.contratacao.dominio.ErrosDaContratacao;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -43,7 +44,7 @@ public class EmitirContratoService {
         var preparo = contratacoes.preparo(preparoId);
         if (preparo.emitido()) return DetalheDaContratacao.de(preparo);
         if (!preparo.segurosContratados()) {
-            throw new RegraVioladaException("RN-0025", "O contrato só é emitido com os seguros contratados.");
+            throw new ErroDeDominioException(ErrosDaContratacao.SEGUROS_PENDENTES);
         }
         return emitir(preparo);
     }

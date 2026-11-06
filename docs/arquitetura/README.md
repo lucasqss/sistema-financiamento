@@ -223,7 +223,8 @@ Os 6 sistemas externos do modelo têm cada um uma camada anticorrupção no mód
     - ninguém fora de um plug-in depende dele;
     - cada tipo de bem final de DIM-0001, lido de `docs/dominio/especificacao.md`, tem exatamente um plug-in;
     - os parâmetros conferem com a tabela RN-0010, a fonte e a validade da avaliação com a RN-0023, e os seguros com a RN-0025;
-  - `EsquemaPorModuloTest`: entidades, migrações e consultas só no esquema do próprio módulo.
+  - `EsquemaPorModuloTest`: entidades, migrações e consultas só no esquema do próprio módulo;
+  - `ValidacaoTest`: o fluxo comum de validação do [ADR 0011](adr/0011-fluxo-comum-de-validacao.md) (validador por request, cadeia de domínio por caso de uso, erros só do catálogo).
 - Os ciclos de vida implementados (`EstadoProposta`, `EstadoContrato`) são conferidos contra os diagramas CV-0001 e CV-0002 do modelo.
 
 ## ADRs
@@ -240,3 +241,4 @@ Os 6 sistemas externos do modelo têm cada um uma camada anticorrupção no mód
 | [0008](adr/0008-fitness-functions.md) | Fitness functions para as decisões estruturais | as três |
 | [0009](adr/0009-retorno-entre-modulos-por-porta-de-ouvinte.md) | Retorno entre módulos por porta de ouvinte, sem ciclo | evolutividade, confiabilidade |
 | [0010](adr/0010-armazenamento-de-arquivos.md) | Arquivos dos documentos atrás de uma porta: sistema de arquivos agora, armazenamento de objetos em produção | evolutividade, confiabilidade |
+| [0011](adr/0011-fluxo-comum-de-validacao.md) | Fluxo comum de validação: catálogo de erros, cadeia de atributo no request e cadeia de domínio no caso de uso | evolutividade, confiabilidade |

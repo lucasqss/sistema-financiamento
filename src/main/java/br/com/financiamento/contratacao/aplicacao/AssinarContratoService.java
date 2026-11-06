@@ -31,7 +31,7 @@ public class AssinarContratoService {
 
     @Transactional
     public DetalheDoContrato executar(Long contratoId, String documento) {
-        var contrato = contratacoes.contrato(contratoId);
+        var contrato = contratacoes.contrato(contratoId, Contratacoes.aceita("ContratoAssinado"));
         if (!contrato.assinar(documento, relogio.instant())) return DetalheDoContrato.de(contrato);
         contratacoes.salvar(contrato);
         if (contrato.estado() == EstadoContrato.ASSINADO) {

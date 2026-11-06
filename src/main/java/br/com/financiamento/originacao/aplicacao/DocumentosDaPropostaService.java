@@ -12,18 +12,21 @@ import jakarta.transaction.Transactional;
 public class DocumentosDaPropostaService {
 
     @Inject
+    ElosDaProposta elos;
+
+    @Inject
     Propostas propostas;
 
     @Transactional
     public void recebido(Long propostaId, Long documentoId, String titular, String tipo) {
-        var proposta = propostas.buscar(propostaId);
+        var proposta = elos.validar(propostaId);
         proposta.documentoRecebido(documentoId, titular, tipo);
         propostas.salvar(proposta);
     }
 
     @Transactional
     public void conferido(Long propostaId, Long documentoId, boolean aceito, String motivo) {
-        var proposta = propostas.buscar(propostaId);
+        var proposta = elos.validar(propostaId);
         proposta.documentoConferido(documentoId, aceito, motivo);
         propostas.salvar(proposta, propostas.decidir(proposta));
     }

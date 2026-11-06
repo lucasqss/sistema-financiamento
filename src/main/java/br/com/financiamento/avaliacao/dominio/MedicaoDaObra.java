@@ -1,6 +1,6 @@
 package br.com.financiamento.avaliacao.dominio;
 
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,11 +42,10 @@ public class MedicaoDaObra extends PanacheEntityBase {
     public static MedicaoDaObra medir(Long contratoId, BigDecimal percentualAcumulado, LocalDate medidaEm,
                                       MedicaoDaObra anterior) {
         if (percentualAcumulado == null || percentualAcumulado.signum() <= 0 || percentualAcumulado.compareTo(CEM) > 0) {
-            throw new RegraVioladaException("RN-0024", "O percentual acumulado da obra fica entre 0 e 100%.");
+            throw new ErroDeDominioException(ErrosDaAvaliacao.PERCENTUAL_FORA_DA_FAIXA);
         }
         if (anterior != null && percentualAcumulado.compareTo(anterior.percentualAcumulado) < 0) {
-            throw new RegraVioladaException("RN-0024", "A medição nunca diminui: a anterior apurou "
-                    + anterior.percentualAcumulado.stripTrailingZeros().toPlainString() + "%.");
+            throw new ErroDeDominioException(ErrosDaAvaliacao.MEDICAO_DIMINUIU, anterior.percentualAcumulado.stripTrailingZeros().toPlainString());
         }
         var m = new MedicaoDaObra();
         m.contratoId = contratoId;

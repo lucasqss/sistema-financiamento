@@ -4,8 +4,9 @@ import br.com.financiamento.bem.FormaDeLiberacao;
 import br.com.financiamento.contratacao.ContratacaoFacade;
 import br.com.financiamento.desembolso.dominio.Desembolso;
 import br.com.financiamento.desembolso.dominio.DesembolsoRepository;
-import br.com.financiamento.shared.dominio.NaoEncontradoException;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.desembolso.dominio.SituacaoDoFgts;
+import br.com.financiamento.shared.validacao.ContextoDeDominio;
+import br.com.financiamento.desembolso.dominio.ErrosDoDesembolso;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -55,7 +56,8 @@ public class LiberarRecursoService {
     /** UC-0022. */
     @Transactional
     public Desembolso entradaRecomposta(Long desembolsoId) {
-        var d = desembolsos.buscar(desembolsoId);
+        var d = desembolsos.buscar(desembolsoId, ContextoDeDominio.exigir(x -> x.fgts() == SituacaoDoFgts.NEGADO,
+                ErrosDoDesembolso.RECOMPOR_SO_COM_FGTS_NEGADO, x -> new Object[0]));
         d.entradaRecomposta(relogio.instant());
         desembolsos.salvar(d);
         return d;
@@ -67,8 +69,7 @@ public class LiberarRecursoService {
      */
     @Transactional
     public void medicaoRealizada(Long contratoId, BigDecimal percentualAcumulado) {
-        var d = repositorio.doContrato(contratoId).orElseThrow(() -> new RegraVioladaException("UC-0013",
-                "Medição só para contrato de imóvel na planta com a garantia constituída."));
+        var d = desembolsos.doContratoComGarantia(contratoId);
         d.medicaoRealizada(percentualAcumulado, relogio.instant());
         desembolsos.salvar(d);
         contratacao.medicaoRealizada(contratoId);
@@ -77,8 +78,7 @@ public class LiberarRecursoService {
     /** O vendedor recebeu (retorno do pagamento, idempotente): o contrato avança (EVT-0033 ou EVT-0034). */
     @Transactional
     public Desembolso pagamentoConfirmado(String protocolo) {
-        var d = Desembolso.contratoDoProtocolo(protocolo).flatMap(repositorio::doContrato)
-                .orElseThrow(() -> new NaoEncontradoException("Protocolo de liberação " + protocolo + " não é nosso."));
+        var d = desembolsos.doProtocolo(protocolo);
         var paga = d.pagamentoConfirmado(protocolo, relogio.instant());
         if (paga.isEmpty()) return d;
         desembolsos.salvar(d);

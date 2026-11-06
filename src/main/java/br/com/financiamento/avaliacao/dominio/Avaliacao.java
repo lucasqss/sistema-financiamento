@@ -1,7 +1,7 @@
 package br.com.financiamento.avaliacao.dominio;
 
 import br.com.financiamento.bem.TipoDeBem;
-import br.com.financiamento.shared.dominio.RegraVioladaException;
+import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -78,13 +78,13 @@ public class Avaliacao extends PanacheEntityBase {
      */
     public boolean concluir(boolean aceito, BigDecimal valor, LocalDate avaliadaEm, LocalDate validaAte) {
         if (aceito && (valor == null || valor.signum() <= 0)) {
-            throw new RegraVioladaException("UC-0012", "Bem aceito como garantia precisa do valor de avaliação.");
+            throw new ErroDeDominioException(ErrosDaAvaliacao.VALOR_DE_AVALIACAO_OBRIGATORIO);
         }
         if (this.aceitoComoGarantia != null) {
             boolean mesmo = this.aceitoComoGarantia == aceito && Objects.equals(this.avaliadaEm, avaliadaEm)
                     && (valor == null ? this.valor == null : this.valor != null && this.valor.compareTo(valor) == 0);
             if (mesmo) return false;
-            throw new RegraVioladaException("UC-0012", "A avaliação " + id + " já foi concluída.");
+            throw new ErroDeDominioException(ErrosDaAvaliacao.AVALIACAO_JA_CONCLUIDA, id);
         }
         this.aceitoComoGarantia = aceito;
         this.valor = aceito ? valor : null;
