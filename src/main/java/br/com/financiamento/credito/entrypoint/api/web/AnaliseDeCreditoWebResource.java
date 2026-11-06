@@ -7,6 +7,7 @@ import br.com.financiamento.credito.dominio.AnaliseDeCredito;
 import br.com.financiamento.shared.seguranca.Papeis;
 import jakarta.annotation.security.RolesAllowed;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -16,6 +17,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import java.util.List;
+
+import static br.com.financiamento.shared.validacao.atributo.ParametroDeConsulta.obrigatorio;
 
 /** Canal web do analista de crédito (ATR-0005). */
 @Tag(name = "Crédito", description = "Análise de crédito pelo analista (DOM-0002).")
@@ -30,8 +33,8 @@ public class AnaliseDeCreditoWebResource {
     @GET
     @Operation(summary = "Análises de crédito de uma proposta")
     @RolesAllowed(Papeis.ANALISTA)
-    public List<AnaliseDeCreditoWebResponse> daProposta(@QueryParam("proposta") Long propostaId) {
-        return consultar.daProposta(propostaId).stream().map(AnaliseDeCreditoWebResponse::de).toList();
+    public List<AnaliseDeCreditoWebResponse> daProposta(@Parameter(required = true) @QueryParam("proposta") Long propostaId) {
+        return consultar.daProposta(obrigatorio("proposta", propostaId)).stream().map(AnaliseDeCreditoWebResponse::de).toList();
     }
 
     @POST

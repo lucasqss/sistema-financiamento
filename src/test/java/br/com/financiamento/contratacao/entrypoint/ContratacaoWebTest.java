@@ -1,5 +1,6 @@
 package br.com.financiamento.contratacao.entrypoint;
 
+import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
@@ -137,6 +138,56 @@ class ContratacaoWebTest {
         given().contentType(ContentType.JSON)
                 .body(Map.of("propostaId", proposta, "conjuges", List.of(Map.of("documento", CONJUGE, "nome", "Bruno"))))
                 .post("/web/contratacoes").then().statusCode(422).body("falhas[0].regra", equalTo("RN-0026"));
+    }
+
+    @Test
+    void novaTentativaDeEmissao() {
+        long proposta = motoUsadaAprovada(ANA, VENDEDOR);
+        long contratacao = aceitar(proposta, Map.of("propostaId", proposta));
+        // RN-0025: sem os seguros contratados, não há o que emitir.
+        given().post("/web/contratacoes/" + contratacao + "/emissao").then().statusCode(422)
+                .body("falhas[0].codigo", equalTo("CON-0008"));
+
+        // A aprovação vence antes de a seguradora responder: a emissão é impedida e a proposta expira (RN-0021).
+        QuarkusTransaction.requiringNew().run(() -> em.createNativeQuery(
+                        "update originacao.proposta set aprovacao_valida_ate = current_date - 1 where id = ?1")
+                .setParameter(1, proposta).executeUpdate());
+        apolice(contratacao, "seguro do bem", "APOLICE-3");
+        given().get("/web/contratacoes/" + contratacao).then()
+                .body("contratoId", nullValue())
+                .body("impedimento", startsWith("A proposta passou da validade"));
+        // A nova tentativa não emite: a proposta agora está expirada.
+        given().post("/web/contratacoes/" + contratacao + "/emissao").then().statusCode(422)
+                .body("contratoId", nullValue())
+                .body("impedimento", startsWith("A proposta está expirada"));
+        given().get("/web/propostas/" + proposta).then().body("estado", equalTo("EXPIRADA"));
+    }
+
+    @Test
+    void emissaoJaFeitaNaoEmiteDeNovo() {
+        long proposta = motoUsadaAprovada(ANA, VENDEDOR);
+        long contratacao = aceitar(proposta, Map.of("propostaId", proposta));
+        apolice(contratacao, "seguro do bem", "APOLICE-4");
+        long contrato = contratoDe(contratacao);
+        given().post("/web/contratacoes/" + contratacao + "/emissao").then().statusCode(200)
+                .body("contratoId", equalTo((int) contrato));
+        // A seguradora repete a apólice: idempotente. Seguro que não é desta contratação é recusado.
+        apolice(contratacao, "seguro do bem", "APOLICE-4");
+        given().contentType(ContentType.JSON).body(Map.of("seguro", "MIP", "apolice", "AP-X"))
+                .post("/retornos/seguradora/" + contratacao).then().statusCode(422)
+                .body("falhas[0].codigo", equalTo("CON-0005"));
+    }
+
+    @Test
+    void contratoAssinadoNaoECanceladoPeloProponente() {
+        long proposta = motoUsadaAprovada(ANA, VENDEDOR);
+        long contratacao = aceitar(proposta, Map.of("propostaId", proposta));
+        apolice(contratacao, "seguro do bem", "APOLICE-5");
+        long contrato = contratoDe(contratacao);
+        assinar(contrato, ANA);
+        given().contentType(ContentType.JSON).body(Map.of("motivo", "desistência"))
+                .post("/web/contratos/" + contrato + "/cancelamento").then().statusCode(422)
+                .body("falhas[0].regra", equalTo("CV-0002"));
     }
 
     @SuppressWarnings("unchecked")

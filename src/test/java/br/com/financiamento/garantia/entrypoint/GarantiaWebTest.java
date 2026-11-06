@@ -126,6 +126,22 @@ class GarantiaWebTest {
     }
 
     @Test
+    void acoesDoAnalistaForaDaSituacaoCertaSaoRecusadas() {
+        long contrato = motoUsadaComContratoAssinado(ANA, VENDEDOR);
+        long registro = registro(contrato).getLong("id");
+        // Em registro, sem retorno do órgão: não há recusa a reenviar (UC-0019), exigência a cumprir (UC-0020)
+        // nem contrato a desfazer.
+        given().contentType(ContentType.JSON).body(Map.of()).post("/web/registros/" + registro + "/reenvio")
+                .then().statusCode(422).body("falhas[0].codigo", equalTo("GAR-0004"));
+        given().contentType(ContentType.JSON).body(Map.of()).post("/web/registros/" + registro + "/exigencia-cumprida")
+                .then().statusCode(422).body("falhas[0].codigo", equalTo("GAR-0005"));
+        given().contentType(ContentType.JSON).body(Map.of("motivo", "engano"))
+                .post("/web/registros/" + registro + "/desfazimento")
+                .then().statusCode(422).body("falhas[0].codigo", equalTo("GAR-0006"));
+        assertEquals("EM_REGISTRO", estadoDoContrato(contrato));
+    }
+
+    @Test
     void protocoloQueNaoENossoNaoEncontraRegistro() {
         given().contentType(ContentType.JSON).body(Map.of("protocolo", "XYZ-1", "resultado", "REGISTRADO"))
                 .post("/retornos/orgao-de-registro").then().statusCode(404);

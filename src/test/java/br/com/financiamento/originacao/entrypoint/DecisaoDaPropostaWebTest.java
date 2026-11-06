@@ -139,6 +139,47 @@ class DecisaoDaPropostaWebTest {
     }
 
     @Test
+    void contrapropostaRecusadaReprovaAProposta() {
+        long id = submetida();
+        laudo(avaliacaoDe(id), 20000);
+        // Sem contraproposta, não há o que aceitar nem recusar (CV-0001).
+        given().post("/web/propostas/" + id + "/contraproposta/recusa").then().statusCode(422)
+                .body("falhas[0].codigo", equalTo("ORI-0003"));
+        bureau(analiseDe(id, 0), Map.of("resultado", "APROVADO_COM_RESSALVA", "ressalva", "entrada maior",
+                "sugeridas", Map.of("entradaPropria", 9000, "entradaFgts", 0, "prazoMeses", 36, "parcela", 800)), 202);
+
+        given().post("/web/propostas/" + id + "/contraproposta/recusa").then().statusCode(200)
+                .body("estado", equalTo("REPROVADA"));
+        given().post("/web/propostas/" + id + "/contraproposta/aceite").then().statusCode(422)
+                .body("falhas[0].codigo", equalTo("ORI-0003"))
+                .body("falhas[0].regra", equalTo("CV-0001"));
+    }
+
+    @Test
+    void analistaNaoDecideSemRessalvaCompletaNemAnaliseJaDecidida() {
+        long id = submetida();
+        long analise = analiseDe(id, 0);
+        // RN-0020: aprovar com ressalva exige a ressalva e as condições sugeridas.
+        given().contentType(ContentType.JSON).body(Map.of("resultado", "APROVADO_COM_RESSALVA"))
+                .post("/web/analises-de-credito/" + analise + "/decisao").then().statusCode(422)
+                .body("falhas[0].codigo", equalTo("CRE-0003"));
+        bureau(analise, Map.of("resultado", "APROVADO"), 202);
+        given().contentType(ContentType.JSON).body(Map.of("resultado", "REPROVADO"))
+                .post("/web/analises-de-credito/" + analise + "/decisao").then().statusCode(422)
+                .body("falhas[0].codigo", equalTo("CRE-0002"));
+    }
+
+    @Test
+    void laudoQueAceitaOBemPrecisaDoValor() {
+        long id = submetida();
+        given().contentType(ContentType.JSON)
+                .body(Map.of("aceitoComoGarantia", true, "avaliadaEm", LocalDate.now().toString()))
+                .post("/retornos/avaliador/" + avaliacaoDe(id)).then().statusCode(422)
+                .body("falhas[0].codigo", equalTo("AVA-0002"));
+        assertEquals("EM_ANALISE", estado(id));
+    }
+
+    @Test
     void cotaEstouradaNaAvaliacaoDaPendenciaQueSeResolveComNovaEntradaENovoCredito() {
         long id = submetida();
         bureau(analiseDe(id, 0), Map.of("resultado", "APROVADO"), 202);

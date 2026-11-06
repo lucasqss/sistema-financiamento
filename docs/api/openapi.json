@@ -1080,6 +1080,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -1092,16 +1102,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1168,6 +1168,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -1180,16 +1190,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1256,6 +1256,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -1268,16 +1278,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1335,6 +1335,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -1347,16 +1357,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1414,6 +1414,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -1426,16 +1436,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1502,6 +1502,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -1514,16 +1524,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1563,6 +1563,7 @@
         "summary" : "Análises de crédito de uma proposta",
         "tags" : [ "Crédito" ],
         "parameters" : [ {
+          "required" : true,
           "name" : "proposta",
           "in" : "query",
           "schema" : {
@@ -1584,6 +1585,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -1596,16 +1607,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1674,6 +1675,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -1686,16 +1697,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1735,6 +1736,7 @@
         "summary" : "Avaliações do bem de uma proposta",
         "tags" : [ "Avaliação" ],
         "parameters" : [ {
+          "required" : true,
           "name" : "proposta",
           "in" : "query",
           "schema" : {
@@ -1756,6 +1758,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -1768,16 +1780,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1835,6 +1837,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -1847,16 +1859,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1915,6 +1917,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -1927,16 +1939,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1993,6 +1995,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -2005,16 +2017,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -2073,6 +2075,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -2085,16 +2097,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -2163,6 +2165,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -2175,16 +2187,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -2253,6 +2255,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -2265,16 +2277,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -2343,6 +2345,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -2355,16 +2367,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -2433,6 +2435,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -2445,16 +2457,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -2494,6 +2496,7 @@
         "summary" : "Desembolso de um contrato",
         "tags" : [ "Desembolso" ],
         "parameters" : [ {
+          "required" : true,
           "name" : "contrato",
           "in" : "query",
           "schema" : {
@@ -2512,6 +2515,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -2524,16 +2537,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -2592,6 +2595,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -2604,16 +2617,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -2680,6 +2683,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -2692,16 +2705,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -2773,6 +2776,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -2785,16 +2798,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -2851,6 +2854,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -2863,16 +2876,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -2941,6 +2944,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -2953,16 +2966,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -3022,6 +3025,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -3034,16 +3047,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -3081,6 +3084,7 @@
         "summary" : "Medições da obra de um contrato",
         "tags" : [ "Avaliação" ],
         "parameters" : [ {
+          "required" : true,
           "name" : "contrato",
           "in" : "query",
           "schema" : {
@@ -3102,6 +3106,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -3114,16 +3128,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -3181,6 +3185,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -3193,16 +3207,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -3261,6 +3265,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -3273,16 +3287,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -3351,6 +3355,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -3363,16 +3377,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -3431,6 +3435,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -3443,16 +3457,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -3521,6 +3525,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -3533,16 +3547,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -3601,6 +3605,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -3613,16 +3627,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -3681,6 +3685,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -3693,16 +3707,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -3771,6 +3775,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -3783,16 +3797,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -3851,6 +3855,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -3863,16 +3877,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -3931,6 +3935,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -3943,16 +3957,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -3992,6 +3996,7 @@
         "summary" : "Registro da garantia de um contrato",
         "tags" : [ "Garantia" ],
         "parameters" : [ {
+          "required" : true,
           "name" : "contrato",
           "in" : "query",
           "schema" : {
@@ -4010,6 +4015,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -4022,16 +4037,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -4100,6 +4105,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -4112,16 +4127,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -4180,6 +4185,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -4192,16 +4207,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -4260,6 +4265,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
           "401" : {
             "description" : "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "content" : {
@@ -4272,16 +4287,6 @@
           },
           "403" : {
             "description" : "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Erro"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "content" : {
               "application/json" : {
                 "schema" : {

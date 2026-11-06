@@ -227,6 +227,20 @@ Os 6 sistemas externos do modelo têm cada um uma camada anticorrupção no mód
   - `SegurancaArquiteturaTest`: todo endpoint declara os papéis ([ADR 0012](adr/0012-autenticacao-delegada-e-autorizacao.md));
   - `ValidacaoTest`: o fluxo comum de validação do [ADR 0011](adr/0011-fluxo-comum-de-validacao.md) (validador por request, cadeia de domínio por caso de uso, erros só do catálogo).
 - Os ciclos de vida implementados (`EstadoProposta`, `EstadoContrato`) são conferidos contra os diagramas CV-0001 e CV-0002 do modelo.
+- **Testes de integração dos endpoints** (`@QuarkusTest` com RestAssured, contra o PostgreSQL):
+  - os testes de jornada de cada módulo (`*WebTest`) levam a proposta da criação até o contrato formalizado, com as regras de negócio (422) de cada operação;
+  - `api/TodasAsOperacoesWebTest` percorre todas as operações do contrato publicado: sem token dá 401, papel não aceito dá 403 e recurso inexistente dá 404. Operação nova entra nele sozinha;
+  - `api/AtributosDasOperacoesWebTest`: para cada operação com corpo ou filtro obrigatório, um corpo errado em vários campos volta 400 com todas as falhas, campo a campo;
+  - `shared/seguranca/DonoDosRecursosWebTest`: quem tem todos os papéis de pessoa mas não participa recebe 403 em toda operação das pessoas, antes de qualquer regra de negócio.
+- **Portão de cobertura** (`arquitetura/CoberturaDosEndpointsIT`, pelo failsafe, depois de toda a suíte):
+  - cada chamada dos testes fica gravada em `target/cobertura-da-api/chamadas.csv`;
+  - o portão cruza essas chamadas com `docs/api/openapi.json` e exige, por operação:
+    - 2xx, 401 e 403 em todas;
+    - 400 nas que têm corpo ou filtro obrigatório;
+    - 404 nas que apontam um recurso;
+    - 422 em todo POST e PUT, salvo as exceções justificadas no próprio portão;
+  - ele fica de fora com `-Dtest=...`, que roda só parte da suíte.
+- **Cobertura de linhas** (JaCoCo, pelo `quarkus-jacoco`): mínimo de 95% em `entrypoint` e `aplicacao` (`cobertura.minima` no `pom.xml`). O relatório fica em `target/jacoco-report/index.html`.
 
 ## ADRs
 

@@ -8,6 +8,7 @@ import org.eclipse.microprofile.openapi.models.media.Schema;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Completa o contrato OpenAPI com o formato único de erro (ADR 0011, ADR 0012): registra o esquema e acrescenta a
@@ -18,12 +19,13 @@ public class RespostasDeErroNoContrato implements OASFilter {
 
     static final String ESQUEMA = "Erro";
 
-    static final Map<String, String> RESPOSTAS = Map.of(
+    /** Em ordem de status: o contrato gerado sai igual a cada build, e o diff mostra só mudança de verdade. */
+    static final Map<String, String> RESPOSTAS = new TreeMap<>(Map.of(
             "400", "Atributo fora de forma ou formato (códigos ATR-): corrija os campos indicados em falhas[].campo.",
             "401", "Sem token, token inválido, expirado ou de outro emissor (SEG-0001).",
             "403", "O papel não permite, ou você não participa da proposta ou do contrato (SEG-0002 a SEG-0004).",
             "404", "O que se pede não existe (código do catálogo do módulo).",
-            "422", "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo).");
+            "422", "A regra de negócio não deixa: veja falhas[].codigo e falhas[].regra (regra do modelo)."));
 
     @Override
     public void filterOpenAPI(OpenAPI openAPI) {
@@ -40,6 +42,7 @@ public class RespostasDeErroNoContrato implements OASFilter {
                         .content(OASFactory.createContent().addMediaType("application/json",
                                 OASFactory.createMediaType().schema(OASFactory.createSchema().ref(ESQUEMA)))));
             });
+            operacao.getResponses().setAPIResponses(new TreeMap<>(operacao.getResponses().getAPIResponses()));
         }));
     }
 

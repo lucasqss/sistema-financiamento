@@ -100,4 +100,6 @@ Acompanhe em `GET /web/propostas/{id}`, `GET /web/contratacoes/{id}` e `GET /web
 - **Retornos de sistemas externos são idempotentes:** o mesmo retorno repetido não tem novo efeito. Um retorno do órgão de registro nunca é recusado; é classificado (RN-0029).
 - **O reenvio de um documento ainda não aceito substitui o anterior.** O substituído continua consultável, com o motivo da recusa.
 - **Ids são números; protocolos são textos nossos** (`GAR-<contrato>-<n>`, `LIB-<contrato>-<n>`), que os sistemas externos devolvem nos retornos.
+- **As consultas de lista exigem o filtro:** `GET /web/avaliacoes` e `GET /web/analises-de-credito` pedem `proposta`; `GET /web/medicoes`, `GET /web/registros` e `GET /web/desembolsos` pedem `contrato`. Sem ele, a resposta é 400 (`ATR-0001`).
+- **Quem não participa recebe 403 antes de qualquer regra de negócio:** a resposta não revela nada sobre a proposta ou o contrato alheio.
 - **Campos desconhecidos na resposta devem ser ignorados.** Campos novos podem entrar sem aviso; remoção ou mudança de significado só com nova versão.

@@ -42,8 +42,12 @@ public class EnviarDocumentoService {
 
     @Transactional
     public Documento executar(Envio e) {
-        // Cadeia de domínio (ADR 0011): o conteúdo do arquivo é íntegro e do tipo declarado (ADR 0010).
+        // Cadeia de domínio (ADR 0011): a proposta existe e quem envia participa dela (ADR 0012); o conteúdo
+        // do arquivo é íntegro e do tipo declarado (ADR 0010).
         CadeiaDeValidacao.<Envio>de((envio, proximo) -> {
+            ouvintes.forEach(o -> o.envioPedido(envio.propostaId()));
+            proximo.seguir(envio);
+        }, (envio, proximo) -> {
             Documento.validar(envio.tipo(), envio.tipoDeConteudo(), envio.conteudo());
             proximo.seguir(envio);
         }).validar(e);

@@ -67,6 +67,13 @@ class DesembolsoWebTest {
         assertEquals("FORMALIZADO", estado(contrato));
         assertEquals(12600.0f, desembolso(contrato).getFloat("totalLiberado"));
         assertEquals(List.of("LiberacaoSolicitada", "RecursoLiberado"), eventos(d.getLong("id")));
+
+        // RN-0031: protocolo do contrato, mas de uma liberação que não existe.
+        given().contentType(ContentType.JSON).body(Map.of("protocolo", "LIB-" + contrato + "-99")).post("/retornos/pagamento")
+                .then().statusCode(422).body("falhas[0].codigo", equalTo("DES-0006"));
+        // UC-0022: sem FGTS negado, não há entrada a recompor.
+        given().post("/web/desembolsos/" + d.getLong("id") + "/entrada-recomposta").then().statusCode(422)
+                .body("falhas[0].codigo", equalTo("DES-0007"));
     }
 
     @Test
@@ -102,6 +109,8 @@ class DesembolsoWebTest {
         assertEquals(0, desembolso(contrato).getList("liberacoes").size(), "na planta, espera a medição");
 
         medir(contrato, 30, 200);
+        given().queryParam("contrato", contrato).get("/web/medicoes").then().statusCode(200)
+                .body("percentualAcumulado", equalTo(List.of(30.0f)));
         var d = desembolso(contrato);
         assertEquals(120000.0f, d.getFloat("liberacoes[0].valor")); // 400.000 × 30%
         pagar(d.getString("liberacoes[0].protocolo"));
@@ -117,6 +126,13 @@ class DesembolsoWebTest {
         given().contentType(ContentType.JSON).body(Map.of("aprovada", false))
                 .post("/web/contratos/" + contrato + "/prorrogacoes/pendente/decisao").then().statusCode(200)
                 .body("obra.prorrogacaoPendente", equalTo(null));
+        // RN-0027: sem prorrogação pendente, não há o que decidir; a nova data vem depois da previsão atual.
+        given().contentType(ContentType.JSON).body(Map.of("aprovada", true))
+                .post("/web/contratos/" + contrato + "/prorrogacoes/pendente/decisao").then().statusCode(422)
+                .body("falhas[0].codigo", equalTo("CON-0015"));
+        given().contentType(ContentType.JSON).body(Map.of("novaData", previsao.toString()))
+                .post("/web/contratos/" + contrato + "/prorrogacoes").then().statusCode(422)
+                .body("falhas[0].codigo", equalTo("CON-0014"));
 
         medir(contrato, 25, 422); // RN-0024: nunca diminui
         medir(contrato, 70, 200);

@@ -4,6 +4,7 @@ import br.com.financiamento.avaliacao.aplicacao.MedirObraService;
 import br.com.financiamento.shared.seguranca.Papeis;
 import jakarta.annotation.security.RolesAllowed;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -12,6 +13,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
 import java.util.List;
+
+import static br.com.financiamento.shared.validacao.atributo.ParametroDeConsulta.obrigatorio;
 
 /** Canal web do engenheiro de medição (ATR-0006): UC-0013. */
 @Tag(name = "Avaliação", description = "Avaliação do bem e medição da obra (DOM-0003).")
@@ -33,7 +36,7 @@ public class MedicaoWebResource {
     @GET
     @Operation(summary = "Medições da obra de um contrato")
     @RolesAllowed({Papeis.ENGENHEIRO, Papeis.ANALISTA})
-    public List<MedicaoWebResponse> doContrato(@QueryParam("contrato") Long contratoId) {
-        return medir.doContrato(contratoId).stream().map(MedicaoWebResponse::de).toList();
+    public List<MedicaoWebResponse> doContrato(@Parameter(required = true) @QueryParam("contrato") Long contratoId) {
+        return medir.doContrato(obrigatorio("contrato", contratoId)).stream().map(MedicaoWebResponse::de).toList();
     }
 }

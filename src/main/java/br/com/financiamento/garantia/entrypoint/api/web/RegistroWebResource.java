@@ -7,6 +7,7 @@ import br.com.financiamento.garantia.dominio.ErrosDaGarantia;
 import br.com.financiamento.shared.seguranca.Papeis;
 import jakarta.annotation.security.RolesAllowed;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -14,6 +15,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
+
+import static br.com.financiamento.shared.validacao.atributo.ParametroDeConsulta.obrigatorio;
 
 /** Canal web do analista (ATR-0005) para o registro da garantia. */
 @Tag(name = "Garantia", description = "Registro da alienação fiduciária (DOM-0005).")
@@ -28,8 +31,8 @@ public class RegistroWebResource {
     @GET
     @Operation(summary = "Registro da garantia de um contrato")
     @RolesAllowed(Papeis.ANALISTA)
-    public RegistroWebResponse doContrato(@QueryParam("contrato") Long contratoId) {
-        return consultar.doContrato(contratoId).map(RegistroWebResponse::de)
+    public RegistroWebResponse doContrato(@Parameter(required = true) @QueryParam("contrato") Long contratoId) {
+        return consultar.doContrato(obrigatorio("contrato", contratoId)).map(RegistroWebResponse::de)
                 .orElseThrow(() -> new ErroDeDominioException(ErrosDaGarantia.CONTRATO_SEM_REGISTRO, contratoId));
     }
 

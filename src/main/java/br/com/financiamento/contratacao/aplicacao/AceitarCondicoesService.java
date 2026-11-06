@@ -10,6 +10,8 @@ import br.com.financiamento.shared.validacao.CadeiaDeValidacao;
 import br.com.financiamento.shared.validacao.ErroDeDominioException;
 import br.com.financiamento.contratacao.dominio.ErrosDaContratacao;
 import jakarta.enterprise.context.ApplicationScoped;
+import br.com.financiamento.shared.seguranca.ErroDeSeguranca;
+import br.com.financiamento.shared.seguranca.UsuarioAtual;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
@@ -43,11 +45,20 @@ public class AceitarCondicoesService {
     @Inject
     Clock relogio;
 
+    @Inject
+    UsuarioAtual usuarioAtual;
+
     @Transactional
     public DetalheDaContratacao executar(Long propostaId, List<String> segurosOpcionais, List<Conjuge> conjuges,
                                          LocalDate previsaoDeEntregaDaObra) {
-        // Cadeia de domínio (ADR 0011): uma proposta gera no máximo um contrato (invariante 8 do AGR-0001).
+        // Cadeia de domínio (ADR 0011): quem aceita participa da proposta (ADR 0012), antes de qualquer regra;
+        // uma proposta gera no máximo um contrato (invariante 8 do AGR-0001).
         CadeiaDeValidacao.<Long>de((id, proximo) -> {
+            if (!usuarioAtual.participaDe(originacao.documentosEnvolvidos(id))) {
+                throw new ErroDeDominioException(ErroDeSeguranca.NAO_PARTICIPA, "proposta");
+            }
+            proximo.seguir(id);
+        }, (id, proximo) -> {
             if (preparos.daProposta(id).isPresent()) throw new ErroDeDominioException(ErrosDaContratacao.CONDICOES_JA_ACEITAS);
             proximo.seguir(id);
         }).validar(propostaId);

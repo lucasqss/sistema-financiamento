@@ -15,6 +15,11 @@ class OuvinteDosDocumentosNaOriginacao implements OuvinteDosDocumentos {
     DocumentosDaPropostaService documentos;
 
     @Override
+    public void envioPedido(Long propostaId) {
+        documentos.envioPedido(propostaId);
+    }
+
+    @Override
     public void documentoRecebido(DocumentoRecebido d) {
         documentos.recebido(d.propostaId(), d.documentoId(), d.titular(), d.tipo());
     }

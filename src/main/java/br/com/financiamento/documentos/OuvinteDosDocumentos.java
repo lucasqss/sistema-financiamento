@@ -7,6 +7,13 @@ package br.com.financiamento.documentos;
  */
 public interface OuvinteDosDocumentos {
 
+    /**
+     * Antes de guardar o arquivo: quem acompanha a proposta confere que ela existe e que quem envia
+     * participa dela (ADR 0012). Vem antes de qualquer regra dos Documentos, para quem não participa
+     * não saber nada da proposta alheia.
+     */
+    void envioPedido(Long propostaId);
+
     void documentoRecebido(DocumentoRecebido documento);
 
     void documentoConferido(DocumentoConferido documento);

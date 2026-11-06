@@ -17,6 +17,12 @@ public class DocumentosDaPropostaService {
     @Inject
     Propostas propostas;
 
+    /** A proposta existe e quem envia participa dela (ADR 0012). */
+    @Transactional
+    public void envioPedido(Long propostaId) {
+        elos.validar(propostaId);
+    }
+
     @Transactional
     public void recebido(Long propostaId, Long documentoId, String titular, String tipo) {
         var proposta = elos.validar(propostaId);

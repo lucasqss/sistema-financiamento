@@ -36,6 +36,8 @@ Pré-requisito: JDK 25. O Maven vem pelo wrapper.
 
 - Em dev e teste, os Dev Services do Quarkus sobem um PostgreSQL em container (é preciso Docker).
 - Sem Docker, aponte para um PostgreSQL com `QUARKUS_DATASOURCE_JDBC_URL`, `QUARKUS_DATASOURCE_USERNAME` e `QUARKUS_DATASOURCE_PASSWORD`. As migrações criam os esquemas.
+- O `verify` roda os testes de integração de todos os endpoints. Depois deles, roda o portão de cobertura: toda operação precisa ter sido testada em cada resposta que pode dar (2xx, 400, 401, 403, 404 e 422). Exige também o mínimo de linhas do JaCoCo, com relatório em `target/jacoco-report`. Detalhes na [arquitetura](docs/arquitetura/README.md#5-stack-e-governança).
+- Para rodar um teste só: `./mvnw verify -Dtest=NomeDoTest`. O portão fica de fora, porque a suíte não roda inteira.
 - A API web da originação fica em `/web/propostas`. Exemplo: `POST /web/propostas` com `{"tipoDeBem": "MOTO_USADA"}`.
 
 A autenticação é delegada a um emissor externo de JWT ([ADR 0012](docs/arquitetura/adr/0012-autenticacao-delegada-e-autorizacao.md)). Configure:
