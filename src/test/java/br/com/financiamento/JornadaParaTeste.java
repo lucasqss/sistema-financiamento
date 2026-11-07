@@ -97,9 +97,13 @@ public final class JornadaParaTeste {
         return contrato;
     }
 
-    private static long aprovada(String tipo, String proponente, String vendedor, Map<String, Object> bem,
-                                 Map<String, Object> condicoes, List<String> documentosDoBem,
-                                 List<String> documentosDoProponente, int valorDeAvaliacao) {
+    /**
+     * Monta a proposta (um proponente PF de renda 20.000), envia os documentos, submete e o analista aceita todos:
+     * fica em análise, esperando o crédito e a avaliação.
+     */
+    public static long submetidaComDocumentosAceitos(String tipo, String proponente, Map<String, Object> bem,
+                                                     Map<String, Object> condicoes, List<String> documentosDoBem,
+                                                     List<String> documentosDoProponente) {
         long id = given().contentType(ContentType.JSON).body(Map.of("tipoDeBem", tipo))
                 .post("/web/propostas").then().statusCode(201).extract().jsonPath().getLong("id");
         put(id, "participantes", Map.of("participantes", List.of(Map.of("papel", "PROPONENTE", "forma", "PESSOA_FISICA",
@@ -109,6 +113,13 @@ public final class JornadaParaTeste {
         EnvioDeDocumentosParaTeste.enviarTodos(id, proponente, documentosDoBem, documentosDoProponente);
         given().post("/web/propostas/" + id + "/submissao").then().statusCode(200).body("estado", equalTo("EM_ANALISE"));
         EnvioDeDocumentosParaTeste.aceitarTodos(id); // UC-0024: a aprovação exige os documentos aceitos (RN-0019)
+        return id;
+    }
+
+    private static long aprovada(String tipo, String proponente, String vendedor, Map<String, Object> bem,
+                                 Map<String, Object> condicoes, List<String> documentosDoBem,
+                                 List<String> documentosDoProponente, int valorDeAvaliacao) {
+        long id = submetidaComDocumentosAceitos(tipo, proponente, bem, condicoes, documentosDoBem, documentosDoProponente);
 
         long avaliacao = given().queryParam("proposta", id).get("/web/avaliacoes").then().extract().jsonPath().getLong("[0].id");
         given().contentType(ContentType.JSON)

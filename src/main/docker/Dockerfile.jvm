@@ -1,0 +1,20 @@
+# Imagem JVM do sistema de financiamento (layout fast-jar do Quarkus).
+#   ./mvnw package -DskipTests
+#   docker build -f src/main/docker/Dockerfile.jvm -t financiamento .
+# Toda a configuração vem de variáveis de ambiente: veja docs/operacao/README.md.
+FROM eclipse-temurin:25-jre
+
+RUN groupadd --system financiamento && useradd --system --gid financiamento financiamento \
+    && mkdir -p /app /dados/documentos && chown -R financiamento:financiamento /app /dados
+
+WORKDIR /app
+COPY --chown=financiamento:financiamento target/quarkus-app/lib/ /app/lib/
+COPY --chown=financiamento:financiamento target/quarkus-app/*.jar /app/
+COPY --chown=financiamento:financiamento target/quarkus-app/app/ /app/app/
+COPY --chown=financiamento:financiamento target/quarkus-app/quarkus/ /app/quarkus/
+
+USER financiamento
+ENV DOCUMENTOS_ARMAZEM_DIRETORIO=/dados/documentos
+VOLUME /dados/documentos
+EXPOSE 8080
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-Djava.util.logging.manager=org.jboss.logmanager.LogManager", "-jar", "/app/quarkus-run.jar"]

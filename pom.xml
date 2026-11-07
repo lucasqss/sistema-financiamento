@@ -20,6 +20,7 @@
         <compiler-plugin.version>3.14.0</compiler-plugin.version>
         <surefire-plugin.version>3.5.3</surefire-plugin.version>
         <jacoco.version>0.8.14</jacoco.version>
+        <wiremock.version>3.13.1</wiremock.version>
         <!-- Cobertura mínima de linhas em entrypoint e aplicacao, medida nos testes de integração (@QuarkusTest). -->
         <cobertura.minima>0.95</cobertura.minima>
     </properties>
@@ -67,6 +68,18 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client-jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-health</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jdbc-postgresql</artifactId>
         </dependency>
         <dependency>
@@ -91,6 +104,17 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jacoco</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <version>${wiremock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

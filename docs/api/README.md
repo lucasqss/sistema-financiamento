@@ -97,6 +97,7 @@ Acompanhe em `GET /web/propostas/{id}`, `GET /web/contratacoes/{id}` e `GET /web
 
 ## Regras de integração
 
+- **Os sistemas externos recebem os pedidos por HTTP e devolvem em `/retornos/...`** ([ADR 0013](../arquitetura/adr/0013-integracao-http-com-externos-simulados.md)). Cada pedido leva a `urlDeRetorno`. O formato de cada um e os simuladores estão em [externos simulados](externos-simulados.md).
 - **Retornos de sistemas externos são idempotentes:** o mesmo retorno repetido não tem novo efeito. Um retorno do órgão de registro nunca é recusado; é classificado (RN-0029).
 - **O reenvio de um documento ainda não aceito substitui o anterior.** O substituído continua consultável, com o motivo da recusa.
 - **Ids são números; protocolos são textos nossos** (`GAR-<contrato>-<n>`, `LIB-<contrato>-<n>`), que os sistemas externos devolvem nos retornos.

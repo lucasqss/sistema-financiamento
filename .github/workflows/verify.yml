@@ -1,0 +1,49 @@
+name: verify
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      # Testes, fitness functions, portão de cobertura e JaCoCo. O PostgreSQL vem dos Dev Services (Docker do
+      # runner); os sistemas externos, do WireMock embutido com os stubs de docker/wiremock.
+      - name: Verify
+        run: ./mvnw -B verify
+
+      - name: Relatório de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/jacoco-report
+
+      # O ambiente local completo (aplicação, PostgreSQL e externos simulados) precisa continuar construindo.
+      - name: Imagem e ambiente local
+        run: |
+          ./mvnw -B package -DskipTests
+          docker compose -f docker/compose.yml --env-file docker/externos.env build
+          docker compose -f docker/compose.yml --env-file docker/externos.env config --quiet
+
+      # Fumaça: sobe tudo e chama a API com o token do analista do emissor local (JWKS servido pelo WireMock).
+      - name: Fumaça do ambiente local
+        run: |
+          docker compose -f docker/compose.yml --env-file docker/externos.env up -d --wait
+          TOKEN_ANALISTA=$(grep '^TOKEN_ANALISTA=' docker/externos.env | cut -d= -f2-)
+          curl -fsS http://localhost:8080/q/health/ready
+          curl -fsS -H "Authorization: Bearer $TOKEN_ANALISTA" "http://localhost:8080/web/documentos?situacao=ENVIADO"
+          curl -fsS http://localhost:8089/emissor/.well-known/jwks.json > /dev/null
+
+      - name: Logs do ambiente local
+        if: failure()
+        run: docker compose -f docker/compose.yml --env-file docker/externos.env logs

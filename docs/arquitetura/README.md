@@ -176,11 +176,12 @@ Assim, a regra "outro módulo só pela raiz" já impede o núcleo e os outros m�
 | UC-0024 Conferir documento | módulo `documentos`: `Documento` com o arquivo no `ArmazemDeArquivos` ([ADR 0010](adr/0010-armazenamento-de-arquivos.md)); envio em `/web/documentos` (multipart), fila e arquivo para o analista, conferência em `/web/documentos/{id}/conferencia` |
 | RN-0009 com os arquivos, RN-0019 com os documentos aceitos | a Originação ouve os Documentos (`OuvinteDosDocumentos`): o envio só no rascunho ou com pendência, o recusado conta como não entregue e dá pendência, e a aprovação espera todos aceitos |
 | Eventos de toda a jornada, até o contrato formalizado | gravados no outbox (`shared.outbox`) na transação do caso de uso, cada um pelo agregado que o emite no modelo |
+| Pedidos aos 7 sistemas externos | `RelayDoOutbox` entrega cada pedido à `RotaDeSaida` da camada anticorrupção do módulo dono (`<módulo>/integracao`), que chama o externo por HTTP; o externo devolve em `/retornos/...` ([ADR 0013](adr/0013-integracao-http-com-externos-simulados.md)) |
+| Externos simulados | WireMock em `docker/wiremock`, no `docker compose` e embutido nos testes; a jornada de ponta a ponta roda em `JornadaPelosExternosTest` ([externos simulados](../api/externos-simulados.md)) |
 
-Os retornos externos chegam hoje por REST. Em produção, chegam pela fila ([ADR 0006](adr/0006-mensageria-por-fila-gerenciada.md)) para o mesmo serviço, que é idempotente: o mesmo retorno repetido não tem novo efeito, e um retorno diferente do já registrado é recusado.
+Os retornos dos externos são idempotentes: o mesmo retorno repetido não tem novo efeito, e um retorno diferente do já registrado é recusado. Quando dois chegam ao mesmo tempo para o mesmo agregado, o que perde no controle de concorrência é repetido.
 
 **Próximos passos:**
-- o relay do outbox para a fila (ADR 0006), que tira os pedidos aos externos do banco;
 - RN-0013 (veículo sem restrição) e a elegibilidade do FGTS antes da submissão, que dependem de sistemas externos;
 - o adaptador de armazenamento de objetos para os arquivos (ADR 0010), para mais de uma instância;
 - Cadastro de pessoas, hoje só com a fachada.
@@ -191,27 +192,24 @@ Os retornos externos chegam hoje por REST. Em produção, chegam pela fila ([ADR
   - Cada módulo é dono das suas tabelas; os outros só chegam a elas pela fachada.
   - A transação é local.
   - O módulo pode ser extraído depois sem desmontar dados compartilhados.
-- **Comunicação** ([ADR 0005](adr/0005-comunicacao-sincrona-interna-e-outbox.md) e [ADR 0006](adr/0006-mensageria-por-fila-gerenciada.md)):
+- **Comunicação** ([ADR 0005](adr/0005-comunicacao-sincrona-interna-e-outbox.md) e [ADR 0013](adr/0013-integracao-http-com-externos-simulados.md)):
   - **Entre módulos:** chamada síncrona pela fachada, na mesma transação.
-  - **Para os externos:** o comando é gravado no **outbox**, na mesma transação da mudança de estado. Um relay publica na **fila gerenciada** depois do commit, com retentativa.
-  - **Retornos:** entram pela fila e são **idempotentes**. Um protocolo repetido não tem novo efeito, como pede a regra de negócio "retorno de registro é fato, não pedido".
+  - **Para os externos:** o pedido é gravado no **outbox**, na mesma transação da mudança de estado. Depois do commit, o **relay** o entrega por HTTP pela camada anticorrupção do módulo dono, em ordem por agregado, com recuo exponencial se o externo estiver fora do ar.
+  - **Retornos:** o externo chama de volta `/retornos/...`, com o JWT do sistema. São **idempotentes**: um protocolo repetido não tem novo efeito, como pede a regra de negócio "retorno de registro é fato, não pedido".
 
 ```mermaid
 sequenceDiagram
     participant M as Módulo (ex.: garantia)
     participant DB as PostgreSQL (esquema do módulo + outbox)
     participant R as Relay do outbox
-    participant F as Fila gerenciada
     participant X as Externo (ex.: cartório)
-    M->>DB: muda o estado + grava o comando no outbox (uma transação)
-    R->>DB: lê pendentes depois do commit
-    R->>F: publica (com retentativa)
-    F->>X: entrega pelo adaptador de integração
-    X-->>F: retorno assíncrono
-    F-->>M: consome o retorno (idempotente por protocolo)
+    M->>DB: muda o estado + grava o pedido no outbox (uma transação)
+    R->>DB: reivindica o próximo pendente (FOR UPDATE SKIP LOCKED)
+    R->>X: POST pela camada anticorrupção (com recuo se falhar)
+    X-->>M: POST /retornos/... com o JWT do sistema (idempotente por protocolo)
 ```
 
-Os 6 sistemas externos do modelo têm cada um uma camada anticorrupção no módulo dono: bureau (`credito`), avaliador (`avaliacao`), seguradora (`contratacao`), cartório e órgão de trânsito (`garantia`) e FGTS (`desembolso`).
+Os 7 sistemas externos têm cada um uma camada anticorrupção no módulo dono: bureau (`credito`), avaliador (`avaliacao`), seguradora (`contratacao`), cartório e órgão de trânsito (`garantia`), FGTS e pagamento (`desembolso`). Em desenvolvimento, nos testes e na CI, todos são simulados no WireMock (`docker/wiremock`).
 
 ## 5. Stack e governança
 
@@ -225,6 +223,12 @@ Os 6 sistemas externos do modelo têm cada um uma camada anticorrupção no mód
   - `EsquemaPorModuloTest`: entidades, migrações e consultas só no esquema do próprio módulo;
   - `ContratoDaApiTest` e `CatalogoDeErrosPublicadoTest`: todo endpoint documentado no contrato OpenAPI ([`docs/api`](../api/README.md)) e o catálogo de erros publicado em dia com o código;
   - `SegurancaArquiteturaTest`: todo endpoint declara os papéis ([ADR 0012](adr/0012-autenticacao-delegada-e-autorizacao.md));
+  - `IntegracaoArquiteturaTest` e `integracao/RotasDeSaidaTest` ([ADR 0013](adr/0013-integracao-http-com-externos-simulados.md)):
+    - formatos externos só em `..integracao..`;
+    - todo pedido a externo tem exatamente uma rota, e todo endpoint chamado tem stub no WireMock;
+    - todo externo do mapa de contexto do modelo tem simulador;
+    - retornos repetidos em conflito de concorrência;
+  - `integracao/AmbienteLocalTest`: os tokens do ambiente local valem contra o JWKS do emissor local;
   - `ValidacaoTest`: o fluxo comum de validação do [ADR 0011](adr/0011-fluxo-comum-de-validacao.md) (validador por request, cadeia de domínio por caso de uso, erros só do catálogo).
 - Os ciclos de vida implementados (`EstadoProposta`, `EstadoContrato`) são conferidos contra os diagramas CV-0001 e CV-0002 do modelo.
 - **Testes de integração dos endpoints** (`@QuarkusTest` com RestAssured, contra o PostgreSQL):
@@ -251,10 +255,11 @@ Os 6 sistemas externos do modelo têm cada um uma camada anticorrupção no mód
 | [0003](adr/0003-monolito-modular-com-microkernel.md) | Monólito modular com microkernel por categoria de bem | as três |
 | [0004](adr/0004-postgresql-com-esquema-por-modulo.md) | PostgreSQL com um esquema por módulo | evolutividade, confiabilidade |
 | [0005](adr/0005-comunicacao-sincrona-interna-e-outbox.md) | Comunicação síncrona entre módulos e outbox para fora | confiabilidade |
-| [0006](adr/0006-mensageria-por-fila-gerenciada.md) | Fila gerenciada atrás de uma porta: RabbitMQ padrão, SQS alternativa | confiabilidade, evolutividade |
+| [0006](adr/0006-mensageria-por-fila-gerenciada.md) | Fila gerenciada atrás de uma porta: RabbitMQ padrão, SQS alternativa (substituída em parte pela 0013) | confiabilidade, evolutividade |
 | [0007](adr/0007-java-25-e-quarkus-3-33.md) | Java 25 e Quarkus 3.33 | evolutividade |
 | [0008](adr/0008-fitness-functions.md) | Fitness functions para as decisões estruturais | as três |
 | [0009](adr/0009-retorno-entre-modulos-por-porta-de-ouvinte.md) | Retorno entre módulos por porta de ouvinte, sem ciclo | evolutividade, confiabilidade |
 | [0010](adr/0010-armazenamento-de-arquivos.md) | Arquivos dos documentos atrás de uma porta: sistema de arquivos agora, armazenamento de objetos em produção | evolutividade, confiabilidade |
 | [0011](adr/0011-fluxo-comum-de-validacao.md) | Fluxo comum de validação: catálogo de erros, cadeia de atributo no request e cadeia de domínio no caso de uso | evolutividade, confiabilidade |
 | [0012](adr/0012-autenticacao-delegada-e-autorizacao.md) | Autenticação delegada (JWT de emissor externo) e autorização por papel e por dono | segurança, evolutividade |
+| [0013](adr/0013-integracao-http-com-externos-simulados.md) | Integração com os externos por HTTP pelo relay do outbox, simulados no WireMock (substitui em parte a 0006) | confiabilidade, evolutividade |

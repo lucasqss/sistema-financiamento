@@ -34,8 +34,21 @@ Pré-requisito: JDK 25. O Maven vem pelo wrapper.
 ./mvnw verify
 ```
 
+**Tudo de uma vez, com os sistemas externos simulados** (bureau, avaliador, seguradora, cartório, órgão de trânsito, FGTS e pagamento, num WireMock), precisa de Docker:
+
+```bash
+./mvnw package -DskipTests
+```
+
+```bash
+docker compose -f docker/compose.yml --env-file docker/externos.env up --build
+```
+
+Os externos recebem os pedidos e devolvem os resultados sozinhos. A massa de teste, o emissor local de JWT e os tokens de exemplo estão em [externos simulados](docs/api/externos-simulados.md). Variáveis, saúde e métricas estão em [operação](docs/operacao/README.md).
+
 - Em dev e teste, os Dev Services do Quarkus sobem um PostgreSQL em container (é preciso Docker).
 - Sem Docker, aponte para um PostgreSQL com `QUARKUS_DATASOURCE_JDBC_URL`, `QUARKUS_DATASOURCE_USERNAME` e `QUARKUS_DATASOURCE_PASSWORD`. As migrações criam os esquemas.
+- O `verify` roda também a jornada inteira contra os externos simulados (o mesmo WireMock, embutido no teste, sem Docker).
 - O `verify` roda os testes de integração de todos os endpoints. Depois deles, roda o portão de cobertura: toda operação precisa ter sido testada em cada resposta que pode dar (2xx, 400, 401, 403, 404 e 422). Exige também o mínimo de linhas do JaCoCo, com relatório em `target/jacoco-report`. Detalhes na [arquitetura](docs/arquitetura/README.md#5-stack-e-governança).
 - Para rodar um teste só: `./mvnw verify -Dtest=NomeDoTest`. O portão fica de fora, porque a suíte não roda inteira.
 - A API web da originação fica em `/web/propostas`. Exemplo: `POST /web/propostas` com `{"tipoDeBem": "MOTO_USADA"}`.

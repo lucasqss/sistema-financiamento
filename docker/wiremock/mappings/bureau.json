@@ -1,0 +1,82 @@
+{
+  "mappings": [
+    {
+      "name": "bureau: aprova",
+      "priority": 5,
+      "request": {
+        "method": "POST",
+        "urlPath": "/bureau/consultas"
+      },
+      "response": {
+        "status": 202,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "recebido": true
+        }
+      },
+      "serveEventListeners": [
+        {
+          "name": "webhook",
+          "parameters": {
+            "method": "POST",
+            "url": "{{jsonPath originalRequest.body '$.urlDeRetorno'}}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{systemValue type='PROPERTY' key='token.sistema-bureau'}}"
+            },
+            "body": "{\"resultado\":\"APROVADO\"}",
+            "delay": {
+              "type": "fixed",
+              "milliseconds": 300
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "bureau: reprova acima de 1.000.000",
+      "priority": 1,
+      "request": {
+        "method": "POST",
+        "urlPath": "/bureau/consultas",
+        "bodyPatterns": [
+          {
+            "matchesJsonPath": {
+              "expression": "$.valorFinanciado",
+              "matches": "^\\d{7,}(\\.\\d+)?$"
+            }
+          }
+        ]
+      },
+      "response": {
+        "status": 202,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "recebido": true
+        }
+      },
+      "serveEventListeners": [
+        {
+          "name": "webhook",
+          "parameters": {
+            "method": "POST",
+            "url": "{{jsonPath originalRequest.body '$.urlDeRetorno'}}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{systemValue type='PROPERTY' key='token.sistema-bureau'}}"
+            },
+            "body": "{\"resultado\":\"REPROVADO\"}",
+            "delay": {
+              "type": "fixed",
+              "milliseconds": 300
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

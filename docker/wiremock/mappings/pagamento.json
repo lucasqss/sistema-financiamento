@@ -1,0 +1,39 @@
+{
+  "mappings": [
+    {
+      "name": "pagamento: confirma a transferência",
+      "priority": 5,
+      "request": {
+        "method": "POST",
+        "urlPath": "/pagamento/transferencias"
+      },
+      "response": {
+        "status": 202,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "recebido": true
+        }
+      },
+      "serveEventListeners": [
+        {
+          "name": "webhook",
+          "parameters": {
+            "method": "POST",
+            "url": "{{jsonPath originalRequest.body '$.urlDeRetorno'}}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{systemValue type='PROPERTY' key='token.sistema-pagamento'}}"
+            },
+            "body": "{\"protocolo\":\"{{jsonPath originalRequest.body '$.protocolo'}}\"}",
+            "delay": {
+              "type": "fixed",
+              "milliseconds": 300
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import jakarta.annotation.security.RolesAllowed;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import jakarta.inject.Inject;
+import br.com.financiamento.shared.web.RepeteEmConflito;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -16,6 +17,7 @@ import jakarta.ws.rs.core.Response;
  * vendedor. Em produção chegam pela fila (ADR 0006); são idempotentes.
  */
 @Tag(name = "Retornos de sistemas externos", description = "Entradas dos sistemas externos (bureau, avaliador, seguradora, cartório/órgão de trânsito, FGTS, pagamento). Idempotentes pelo protocolo.")
+@RepeteEmConflito
 @Path("/retornos")
 public class RetornoDoDesembolsoResource {
 

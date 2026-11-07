@@ -1,0 +1,82 @@
+{
+  "mappings": [
+    {
+      "name": "FGTS: libera",
+      "priority": 5,
+      "request": {
+        "method": "POST",
+        "urlPath": "/fgts/saques"
+      },
+      "response": {
+        "status": 202,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "recebido": true
+        }
+      },
+      "serveEventListeners": [
+        {
+          "name": "webhook",
+          "parameters": {
+            "method": "POST",
+            "url": "{{jsonPath originalRequest.body '$.urlDeRetorno'}}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{systemValue type='PROPERTY' key='token.sistema-fgts'}}"
+            },
+            "body": "{\"liberado\":true}",
+            "delay": {
+              "type": "fixed",
+              "milliseconds": 300
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "FGTS: nega a partir de 200.000",
+      "priority": 1,
+      "request": {
+        "method": "POST",
+        "urlPath": "/fgts/saques",
+        "bodyPatterns": [
+          {
+            "matchesJsonPath": {
+              "expression": "$.valor",
+              "matches": "^([2-9]\\d{5}|\\d{7,})(\\.\\d+)?$"
+            }
+          }
+        ]
+      },
+      "response": {
+        "status": 202,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "recebido": true
+        }
+      },
+      "serveEventListeners": [
+        {
+          "name": "webhook",
+          "parameters": {
+            "method": "POST",
+            "url": "{{jsonPath originalRequest.body '$.urlDeRetorno'}}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{systemValue type='PROPERTY' key='token.sistema-fgts'}}"
+            },
+            "body": "{\"liberado\":false,\"motivo\":\"saldo insuficiente\"}",
+            "delay": {
+              "type": "fixed",
+              "milliseconds": 300
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

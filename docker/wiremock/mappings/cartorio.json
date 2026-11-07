@@ -1,0 +1,137 @@
+{
+  "mappings": [
+    {
+      "name": "cartório: registra",
+      "priority": 5,
+      "request": {
+        "method": "POST",
+        "urlPath": "/cartorio/registros"
+      },
+      "response": {
+        "status": 202,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "recebido": true
+        }
+      },
+      "serveEventListeners": [
+        {
+          "name": "webhook",
+          "parameters": {
+            "method": "POST",
+            "url": "{{jsonPath originalRequest.body '$.urlDeRetorno'}}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{systemValue type='PROPERTY' key='token.sistema-registro'}}"
+            },
+            "body": "{\"protocolo\":\"{{jsonPath originalRequest.body '$.protocolo'}}\",\"resultado\":\"REGISTRADO\",\"identificacaoRegistrada\":\"{{jsonPath originalRequest.body '$.identificacaoDoBem'}}\"}",
+            "delay": {
+              "type": "fixed",
+              "milliseconds": 300
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "cartório: exigência na primeira tentativa",
+      "priority": 1,
+      "request": {
+        "method": "POST",
+        "urlPath": "/cartorio/registros",
+        "bodyPatterns": [
+          {
+            "matchesJsonPath": {
+              "expression": "$.identificacaoDoBem",
+              "contains": "EXIGENCIA"
+            }
+          },
+          {
+            "matchesJsonPath": {
+              "expression": "$.tentativa",
+              "equalTo": "1"
+            }
+          }
+        ]
+      },
+      "response": {
+        "status": 202,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "recebido": true
+        }
+      },
+      "serveEventListeners": [
+        {
+          "name": "webhook",
+          "parameters": {
+            "method": "POST",
+            "url": "{{jsonPath originalRequest.body '$.urlDeRetorno'}}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{systemValue type='PROPERTY' key='token.sistema-registro'}}"
+            },
+            "body": "{\"protocolo\":\"{{jsonPath originalRequest.body '$.protocolo'}}\",\"resultado\":\"EXIGENCIA\",\"texto\":\"apresentar certidão de ônus atualizada\"}",
+            "delay": {
+              "type": "fixed",
+              "milliseconds": 300
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "cartório: recusa na primeira tentativa",
+      "priority": 1,
+      "request": {
+        "method": "POST",
+        "urlPath": "/cartorio/registros",
+        "bodyPatterns": [
+          {
+            "matchesJsonPath": {
+              "expression": "$.identificacaoDoBem",
+              "contains": "RECUSA"
+            }
+          },
+          {
+            "matchesJsonPath": {
+              "expression": "$.tentativa",
+              "equalTo": "1"
+            }
+          }
+        ]
+      },
+      "response": {
+        "status": 202,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "recebido": true
+        }
+      },
+      "serveEventListeners": [
+        {
+          "name": "webhook",
+          "parameters": {
+            "method": "POST",
+            "url": "{{jsonPath originalRequest.body '$.urlDeRetorno'}}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{systemValue type='PROPERTY' key='token.sistema-registro'}}"
+            },
+            "body": "{\"protocolo\":\"{{jsonPath originalRequest.body '$.protocolo'}}\",\"resultado\":\"RECUSADO\",\"texto\":\"dados do proprietário divergentes\"}",
+            "delay": {
+              "type": "fixed",
+              "milliseconds": 300
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

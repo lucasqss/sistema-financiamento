@@ -38,6 +38,7 @@ public class SolicitarAvaliacaoService {
                 "propostaId", s.propostaId(),
                 "tipoDeBem", s.tipoDeBem().codigo(),
                 "identificacaoDoBem", s.identificacaoDoBem(),
+                "valorDeCompra", s.valorDeCompra(),
                 "fonte", fonte));
         return avaliacao.id();
     }

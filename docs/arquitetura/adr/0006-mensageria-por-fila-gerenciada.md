@@ -1,6 +1,6 @@
 # 0006. Fila gerenciada atrás de uma porta: RabbitMQ padrão, SQS alternativa
 
-**Status:** Aceita · **Data:** 2026-11-05
+**Status:** Substituída em parte pela [0013](0013-integracao-http-com-externos-simulados.md) (a saída e a entrada passam a ser HTTP, com os externos simulados no WireMock) · **Data:** 2026-11-05
 
 ## Contexto
 O outbox ([0005](0005-comunicacao-sincrona-interna-e-outbox.md)) precisa de um meio durável para os comandos de saída e os retornos de entrada. Com volume baixo, um log de eventos (Kafka) é mais do que o necessário. Uma fila gerenciada basta.

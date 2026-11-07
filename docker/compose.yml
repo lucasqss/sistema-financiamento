@@ -1,0 +1,60 @@
+# Ambiente local completo: o sistema de financiamento, o PostgreSQL e os 7 sistemas externos simulados no
+# WireMock (bureau, avaliador, seguradora, cartório, órgão de trânsito, FGTS e pagamento), mais o emissor de
+# JWT local. Os externos devolvem o resultado chamando /retornos/... da aplicação (webhooks).
+#
+#   ./mvnw package -DskipTests
+#   docker compose -f docker/compose.yml --env-file docker/externos.env up --build
+#
+# Detalhes em docs/api/externos-simulados.md.
+name: financiamento
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: financiamento
+      POSTGRES_USER: financiamento
+      POSTGRES_PASSWORD: financiamento
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U financiamento"]
+      interval: 3s
+      retries: 20
+
+  wiremock:
+    image: wiremock/wiremock:3.13.1
+    command: ["--global-response-templating", "--permitted-system-keys=token.*", "--verbose"]
+    environment:
+      JAVA_OPTS: ${WIREMOCK_JAVA_OPTS}
+    volumes:
+      - ./wiremock/mappings:/home/wiremock/mappings:ro
+      - ./wiremock/__files:/home/wiremock/__files:ro
+    ports: ["8089:8080"]
+
+  financiamento:
+    build:
+      context: ..
+      dockerfile: src/main/docker/Dockerfile.jvm
+    depends_on:
+      postgres:
+        condition: service_healthy
+      wiremock:
+        condition: service_started
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/financiamento
+      QUARKUS_DATASOURCE_USERNAME: financiamento
+      QUARKUS_DATASOURCE_PASSWORD: financiamento
+      JWT_ISSUER: https://emissor.local
+      JWT_JWKS_URL: http://wiremock:8080/emissor/.well-known/jwks.json
+      EXTERNOS_URL: http://wiremock:8080
+      URL_PUBLICA: http://financiamento:8080
+    volumes:
+      - documentos:/dados/documentos
+    ports: ["8080:8080"]
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && printf 'GET /q/health/ready HTTP/1.0\\r\\n\\r\\n' >&3 && grep -q '200 OK' <&3"]
+      interval: 5s
+      retries: 30
+
+volumes:
+  documentos:

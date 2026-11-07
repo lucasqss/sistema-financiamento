@@ -1,0 +1,39 @@
+{
+  "mappings": [
+    {
+      "name": "avaliador: laudo com o valor de compra",
+      "priority": 5,
+      "request": {
+        "method": "POST",
+        "urlPath": "/avaliador/laudos"
+      },
+      "response": {
+        "status": 202,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "recebido": true
+        }
+      },
+      "serveEventListeners": [
+        {
+          "name": "webhook",
+          "parameters": {
+            "method": "POST",
+            "url": "{{jsonPath originalRequest.body '$.urlDeRetorno'}}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{systemValue type='PROPERTY' key='token.sistema-avaliador'}}"
+            },
+            "body": "{\"aceitoComoGarantia\":true,\"valor\":{{jsonPath originalRequest.body '$.valorDeCompra'}},\"avaliadaEm\":\"{{now format='yyyy-MM-dd'}}\"}",
+            "delay": {
+              "type": "fixed",
+              "milliseconds": 300
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

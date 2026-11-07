@@ -40,4 +40,20 @@ class MensagemOutbox extends PanacheEntityBase {
 
     @Column(name = "publicado_em")
     public Instant publicadoEm;
+
+    @Column(nullable = false)
+    public int tentativas;
+
+    @Column(name = "proxima_tentativa")
+    public Instant proximaTentativa;
+
+    @Column(name = "ultimo_erro", columnDefinition = "text")
+    public String ultimoErro;
+
+    @Column(name = "desistido_em")
+    public Instant desistidoEm;
+
+    EventoDoOutbox evento() {
+        return new EventoDoOutbox(id, agregado, agregadoId, evento, dados, ocorridoEm);
+    }
 }

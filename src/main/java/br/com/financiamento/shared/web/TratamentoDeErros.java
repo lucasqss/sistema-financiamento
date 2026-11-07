@@ -52,6 +52,15 @@ class TratamentoDeErros {
         return Response.status(403).entity(corpo(TipoDeErro.DOMINIO, List.of(Falha.de(ErroDeSeguranca.SEM_PAPEL)))).build();
     }
 
+    /**
+     * Conflito de concorrência que sobrou depois das repetições (ADR 0013): 503 com Retry-After, para quem chamou
+     * tentar de novo. Não é erro de negócio, e por isso não tem código do catálogo.
+     */
+    @ServerExceptionMapper({jakarta.persistence.OptimisticLockException.class, org.hibernate.StaleStateException.class})
+    Response conflito() {
+        return Response.status(503).header("Retry-After", "1").build();
+    }
+
     /** JSON malformado ou valor que não cabe no campo (enum desconhecido, número inválido): erro de atributo. */
     @ServerExceptionMapper
     Response jsonInvalido(JsonProcessingException e) {

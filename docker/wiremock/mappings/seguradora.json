@@ -1,0 +1,39 @@
+{
+  "mappings": [
+    {
+      "name": "seguradora: emite a apólice",
+      "priority": 5,
+      "request": {
+        "method": "POST",
+        "urlPath": "/seguradora/apolices"
+      },
+      "response": {
+        "status": 202,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "recebido": true
+        }
+      },
+      "serveEventListeners": [
+        {
+          "name": "webhook",
+          "parameters": {
+            "method": "POST",
+            "url": "{{jsonPath originalRequest.body '$.urlDeRetorno'}}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{systemValue type='PROPERTY' key='token.sistema-seguradora'}}"
+            },
+            "body": "{\"seguro\":\"{{jsonPath originalRequest.body '$.seguro'}}\",\"apolice\":\"AP-{{jsonPath originalRequest.body '$.seguro'}}-{{jsonPath originalRequest.body '$.contratacao'}}\"}",
+            "delay": {
+              "type": "fixed",
+              "milliseconds": 300
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

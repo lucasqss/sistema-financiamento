@@ -1,0 +1,18 @@
+{
+  "mappings": [
+    {
+      "name": "emissor local: JWKS",
+      "request": {
+        "method": "GET",
+        "urlPath": "/emissor/.well-known/jwks.json"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "bodyFileName": "emissor-jwks.json"
+      }
+    }
+  ]
+}
