@@ -1,0 +1,117 @@
+{
+  "mappings": [
+    {
+      "name": "sistema financeiro: valor de quitação total (90% do saldo de referência, válido por 5 dias)",
+      "priority": 5,
+      "request": {
+        "method": "POST",
+        "urlPath": "/financeiro/quitacoes"
+      },
+      "response": {
+        "status": 202,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "recebido": true
+        }
+      },
+      "serveEventListeners": [
+        {
+          "name": "webhook",
+          "parameters": {
+            "method": "POST",
+            "url": "{{jsonPath originalRequest.body '$.urlDeRetorno'}}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{systemValue type='PROPERTY' key='token.sistema-financeiro'}}"
+            },
+            "body": "{\"protocolo\":\"{{jsonPath originalRequest.body '$.protocolo'}}\",\"valor\":{{math (jsonPath originalRequest.body '$.saldoDeReferencia') '*' 0.9}},\"validaAte\":\"{{now offset='5 days' format='yyyy-MM-dd'}}\"}",
+            "delay": {
+              "type": "fixed",
+              "milliseconds": 300
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "sistema financeiro: amortização (o valor pedido, válido por 5 dias)",
+      "priority": 1,
+      "request": {
+        "method": "POST",
+        "urlPath": "/financeiro/quitacoes",
+        "bodyPatterns": [
+          {
+            "matchesJsonPath": {
+              "expression": "$.tipo",
+              "equalTo": "PARCIAL"
+            }
+          }
+        ]
+      },
+      "response": {
+        "status": 202,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "recebido": true
+        }
+      },
+      "serveEventListeners": [
+        {
+          "name": "webhook",
+          "parameters": {
+            "method": "POST",
+            "url": "{{jsonPath originalRequest.body '$.urlDeRetorno'}}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{systemValue type='PROPERTY' key='token.sistema-financeiro'}}"
+            },
+            "body": "{\"protocolo\":\"{{jsonPath originalRequest.body '$.protocolo'}}\",\"valor\":{{jsonPath originalRequest.body '$.valor'}},\"validaAte\":\"{{now offset='5 days' format='yyyy-MM-dd'}}\"}",
+            "delay": {
+              "type": "fixed",
+              "milliseconds": 300
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "sistema financeiro: renegociação (nova parcela = saldo de referência / novo prazo)",
+      "priority": 5,
+      "request": {
+        "method": "POST",
+        "urlPath": "/financeiro/renegociacoes"
+      },
+      "response": {
+        "status": 202,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "recebido": true
+        }
+      },
+      "serveEventListeners": [
+        {
+          "name": "webhook",
+          "parameters": {
+            "method": "POST",
+            "url": "{{jsonPath originalRequest.body '$.urlDeRetorno'}}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{systemValue type='PROPERTY' key='token.sistema-financeiro'}}"
+            },
+            "body": "{\"protocolo\":\"{{jsonPath originalRequest.body '$.protocolo'}}\",\"saldoDevedor\":{{jsonPath originalRequest.body '$.saldoDeReferencia'}},\"novaParcela\":{{math (jsonPath originalRequest.body '$.saldoDeReferencia') '/' (jsonPath originalRequest.body '$.novoPrazoMeses')}},\"diasEmAtraso\":0}",
+            "delay": {
+              "type": "fixed",
+              "milliseconds": 300
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

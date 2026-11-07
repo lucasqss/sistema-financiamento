@@ -1,0 +1,39 @@
+{
+  "mappings": [
+    {
+      "name": "sistema de cobrança: emite e confirma o pagamento",
+      "priority": 5,
+      "request": {
+        "method": "POST",
+        "urlPath": "/cobranca/cobrancas"
+      },
+      "response": {
+        "status": 202,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "recebido": true
+        }
+      },
+      "serveEventListeners": [
+        {
+          "name": "webhook",
+          "parameters": {
+            "method": "POST",
+            "url": "{{jsonPath originalRequest.body '$.urlDeRetorno'}}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer {{systemValue type='PROPERTY' key='token.sistema-cobranca'}}"
+            },
+            "body": "{\"protocolo\":\"{{jsonPath originalRequest.body '$.protocolo'}}\",\"pagoEm\":\"{{now format='yyyy-MM-dd'}}\"}",
+            "delay": {
+              "type": "fixed",
+              "milliseconds": 300
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

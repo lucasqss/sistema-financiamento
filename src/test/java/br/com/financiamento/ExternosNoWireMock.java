@@ -15,7 +15,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 public class ExternosNoWireMock implements QuarkusTestResourceLifecycleManager {
 
     static final String[] SISTEMAS = {"sistema-bureau", "sistema-avaliador", "sistema-seguradora", "sistema-registro",
-            "sistema-fgts", "sistema-pagamento"};
+            "sistema-fgts", "sistema-pagamento", "sistema-financeiro", "sistema-cobranca"};
 
     private static WireMockServer servidor;
 

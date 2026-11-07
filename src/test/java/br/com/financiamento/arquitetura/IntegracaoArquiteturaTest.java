@@ -40,7 +40,9 @@ class IntegracaoArquiteturaTest {
             "Cartório de Registro de Imóveis", "cartorio.json",
             "Órgão de trânsito", "orgao-de-transito.json",
             "Seguradora", "seguradora.json",
-            "Sistema do FGTS", "fgts.json");
+            "Sistema do FGTS", "fgts.json",
+            "Sistema financeiro", "financeiro.json",
+            "Sistema de cobrança", "cobranca.json");
 
     @BeforeAll
     static void importar() {

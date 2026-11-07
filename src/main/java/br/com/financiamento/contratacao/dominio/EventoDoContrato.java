@@ -17,16 +17,20 @@ enum EventoDoContrato {
     RECURSO_LIBERADO,
     PARCELA_DA_OBRA_LIBERADA,
     MEDICAO_REALIZADA,
-    PRAZO_DA_OBRA_PRORROGADO;
+    PRAZO_DA_OBRA_PRORROGADO,
+    CONDICOES_DO_CONTRATO_ALTERADAS,
+    CONTRATO_QUITADO,
+    GARANTIA_BAIXADA;
 
     /**
      * O contrato emite o evento (lista "Emite" do AGR-0002)? Os eventos do registro
-     * (EVT-0027 a EVT-0031) são da Garantia, e os da liberação, do Desembolso: o
-     * contrato só muda de estado com eles.
+     * (EVT-0027 a EVT-0031) e a baixa (GarantiaBaixada) são da Garantia, e os da
+     * liberação, do Desembolso: o contrato só muda de estado com eles.
      */
     boolean emitidoPeloContrato() {
         return switch (this) {
-            case CONTRATO_EMITIDO, CONTRATO_ASSINADO, CONTRATO_CANCELADO, PRAZO_DA_OBRA_PRORROGADO -> true;
+            case CONTRATO_EMITIDO, CONTRATO_ASSINADO, CONTRATO_CANCELADO, PRAZO_DA_OBRA_PRORROGADO,
+                 CONDICOES_DO_CONTRATO_ALTERADAS, CONTRATO_QUITADO -> true;
             default -> false;
         };
     }

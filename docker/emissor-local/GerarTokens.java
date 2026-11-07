@@ -53,7 +53,7 @@ public class GerarTokens {
 
         var tokens = new LinkedHashMap<String, String>();
         for (var sistema : new String[]{"sistema-bureau", "sistema-avaliador", "sistema-seguradora", "sistema-registro",
-                "sistema-fgts", "sistema-pagamento"}) {
+                "sistema-fgts", "sistema-pagamento", "sistema-financeiro", "sistema-cobranca"}) {
             tokens.put("TOKEN_" + sistema.toUpperCase().replace('-', '_'), token(privada, sistema, null, sistema));
         }
         // Pessoas de exemplo, para chamar a API à mão (CPFs válidos fictícios).

@@ -37,7 +37,7 @@ class AmbienteLocalTest {
         for (var linha : Files.readAllLines(Path.of("docker/externos.env"))) {
             if (linha.startsWith("TOKEN_")) tokens.put(linha.substring(0, linha.indexOf('=')), linha.substring(linha.indexOf('=') + 1));
         }
-        assertEquals(10, tokens.size(), tokens.keySet().toString());
+        assertEquals(12, tokens.size(), tokens.keySet().toString());
 
         for (var t : tokens.entrySet()) {
             var partes = t.getValue().split("\\.");

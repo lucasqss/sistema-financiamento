@@ -54,16 +54,23 @@ const add = (i: Item) => { itens.push(i); return i.chave; };
  */
 const SITUACAO: Situacao = 'APROVADO';
 
+/**
+ * Situação dos itens que estão sendo criados agora. A etapa da vida do contrato (2026-11-07) entra "Em revisão"
+ * até o negócio validar; os itens aprovados que ela alterou também voltam a "Em revisão".
+ */
+let situacaoAtual: Situacao = SITUACAO;
+const EM_REVISAO = { situacao: 'EM_REVISAO' as Situacao };
+
 /** Atalho: item com a situação do modelo. */
 const it = (chave: string, pai: string | null, tipo: Tipo, titulo: string, texto: string, extra: Partial<Item> = {}) =>
-  add({ chave, pai, tipo, titulo, texto, situacao: SITUACAO, ...extra });
+  add({ chave, pai, tipo, titulo, texto, situacao: situacaoAtual, ...extra });
 
 // ===== Raiz ================================================================
 
 it('raiz', null, 'PASTA', 'Sistema de Financiamento de Bens', `
 Modelo de domínio de um **sistema-modelo de financiamento de bens**, reaproveitável em vários projetos.
 Cobre a jornada da **proposta** até o **contrato formalizado**, com a garantia registrada e o dinheiro
-liberado ao vendedor. Esta etapa fica no **espaço do problema**: não há arquitetura, tecnologia nem banco.
+liberado ao vendedor, e a vida do contrato até a **quitação**, com a garantia baixada, passando pela **renegociação**. Esta etapa fica no **espaço do problema**: não há arquitetura, tecnologia nem banco.
 
 ## Bens financiados
 
@@ -104,12 +111,14 @@ externos são **assíncronos** e podem chegar repetidos ou fora de ordem.
 
 ## Fora de escopo nesta etapa
 
-- Vida do contrato depois de formalizado: cobrança, atraso, renegociação, quitação.
-- Cálculo financeiro (taxa, CET, PRICE/SAC) e cálculo de prêmio de seguro: a parcela é um dado da simulação.
+- Da vida do contrato depois de formalizado: cobrança das parcelas, atraso e retomada da garantia. A quitação e a
+  renegociação estão no modelo (domínio Carteira de contratos).
+- Cálculo financeiro (taxa, CET, PRICE/SAC, saldo devedor, desconto da quitação antecipada) e cálculo de prêmio de
+  seguro: a parcela é um dado da simulação, e o que depende de cálculo vem do sistema financeiro.
 - Subsídio habitacional, consórcio, leasing e refinanciamento.
 
 > Os números das regras são **valores de referência do modelo**, parametrizáveis: cada projeto que usar este modelo ajusta os seus.
-`);
+`, EM_REVISAO);
 
 // ===== Glossário ===========================================================
 
@@ -302,6 +311,8 @@ const dominio = (chave: string, titulo: string, classificacao: Item['classificac
 
 // Cada domínio nasce com a sua visão; o texto dela entra pela chave `<dominio>.vis`.
 const visoes: Record<string, string> = {};
+/** Visões alteradas ou criadas na etapa da vida do contrato: ficam "Em revisão". */
+const visoesEmRevisao = new Set(['gar', 'car']);
 
 // ----- Originação (principal) ----------------------------------------------
 
@@ -759,9 +770,12 @@ pelo identificador, sem alterá-la.
 4. Retorno de registro só vale se a identificação registrada for a do contrato ([[USA:@rn.retorno-registro]]).
 5. Nenhuma liberação sem garantia constituída ([[USA:@rn.sem-garantia-sem-dinheiro]]); soma liberada ≤ valor financiado ([[USA:@rn.liberacao-acumulada]]).
 6. Prorrogações da obra até o limite ([[USA:@rn.prorrogacao]]).
+7. Só o contrato formalizado tem quitação ou renegociação, uma de cada vez ([[USA:@rn.uma-operacao]]).
+8. As condições mudam depois de formalizado só por amortização ou por aditivo vigente: cada mudança é uma nova versão, e as anteriores ficam guardadas.
+9. Quitado, o contrato tem o termo de quitação emitido e a garantia baixada ([[USA:@rn.termo-quitacao]]).
 
-**Emite:** [[EMITE:@evt.condicoes-aceitas]], [[EMITE:@evt.seguros]], [[EMITE:@evt.contrato-emitido]], [[EMITE:@evt.contrato-assinado]], [[EMITE:@evt.prorrogado]], [[EMITE:@evt.contrato-cancelado]].
-`);
+**Emite:** [[EMITE:@evt.condicoes-aceitas]], [[EMITE:@evt.seguros]], [[EMITE:@evt.contrato-emitido]], [[EMITE:@evt.contrato-assinado]], [[EMITE:@evt.prorrogado]], [[EMITE:@evt.contrato-cancelado]], [[EMITE:@evt.contrato-quitado]], [[EMITE:@evt.condicoes-alteradas]], [[EMITE:@evt.termo-quitacao]].
+`, EM_REVISAO);
 it('con.cv.contrato', 'con', 'CICLO_DE_VIDA', 'Ciclo de vida do contrato', `
 Estados do [[@con.agr.contrato|contrato]]. O estado "Em obra" só existe no imóvel na planta.
 
@@ -782,7 +796,10 @@ stateDiagram-v2
     EmObra --> EmObra: MedicaoRealizada / PrazoDaObraProrrogado
     EmObra --> EmObra: ParcelaDaObraLiberada (intermediária)
     EmObra --> Formalizado: ParcelaDaObraLiberada (última)
-    Formalizado --> [*]
+    Formalizado --> Formalizado: CondicoesDoContratoAlteradas
+    Formalizado --> Quitado: ContratoQuitado
+    Quitado --> Encerrado: GarantiaBaixada
+    Encerrado --> [*]
     Cancelado --> [*]
 \`\`\`
 
@@ -794,7 +811,10 @@ stateDiagram-v2
 | Liberação | [[@evt.recurso-liberado]], [[@evt.parcela-obra]] | [[@rn.sem-garantia-sem-dinheiro]] |
 | Prorrogação | [[@evt.prorrogado]] | [[@rn.prorrogacao]] |
 | Cancelamento | [[@evt.contrato-cancelado]] | — |
-`);
+| Nova versão das condições (amortização ou aditivo) | [[@evt.condicoes-alteradas]] | [[@rn.amortizacao]], [[@rn.aditivo]] |
+| Quitação | [[@evt.contrato-quitado]] | [[@rn.quitacao-antecipada]] |
+| Encerramento | [[@evt.garantia-baixada]] | [[@rn.termo-quitacao]] |
+`, EM_REVISAO);
 it('con.eventos', 'con', 'SECAO', 'Eventos', 'Fatos do domínio de contratação.');
 evt('condicoes-aceitas', 'con.eventos', 'CondicoesAceitas', 'O [[@a.proponente]] aceitou as condições finais da proposta aprovada.');
 evt('seguros', 'con.eventos', 'SegurosContratados', 'Os seguros exigidos pelo tipo de bem foram emitidos pela [[@a.seguradora]] ([[@rn.seguros]]).');
@@ -854,8 +874,9 @@ dominio('gar', 'Garantia', 'Suporte', 'Constitui e acompanha a alienação fiduc
 visoes['gar'] = `
 ## Propósito e fronteiras
 
-Registra a [[@t.alienacao|alienação fiduciária]]: averbação na matrícula ou [[@t.gravame|gravame]] do veículo. Trata
-[[@t.exigencia|exigências]] e retornos assíncronos, que podem chegar repetidos ou fora de ordem.
+Registra a [[@t.alienacao|alienação fiduciária]]: averbação na matrícula ou [[@t.gravame|gravame]] do veículo. Na vida
+do contrato, averba o [[@t.aditivo|aditivo]] da renegociação e, quitado o contrato, faz a [[@t.baixa|baixa da garantia]].
+Trata [[@t.exigencia|exigências]] e retornos assíncronos, que podem chegar repetidos ou fora de ordem.
 
 **Depende de:** [[DEPENDE_DE:@con|Contratação]], [[DEPENDE_DE:@a.cartorio]] e [[DEPENDE_DE:@a.transito]]. **Atores:** [[@a.cartorio]], [[@a.transito]], [[@a.analista]].
 
@@ -996,6 +1017,310 @@ uc('conferir-documento', 'doc.ucs', 'Conferir documento', `
 **Fluxo alternativo:** ilegível, vencido ou divergente → recusa. Emite [[EMITE:@evt.documento-recusado]]. O proponente reenvia o documento com a proposta com [[@t.pendencia|pendência]], que então é resolvida.
 `);
 
+// ===== Vida do contrato (entrevista de 2026-11-07, em revisão) ==============
+// Tudo desta etapa entra no FIM da lista: os códigos dos artefatos saem da ordem de criação, e os já aprovados
+// (citados fora do modelo) não podem mudar.
+
+situacaoAtual = 'EM_REVISAO';
+
+ator('financeiro', 'Sistema financeiro', 'Sistema externo que faz as contas do contrato: saldo devedor, valor de quitação válido até uma data (com o desconto proporcional dos juros), efeito de uma amortização ou de uma renegociação, dias em atraso e a liquidação no fim do prazo.');
+ator('cobranca', 'Sistema de cobrança', 'Sistema externo (banco ou arrecadador) que emite a cobrança (boleto, débito ou Pix) e informa o pagamento.');
+
+it('glo.carteira', 'glo', 'SECAO', 'Vida do contrato', 'O contrato depois de formalizado: quitação e renegociação.');
+termo('saldo-devedor', 'carteira', 'Saldo devedor', 'Quanto o devedor ainda deve numa data. Calculado pelo sistema financeiro.');
+termo('quitacao', 'carteira', 'Quitação', 'Pagamento de toda a dívida: no fim do prazo, com a última parcela, ou antecipada, pelo valor de quitação. Quitado, o contrato tem o termo de quitação e a garantia baixada.');
+termo('valor-quitacao', 'carteira', 'Valor de quitação', 'Quanto o devedor paga para quitar antes do fim do prazo: o saldo devedor com o desconto proporcional dos juros. Vale até uma data.');
+termo('amortizacao', 'carteira', 'Amortização', 'Pagamento antecipado de parte da dívida. O devedor escolhe reduzir o prazo ou reduzir a parcela; o contrato ganha nova versão das condições.');
+termo('termo-quitacao', 'carteira', 'Termo de quitação', 'Documento do credor que declara a dívida paga. É o que permite baixar a garantia.');
+termo('baixa', 'carteira', 'Baixa da garantia', 'Cancelamento da alienação fiduciária: averbação do cancelamento na matrícula (imóvel e terreno) ou baixa do gravame (veículo). O bem passa a ser só do devedor.');
+termo('renegociacao', 'carteira', 'Renegociação', 'Mudança das condições de um contrato formalizado a pedido do devedor, em dia ou em atraso: novo prazo e nova parcela, reenquadrados e analisados como na proposta.');
+termo('aditivo', 'carteira', 'Aditivo', 'Instrumento que altera o contrato com as condições renegociadas. Assinado pelos mesmos signatários do contrato.');
+termo('averbacao', 'carteira', 'Averbação do aditivo', 'Anotação do aditivo na matrícula (imóvel e terreno) ou atualização do gravame (veículo), para a garantia refletir as novas condições.');
+termo('inadimplencia', 'carteira', 'Inadimplência', 'Atraso de pagamento acima do limite (referência: 90 dias). Nesta etapa só é informado pelo sistema financeiro; não impede a renegociação.');
+
+fonte('cdc', 'Código de Defesa do Consumidor, art. 52, § 2º', 'Garante ao consumidor a liquidação antecipada do débito, total ou parcial, com redução proporcional dos juros e demais acréscimos.');
+
+q(18, 'O que entra na vida do contrato nesta etapa?', 'Cobrança das parcelas, atraso, quitação, renegociação, retomada da garantia.');
+q(19, 'Quem calcula saldo devedor, valor de quitação e efeito de amortização e renegociação?', 'O cálculo financeiro está fora do escopo do modelo.');
+q(20, 'Quem emite a cobrança e informa os pagamentos?', 'Boleto, débito ou Pix, e a confirmação do pagamento.');
+q(21, 'Quando o atraso vira inadimplência?', 'Número de dias e o que muda para o contrato.');
+q(22, 'Na amortização, o que muda no contrato?', 'Reduz o prazo, reduz a parcela, ou o devedor escolhe.');
+q(23, 'O FGTS pode amortizar ou quitar o imóvel?', 'A lei do FGTS permite no imóvel residencial, com intervalo mínimo entre usos.');
+q(24, 'Renegociação: quem pede, quando, e passa por nova análise?', 'Só em atraso ou a qualquer momento; reenquadra; consulta o bureau; quem decide.');
+q(25, 'Como a renegociação é formalizada?', 'Aditivo assinado; averbação no cartório ou atualização do gravame.');
+
+d(18, [18], 'Nesta etapa: quitação com baixa da garantia, e renegociação', 'Cobrança das parcelas, atraso e retomada da garantia ficam para outra etapa. A quitação vale antecipada (total ou parcial) e no fim do prazo.');
+d(19, [19], 'Um sistema financeiro externo faz as contas', 'O [[@a.financeiro]] informa [[@t.saldo-devedor|saldo devedor]], [[@t.valor-quitacao|valor de quitação]] e o efeito de amortização e renegociação. O financiamento decide e conduz; o cálculo continua fora do escopo.');
+d(20, [20], 'Um sistema de cobrança externo cobra e informa o pagamento', 'Nesta etapa, o [[@a.cobranca]] cobra só a quitação e a amortização.');
+d(21, [21], 'Inadimplente com 90 dias de atraso', 'Valor de referência, parametrizável. Os dias em atraso vêm do sistema financeiro. Nesta etapa a inadimplência só informa: o contrato inadimplente também pode ser renegociado.');
+d(22, [22], 'Na amortização, o devedor escolhe reduzir o prazo ou a parcela', 'O sistema financeiro calcula o efeito, e o contrato ganha nova versão das condições.');
+d(23, [23], 'FGTS amortiza ou quita o imóvel residencial de pessoa física', 'Pedido ao [[@a.fgts]], como na entrada, com intervalo mínimo de 2 anos entre usos ([[@f.8036]]).');
+d(24, [24], 'O devedor pede a renegociação; reenquadra, passa no bureau e o analista decide', 'Em dia ou em atraso, inadimplente incluído. As novas condições respeitam as regras do tipo de bem (prazo, idade do proponente, idade do veículo, comprometimento de renda), a análise de crédito é refeita, e o [[@a.analista]] decide.');
+d(25, [25], 'Renegociação por aditivo assinado e averbado', 'Todos os signatários do contrato assinam o [[@t.aditivo|aditivo]]. No imóvel e no terreno ele é averbado no cartório; no veículo, o gravame é atualizado.');
+
+// ----- Carteira de contratos ------------------------------------------------
+
+dominio('car', 'Carteira de contratos', 'Suporte', 'Acompanha o contrato formalizado até a quitação: quitação antecipada ou no fim do prazo, amortização e renegociação.');
+visoes['car'] = `
+## Propósito e fronteiras
+
+Cuida do [[@t.contrato|contrato]] depois de formalizado: [[@t.quitacao|quitação]] (total ou parcial, antecipada ou no
+fim do prazo) e [[@t.renegociacao|renegociação]]. Não faz contas: o [[@a.financeiro]] calcula, o [[@a.cobranca]] cobra.
+Quitado, pede à Garantia a baixa; renegociado, a averbação do aditivo.
+
+**Depende de:** [[DEPENDE_DE:@con|Contratação]], [[DEPENDE_DE:@gar|Garantia]], [[DEPENDE_DE:@cre|Crédito]] (renegociação),
+[[DEPENDE_DE:@ori|Originação]] (regras de enquadramento), [[DEPENDE_DE:@a.financeiro]], [[DEPENDE_DE:@a.cobranca]] e [[DEPENDE_DE:@a.fgts]].
+
+**Guarda:** os agregados [[@car.agr.quitacao]] e [[@car.agr.renegociacao]], com o [[@car.cv.quitacao]] e o [[@car.cv.renegociacao]].
+
+**Atores:** [[@a.proponente]], [[@a.coobrigado]], [[@a.analista]], [[@a.financeiro]], [[@a.cobranca]], [[@a.fgts]].
+
+## Jornada em eventos
+
+Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que disparam.
+
+\`\`\`event-storming
+\`\`\`
+`;
+it('car.agr.quitacao', 'car', 'AGREGADO', 'Quitação', `
+Fronteira de consistência de um pedido de quitação ou amortização de um [[@con.agr.contrato|contrato]]: o que foi pedido,
+o valor calculado e a sua validade, a cobrança e o pagamento. Referencia o contrato pelo identificador.
+
+## Composição
+
+| Elemento | Natureza | Observação |
+|---|---|---|
+| Tipo | objeto de valor | total, ou parcial com efeito em prazo ou em parcela |
+| Recurso | objeto de valor | próprio, ou FGTS no imóvel residencial de pessoa física |
+| Valor calculado | objeto de valor | valor e data de validade, do sistema financeiro |
+| Cobrança | entidade | uma por pedido, do sistema de cobrança |
+
+## Invariantes
+
+1. Só para contrato formalizado, sem outra quitação ou renegociação em andamento ([[USA:@rn.uma-operacao]]).
+2. O valor vale até a data informada; vencido, o pedido acaba sem efeito ([[USA:@rn.validade-quitacao]]).
+3. O FGTS só no imóvel residencial de pessoa física, respeitado o intervalo entre usos ([[USA:@rn.fgts-amortizacao]]).
+4. Pago, aplica-se uma única vez: quita o contrato (total) ou gera a nova versão das condições (parcial, [[USA:@rn.amortizacao]]).
+
+**Emite:** [[EMITE:@evt.quitacao-solicitada]], [[EMITE:@evt.quitacao-calculada]], [[EMITE:@evt.cobranca-emitida]], [[EMITE:@evt.fgts-quitacao-solicitado]], [[EMITE:@evt.fgts-quitacao-negado]], [[EMITE:@evt.quitacao-paga]], [[EMITE:@evt.quitacao-vencida]], [[EMITE:@evt.quitacao-cancelada]], [[EMITE:@evt.quitacao-concluida]].
+`);
+it('car.cv.quitacao', 'car', 'CICLO_DE_VIDA', 'Ciclo de vida da quitação', `
+Estados de um pedido de [[@car.agr.quitacao|quitação]] (total ou parcial).
+
+\`\`\`mermaid
+stateDiagram-v2
+    [*] --> Solicitada: QuitacaoSolicitada
+    Solicitada --> Calculada: QuitacaoCalculada
+    Solicitada --> Cancelada: QuitacaoCancelada
+    Calculada --> Cobrada: CobrancaEmitida (recurso próprio)
+    Calculada --> AguardandoFgts: FgtsDaQuitacaoSolicitado (FGTS)
+    Calculada --> Vencida: QuitacaoVencida
+    Calculada --> Cancelada: QuitacaoCancelada
+    Cobrada --> Paga: QuitacaoPaga
+    Cobrada --> Vencida: QuitacaoVencida
+    AguardandoFgts --> Paga: QuitacaoPaga
+    AguardandoFgts --> Cancelada: FgtsDaQuitacaoNegado
+    Paga --> Concluida: QuitacaoConcluida
+    Concluida --> [*]
+    Vencida --> [*]
+    Cancelada --> [*]
+\`\`\`
+
+| Transição | Evento | Regra |
+|---|---|---|
+| Pedido | [[@evt.quitacao-solicitada]] | [[@rn.uma-operacao]], [[@rn.quitacao-antecipada]] |
+| Cálculo | [[@evt.quitacao-calculada]] | [[@rn.validade-quitacao]] |
+| FGTS | [[@evt.fgts-quitacao-solicitado]], [[@evt.fgts-quitacao-negado]] | [[@rn.fgts-amortizacao]] |
+| Pagamento | [[@evt.quitacao-paga]] | — |
+| Conclusão | [[@evt.quitacao-concluida]] | [[@rn.amortizacao]] |
+| Vencimento | [[@evt.quitacao-vencida]] | [[@rn.validade-quitacao]] |
+`);
+it('car.agr.renegociacao', 'car', 'AGREGADO', 'Renegociação', `
+Fronteira de consistência de uma [[@t.renegociacao|renegociação]]: as condições pedidas, as calculadas pelo sistema
+financeiro, o reenquadramento, a decisão e o [[@t.aditivo|aditivo]] com as suas assinaturas. Referencia o contrato pelo identificador.
+
+## Composição
+
+| Elemento | Natureza | Observação |
+|---|---|---|
+| Condições pedidas | objeto de valor | novo prazo |
+| Condições calculadas | objeto de valor | novo saldo e nova parcela, com as parcelas em atraso incorporadas |
+| Decisão | objeto de valor | aprovada ou reprovada, com o motivo |
+| Aditivo | entidade | as novas condições e uma assinatura por signatário |
+
+## Invariantes
+
+1. Só para contrato formalizado, sem outra quitação ou renegociação em andamento ([[USA:@rn.uma-operacao]]).
+2. As condições calculadas respeitam as regras do tipo de bem ([[USA:@rn.reenquadramento]]).
+3. O aditivo só vale depois de assinado por todos e averbado ([[USA:@rn.aditivo]]).
+
+**Emite:** [[EMITE:@evt.renegociacao-solicitada]], [[EMITE:@evt.renegociacao-simulada]], [[EMITE:@evt.renegociacao-aprovada]], [[EMITE:@evt.renegociacao-reprovada]], [[EMITE:@evt.aditivo-emitido]], [[EMITE:@evt.aditivo-assinado]], [[EMITE:@evt.renegociacao-cancelada]].
+`);
+it('car.cv.renegociacao', 'car', 'CICLO_DE_VIDA', 'Ciclo de vida da renegociação', `
+Estados de uma [[@car.agr.renegociacao|renegociação]].
+
+\`\`\`mermaid
+stateDiagram-v2
+    [*] --> Solicitada: RenegociacaoSolicitada
+    Solicitada --> Simulada: RenegociacaoSimulada
+    Solicitada --> Cancelada: RenegociacaoCancelada
+    Simulada --> EmAnalise: AnaliseCreditoSolicitada
+    Simulada --> Reprovada: RenegociacaoReprovada (fora do enquadramento)
+    Simulada --> Cancelada: RenegociacaoCancelada
+    EmAnalise --> Aprovada: RenegociacaoAprovada
+    EmAnalise --> Reprovada: RenegociacaoReprovada
+    Aprovada --> AditivoEmitido: AditivoEmitido
+    AditivoEmitido --> AditivoAssinado: AditivoAssinado
+    AditivoEmitido --> Cancelada: RenegociacaoCancelada
+    AditivoAssinado --> EmAverbacao: AverbacaoSolicitada
+    EmAverbacao --> Vigente: AditivoAverbado
+    Vigente --> [*]
+    Reprovada --> [*]
+    Cancelada --> [*]
+\`\`\`
+
+| Transição | Evento | Regra |
+|---|---|---|
+| Pedido | [[@evt.renegociacao-solicitada]] | [[@rn.uma-operacao]] |
+| Cálculo e reenquadramento | [[@evt.renegociacao-simulada]] | [[@rn.reenquadramento]] |
+| Decisão | [[@evt.renegociacao-aprovada]], [[@evt.renegociacao-reprovada]] | [[@rn.reenquadramento]] |
+| Aditivo | [[@evt.aditivo-emitido]], [[@evt.aditivo-assinado]] | [[@rn.aditivo]] |
+| Averbação | [[@evt.averbacao-solicitada]], [[@evt.aditivo-averbado]] | [[@rn.aditivo]], [[@rn.orgao]] |
+`);
+
+it('car.eventos', 'car', 'SECAO', 'Eventos', 'Fatos do domínio da carteira de contratos.');
+evt('quitacao-solicitada', 'car.eventos', 'QuitacaoSolicitada', 'O [[@a.proponente]] pediu a quitação ou a amortização do contrato: tipo, efeito e recurso.');
+evt('quitacao-calculada', 'car.eventos', 'QuitacaoCalculada', 'O [[@a.financeiro]] informou o valor e até quando ele vale ([[@rn.validade-quitacao]]).');
+evt('cobranca-emitida', 'car.eventos', 'CobrancaEmitida', 'O [[@a.cobranca]] emitiu a cobrança do valor calculado.');
+evt('fgts-quitacao-solicitado', 'car.eventos', 'FgtsDaQuitacaoSolicitado', 'O uso do FGTS na quitação ou amortização foi pedido ao [[@a.fgts]] ([[@rn.fgts-amortizacao]]).');
+evt('fgts-quitacao-negado', 'car.eventos', 'FgtsDaQuitacaoNegado', 'O [[@a.fgts]] negou o uso. O pedido acaba; o devedor pode pedir de novo com recurso próprio.');
+evt('quitacao-paga', 'car.eventos', 'QuitacaoPaga', 'O valor foi pago, pela cobrança ou pelo FGTS.');
+evt('quitacao-vencida', 'car.eventos', 'QuitacaoVencida', 'Passou a validade do valor sem pagamento. O pedido acaba sem efeito.');
+evt('quitacao-cancelada', 'car.eventos', 'QuitacaoCancelada', 'O devedor desistiu do pedido antes de pagar.');
+evt('quitacao-concluida', 'car.eventos', 'QuitacaoConcluida', 'O pagamento foi aplicado ao contrato. Total: dispara [[DISPARA:@evt.contrato-quitado]]. Parcial: dispara [[DISPARA:@evt.condicoes-alteradas]].');
+evt('renegociacao-solicitada', 'car.eventos', 'RenegociacaoSolicitada', 'O [[@a.proponente]] pediu a renegociação do contrato, com o novo prazo.');
+evt('renegociacao-simulada', 'car.eventos', 'RenegociacaoSimulada', 'O [[@a.financeiro]] calculou o novo saldo e a nova parcela, com as parcelas em atraso incorporadas. Enquadrada, dispara [[DISPARA:@uc.analisar]].');
+evt('renegociacao-aprovada', 'car.eventos', 'RenegociacaoAprovada', 'O [[@a.analista]] aprovou a renegociação, com o crédito analisado.');
+evt('renegociacao-reprovada', 'car.eventos', 'RenegociacaoReprovada', 'A renegociação foi reprovada: fora do enquadramento ou pelo analista.');
+evt('aditivo-emitido', 'car.eventos', 'AditivoEmitido', 'O aditivo com as condições renegociadas foi emitido para assinatura.');
+evt('aditivo-assinado', 'car.eventos', 'AditivoAssinado', 'Todos os signatários assinaram o aditivo. Dispara [[DISPARA:@uc.averbar]].');
+evt('renegociacao-cancelada', 'car.eventos', 'RenegociacaoCancelada', 'O devedor desistiu da renegociação antes de assinar.');
+
+evt('contrato-quitado', 'con.eventos', 'ContratoQuitado', 'A dívida foi toda paga: quitação antecipada concluída ou liquidação no fim do prazo. Dispara [[DISPARA:@uc.baixar]].');
+evt('condicoes-alteradas', 'con.eventos', 'CondicoesDoContratoAlteradas', 'O contrato formalizado ganhou nova versão das condições: amortização aplicada ou aditivo vigente.');
+evt('termo-quitacao', 'con.eventos', 'TermoDeQuitacaoEmitido', 'O credor emitiu o termo de quitação do contrato ([[@rn.termo-quitacao]]).');
+
+evt('baixa-solicitada', 'gar.eventos', 'BaixaSolicitada', 'O pedido de baixa da garantia do contrato quitado foi enviado ao órgão de registro, com um protocolo nosso.');
+evt('garantia-baixada', 'gar.eventos', 'GarantiaBaixada', 'O órgão confirmou a baixa. O contrato está encerrado.');
+evt('averbacao-solicitada', 'gar.eventos', 'AverbacaoSolicitada', 'O aditivo assinado foi enviado ao órgão de registro, com um protocolo nosso.');
+evt('aditivo-averbado', 'gar.eventos', 'AditivoAverbado', 'O órgão averbou o aditivo (ou atualizou o gravame). O aditivo está vigente: dispara [[DISPARA:@evt.condicoes-alteradas]].');
+
+it('car.regras', 'car', 'DOCUMENTO', 'Regras de Negócio', 'Regras da carteira de contratos.');
+rn('uma-operacao', 'car.regras', 'Uma quitação ou renegociação por vez, só no contrato formalizado',
+  'Quitação, amortização e renegociação só existem para o contrato formalizado (bem pronto liberado ou obra concluída). Enquanto uma está em andamento, outra não começa. Decisão: [[@d18]].');
+rn('quitacao-antecipada', 'car.regras', 'Quitação antecipada com desconto dos juros',
+  'O devedor pode quitar ou amortizar antes do prazo, a qualquer tempo, com a redução proporcional dos juros e demais acréscimos ([[@f.cdc]]). O valor é calculado pelo [[@a.financeiro]]. Decisões: [[@d19]], [[@d22]].');
+rn('validade-quitacao', 'car.regras', 'Validade do valor de quitação',
+  'O [[@t.valor-quitacao|valor de quitação]] (ou de amortização) vale até a data informada pelo sistema financeiro. Sem pagamento até lá, o pedido vence sem efeito, e um novo pedido recalcula.',
+  'Valor de R$ 12.300,00 válido até 15/03. Pago em 16/03 → o pedido já venceu; o devedor pede de novo e recebe um novo valor.');
+rn('amortizacao', 'car.regras', 'Efeito da amortização',
+  'Na [[@t.amortizacao|amortização]], o devedor escolhe reduzir o prazo (a parcela fica igual) ou reduzir a parcela (o prazo fica igual). O contrato ganha nova versão das condições, calculada pelo sistema financeiro. Decisão: [[@d22]].');
+rn('fgts-amortizacao', 'car.regras', 'FGTS na quitação e na amortização',
+  'Só no imóvel residencial de [[@t.pf|pessoa física]], com o FGTS de um participante do contrato e no mínimo 2 anos desde o último uso do FGTS no mesmo contrato (inclusive na entrada). Decide o [[@a.fgts]] ([[@f.8036]]). Decisão: [[@d23]].',
+  'Entrada com FGTS em 2026; amortização com FGTS pedida em 2027 → recusada (menos de 2 anos). Em 2028 → pedida ao sistema do FGTS.');
+rn('reenquadramento', 'car.regras', 'Renegociação reenquadrada',
+  'As condições renegociadas respeitam as regras do tipo de bem como na proposta: [[INCLUI:@rn.prazo]], [[INCLUI:@rn.idade-proponente]], [[INCLUI:@rn.idade-veiculo]] e [[INCLUI:@rn.comprometimento]]. Fora delas, a renegociação é reprovada sem ir ao bureau. Decisão: [[@d24]].');
+rn('aditivo', 'car.regras', 'Aditivo assinado e averbado',
+  'O [[@t.aditivo|aditivo]] é assinado pelos mesmos signatários do contrato ([[@rn.assinaturas]]) e só vale depois de averbado no órgão da categoria ([[@rn.orgao]]): averbação na matrícula (imóvel e terreno) ou atualização do gravame (veículo). Decisão: [[@d25]].');
+rn('termo-quitacao', 'car.regras', 'Termo de quitação e baixa da garantia',
+  'Quitado o contrato, o credor emite o [[@t.termo-quitacao|termo de quitação]] em até 30 dias ([[@f.9514]], art. 25) e pede a [[@t.baixa|baixa da garantia]] ao órgão da categoria ([[@rn.orgao]]). O retorno do órgão é fato, como no registro ([[@rn.retorno-registro]]).');
+rn('inadimplencia', 'car.regras', 'Inadimplência',
+  'O contrato com 90 dias ou mais de atraso, informados pelo [[@a.financeiro]], está [[@t.inadimplencia|inadimplente]] (valor de referência). Nesta etapa isso só informa: o inadimplente também pode renegociar. Decisão: [[@d21]].');
+
+it('car.ucs', 'car', 'SECAO', 'Casos de uso', 'Casos de uso da carteira de contratos.');
+uc('pedir-quitacao', 'car.ucs', 'Pedir quitação ou amortização', `
+**Atores:** [[@a.proponente]], [[@a.financeiro]].
+
+**Pré-condição:** contrato formalizado, sem outra operação em andamento ([[USA:@rn.uma-operacao]]).
+
+**Fluxo principal**
+1. O proponente escolhe: quitação total, ou amortização de um valor com efeito em prazo ou em parcela ([[USA:@rn.amortizacao]]); e o recurso, próprio ou FGTS ([[USA:@rn.fgts-amortizacao]]). Emite [[EMITE:@evt.quitacao-solicitada]].
+2. O sistema financeiro calcula o valor, com o desconto dos juros, e a validade ([[USA:@rn.quitacao-antecipada]], [[USA:@rn.validade-quitacao]]). Emite [[EMITE:@evt.quitacao-calculada]].
+3. Segue em [[INCLUI:@uc.pagar-quitacao]].
+
+**Fluxo alternativo:** o proponente desiste antes de pagar. Emite [[EMITE:@evt.quitacao-cancelada]].
+`);
+uc('pagar-quitacao', 'car.ucs', 'Pagar quitação ou amortização', `
+**Atores:** [[@a.cobranca]] (recurso próprio) ou [[@a.fgts]].
+
+**Fluxo principal**
+1. Recurso próprio: o sistema de cobrança emite a cobrança ([[EMITE:@evt.cobranca-emitida]]) e informa o pagamento. Emite [[EMITE:@evt.quitacao-paga]].
+2. O sistema aplica o pagamento. Emite [[EMITE:@evt.quitacao-concluida]]: o contrato é quitado (total) ou ganha nova versão das condições (parcial).
+
+**Fluxos alternativos**
+- FGTS: o pedido vai ao sistema do FGTS ([[EMITE:@evt.fgts-quitacao-solicitado]]); liberado, segue como pago; negado, o pedido acaba ([[EMITE:@evt.fgts-quitacao-negado]]).
+- Sem pagamento até a validade: o pedido vence ([[EMITE:@evt.quitacao-vencida]]).
+`);
+uc('quitar-fim-prazo', 'car.ucs', 'Quitar no fim do prazo', `
+**Ator:** [[@a.financeiro]].
+
+**Fluxo principal:** o sistema financeiro informa que a última parcela foi paga e a dívida está liquidada. O contrato é quitado: emite [[EMITE:@evt.contrato-quitado]], e a garantia é baixada em [[INCLUI:@uc.baixar]].
+`);
+uc('pedir-renegociacao', 'car.ucs', 'Pedir renegociação', `
+**Atores:** [[@a.proponente]], [[@a.financeiro]]. Decisão: [[@d24]].
+
+**Pré-condição:** contrato formalizado, em dia ou em atraso ([[USA:@rn.inadimplencia]]), sem outra operação em andamento ([[USA:@rn.uma-operacao]]).
+
+**Fluxo principal**
+1. O proponente pede um novo prazo. Emite [[EMITE:@evt.renegociacao-solicitada]].
+2. O sistema financeiro calcula o novo saldo e a nova parcela. Emite [[EMITE:@evt.renegociacao-simulada]].
+3. O sistema reenquadra as novas condições ([[USA:@rn.reenquadramento]]) e pede a análise de crédito ([[INCLUI:@uc.analisar]]).
+
+**Fluxo alternativo:** fora do enquadramento → reprovada, sem ir ao bureau. Emite [[EMITE:@evt.renegociacao-reprovada]].
+`);
+uc('decidir-renegociacao', 'car.ucs', 'Decidir renegociação', `
+**Ator:** [[@a.analista]].
+
+**Pré-condição:** renegociação enquadrada, com a análise de crédito concluída.
+
+**Fluxo principal:** o analista aprova, com o resultado do crédito à vista. Emite [[EMITE:@evt.renegociacao-aprovada]] e o aditivo é emitido para assinatura ([[EMITE:@evt.aditivo-emitido]]).
+
+**Fluxo alternativo:** o analista reprova, com o motivo. Emite [[EMITE:@evt.renegociacao-reprovada]].
+`);
+uc('assinar-aditivo', 'car.ucs', 'Assinar aditivo', `
+**Atores:** [[@a.proponente]], [[@a.coobrigado]], [[@a.vendedor]] (imóvel e terreno).
+
+**Fluxo principal:** cada signatário do contrato assina o aditivo ([[USA:@rn.aditivo]]); com a última assinatura, emite [[EMITE:@evt.aditivo-assinado]].
+
+**Fluxo alternativo:** o proponente desiste antes de assinar. Emite [[EMITE:@evt.renegociacao-cancelada]].
+`);
+
+uc('baixar', 'gar.ucs', 'Baixar garantia', `
+**Atores:** [[@a.cartorio]] ou [[@a.transito]].
+
+**Pré-condição:** contrato quitado.
+
+**Fluxo principal**
+1. O credor emite o termo de quitação ([[USA:@rn.termo-quitacao]]). Emite [[EMITE:@evt.termo-quitacao]].
+2. O sistema pede a baixa ao órgão da categoria ([[USA:@rn.orgao]]). Emite [[EMITE:@evt.baixa-solicitada]].
+3. O órgão confirma; o sistema classifica o retorno ([[USA:@rn.retorno-registro]]). Emite [[EMITE:@evt.garantia-baixada]]: o contrato está encerrado.
+
+**Fluxo alternativo:** exigência → [[INCLUI:@uc.exigencia]].
+`);
+uc('averbar', 'gar.ucs', 'Averbar aditivo', `
+**Atores:** [[@a.cartorio]] ou [[@a.transito]].
+
+**Pré-condição:** aditivo assinado por todos.
+
+**Fluxo principal**
+1. O sistema envia o aditivo ao órgão da categoria ([[USA:@rn.aditivo]], [[USA:@rn.orgao]]). Emite [[EMITE:@evt.averbacao-solicitada]].
+2. O órgão averba (ou atualiza o gravame). Emite [[EMITE:@evt.aditivo-averbado]]: o aditivo está vigente e o contrato ganha nova versão das condições.
+
+**Fluxo alternativo:** exigência → [[INCLUI:@uc.exigencia]].
+`);
+
+situacaoAtual = SITUACAO;
+
 // ---------------------------------------------------------------------------
 // Carga
 // ---------------------------------------------------------------------------
@@ -1057,7 +1382,9 @@ async function main() {
     for (const w of r.warnings || []) avisos.push(`${ref.codigo} (${chave}): ${w}`);
   };
   for (const item of itens) await escrever(item.chave, item.texto, item.exemplo, item.situacao);
-  for (const [dom, texto] of Object.entries(visoes)) await escrever(`${dom}.vis`, texto, undefined, SITUACAO);
+  for (const [dom, texto] of Object.entries(visoes)) {
+    await escrever(`${dom}.vis`, texto, undefined, visoesEmRevisao.has(dom) ? 'EM_REVISAO' : SITUACAO);
+  }
 
   if (avisos.length > 0) throw new Error('Avisos na carga:\n' + avisos.join('\n'));
   const { violacoes } = await verificarInvariantes(db);

@@ -13,7 +13,8 @@ import static br.com.financiamento.contratacao.dominio.EventoDoContrato.*;
  * Estados do contrato e as transições do ciclo de vida CV-0002. "Em obra" só
  * existe no imóvel na planta. Um evento pode levar a mais de um estado, e quem
  * transiciona escolhe: a parcela da obra intermediária fica em obra, a última
- * formaliza. O teste CicloDeVidaDoContratoTest confere a tabela contra o
+ * formaliza. Depois de formalizado, o contrato é quitado e, com a garantia
+ * baixada, encerrado. O teste CicloDeVidaDoContratoTest confere a tabela contra o
  * diagrama do modelo de negócio.
  */
 public enum EstadoContrato {
@@ -25,6 +26,8 @@ public enum EstadoContrato {
     GARANTIA_CONSTITUIDA,
     EM_OBRA,
     FORMALIZADO,
+    QUITADO,
+    ENCERRADO,
     CANCELADO;
 
     private static final Map<EstadoContrato, Map<EventoDoContrato, Set<EstadoContrato>>> TRANSICOES =
@@ -46,6 +49,10 @@ public enum EstadoContrato {
         transicao(EM_OBRA, PRAZO_DA_OBRA_PRORROGADO, EM_OBRA);
         transicao(EM_OBRA, PARCELA_DA_OBRA_LIBERADA, EM_OBRA);
         transicao(EM_OBRA, PARCELA_DA_OBRA_LIBERADA, FORMALIZADO);
+        // Vida do contrato (CV-0002 do modelo v5, em revisão): nova versão das condições, quitação e baixa.
+        transicao(FORMALIZADO, CONDICOES_DO_CONTRATO_ALTERADAS, FORMALIZADO);
+        transicao(FORMALIZADO, CONTRATO_QUITADO, QUITADO);
+        transicao(QUITADO, GARANTIA_BAIXADA, ENCERRADO);
     }
 
     private static void transicao(EstadoContrato de, EventoDoContrato evento, EstadoContrato para) {

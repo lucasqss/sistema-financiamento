@@ -1,6 +1,6 @@
 # Sistemas externos simulados
 
-O sistema conversa com 7 sistemas externos. Nenhum deles é construído aqui: em desenvolvimento, nos testes e na CI, todos são simulados num **WireMock** ([ADR 0013](../arquitetura/adr/0013-integracao-http-com-externos-simulados.md)). Os stubs ficam em [`docker/wiremock/mappings`](../../docker/wiremock/mappings), e os mesmos rodam no `docker compose` e, embutidos, nos testes de integração.
+O sistema conversa com 7 sistemas externos, e mais 2 na vida do contrato (em implementação). Nenhum deles é construído aqui: em desenvolvimento, nos testes e na CI, todos são simulados num **WireMock** ([ADR 0013](../arquitetura/adr/0013-integracao-http-com-externos-simulados.md)). Os stubs ficam em [`docker/wiremock/mappings`](../../docker/wiremock/mappings), e os mesmos rodam no `docker compose` e, embutidos, nos testes de integração.
 
 ## Como funciona
 1. A mudança de estado grava o pedido no outbox. O relay o envia por HTTP ao externo, pela camada anticorrupção do módulo dono.
@@ -16,6 +16,8 @@ O sistema conversa com 7 sistemas externos. Nenhum deles é construído aqui: em
 | Órgão de trânsito | `POST /orgao-de-transito/gravames`, no mesmo formato | `/retornos/orgao-de-registro` | identificação com `RECUSA` é **recusada** na 1ª tentativa; o resto é registrado |
 | FGTS | `POST /fgts/saques` com `desembolso`, `valor`, `favorecido` | `/retornos/fgts/{desembolsoId}` | saque de 200.000 ou mais é **negado** (saldo insuficiente); o resto é liberado |
 | Pagamento | `POST /pagamento/transferencias` com `protocolo` (`LIB-<contrato>-<n>`), `valor`, `favorecido` | `/retornos/pagamento` | confirma a transferência |
+| Sistema financeiro *(vida do contrato, em implementação)* | `POST /financeiro/quitacoes` com `protocolo`, `tipo` (`TOTAL` ou `PARCIAL`), `valor` (parcial), `saldoDeReferencia`; `POST /financeiro/renegociacoes` com `protocolo`, `saldoDeReferencia`, `novoPrazoMeses` | a `urlDeRetorno` do pedido | quitação total: 90% do saldo de referência; parcial: o valor pedido; ambos válidos por 5 dias. Renegociação: nova parcela = saldo ÷ novo prazo, sem atraso |
+| Sistema de cobrança *(vida do contrato, em implementação)* | `POST /cobranca/cobrancas` com `protocolo`, `valor` | a `urlDeRetorno` do pedido | confirma o pagamento no mesmo dia |
 
 Para mudar um comportamento, edite o stub. A ordem de escolha é a `priority`: o número menor vence, e a massa de teste fica acima do padrão.
 

@@ -52,6 +52,17 @@
     - 1.1.4.12 [GLO-0043 - Registro da garantia](#glo-0043)
     - 1.1.4.13 [GLO-0044 - Liberação do recurso](#glo-0044)
     - 1.1.4.14 [GLO-0045 - Prorrogação da obra](#glo-0045)
+  - 1.1.5 [S-0022 - Vida do contrato](#s-0022)
+    - 1.1.5.1 [GLO-0046 - Saldo devedor](#glo-0046)
+    - 1.1.5.2 [GLO-0047 - Quitação](#glo-0047)
+    - 1.1.5.3 [GLO-0048 - Valor de quitação](#glo-0048)
+    - 1.1.5.4 [GLO-0049 - Amortização](#glo-0049)
+    - 1.1.5.5 [GLO-0050 - Termo de quitação](#glo-0050)
+    - 1.1.5.6 [GLO-0051 - Baixa da garantia](#glo-0051)
+    - 1.1.5.7 [GLO-0052 - Renegociação](#glo-0052)
+    - 1.1.5.8 [GLO-0053 - Aditivo](#glo-0053)
+    - 1.1.5.9 [GLO-0054 - Averbação do aditivo](#glo-0054)
+    - 1.1.5.10 [GLO-0055 - Inadimplência](#glo-0055)
 - 1.2 [DOC-0002 - Dimensões de variação](#doc-0002)
   - 1.2.1 [DIM-0001 - Tipo de bem](#dim-0001)
   - 1.2.2 [DIM-0002 - Forma do participante](#dim-0002)
@@ -61,6 +72,7 @@
   - 1.3.3 [F-0003 - Normas do CONTRAN e do sistema nacional de gravames](#f-0003)
   - 1.3.4 [F-0004 - Lei 8.036/1990 (FGTS)](#f-0004)
   - 1.3.5 [F-0005 - Lei 13.709/2018 (LGPD)](#f-0005)
+  - 1.3.6 [F-0006 - Código de Defesa do Consumidor, art. 52, § 2º](#f-0006)
 - 1.4 [DOC-0004 - Requisitos não funcionais do sistema](#doc-0004)
   - 1.4.1 [RNFS-0001 - Canais disponíveis 24x7](#rnfs-0001)
 - 1.5 [DOC-0005 - Atores](#doc-0005)
@@ -76,6 +88,8 @@
   - 1.5.10 [ATR-0010 - Órgão de trânsito](#atr-0010)
   - 1.5.11 [ATR-0011 - Seguradora](#atr-0011)
   - 1.5.12 [ATR-0012 - Sistema do FGTS](#atr-0012)
+  - 1.5.13 [ATR-0013 - Sistema financeiro](#atr-0013)
+  - 1.5.14 [ATR-0014 - Sistema de cobrança](#atr-0014)
 - 1.6 [DOC-0006 - Questões em aberto](#doc-0006)
   - 1.6.1 [Q-0001 - O proponente pode ser pessoa jurídica?](#q-0001)
   - 1.6.2 [Q-0002 - A proposta aceita coobrigado? Quantos?](#q-0002)
@@ -94,6 +108,14 @@
   - 1.6.15 [Q-0015 - Qual o prazo de validade da contraproposta?](#q-0015)
   - 1.6.16 [Q-0016 - Qual a validade exata da avaliação em cada categoria?](#q-0016)
   - 1.6.17 [Q-0017 - Quais documentos são exigidos de participante pessoa jurídica?](#q-0017)
+  - 1.6.18 [Q-0018 - O que entra na vida do contrato nesta etapa?](#q-0018)
+  - 1.6.19 [Q-0019 - Quem calcula saldo devedor, valor de quitação e efeito de amortização e renegociação?](#q-0019)
+  - 1.6.20 [Q-0020 - Quem emite a cobrança e informa os pagamentos?](#q-0020)
+  - 1.6.21 [Q-0021 - Quando o atraso vira inadimplência?](#q-0021)
+  - 1.6.22 [Q-0022 - Na amortização, o que muda no contrato?](#q-0022)
+  - 1.6.23 [Q-0023 - O FGTS pode amortizar ou quitar o imóvel?](#q-0023)
+  - 1.6.24 [Q-0024 - Renegociação: quem pede, quando, e passa por nova análise?](#q-0024)
+  - 1.6.25 [Q-0025 - Como a renegociação é formalizada?](#q-0025)
 - 1.7 [DOC-0007 - Decisões](#doc-0007)
   - 1.7.1 [DEC-0001 - Pessoa jurídica só em carro novo, moto nova e imóvel comercial](#dec-0001)
   - 1.7.2 [DEC-0002 - Até 4 coobrigados; em proposta de PJ, coobrigado PF ou PJ](#dec-0002)
@@ -112,6 +134,14 @@
   - 1.7.15 [DEC-0015 - Validade da contraproposta por categoria](#dec-0015)
   - 1.7.16 [DEC-0016 - Validade da avaliação por tipo de bem](#dec-0016)
   - 1.7.17 [DEC-0017 - Documentos de participante pessoa jurídica](#dec-0017)
+  - 1.7.18 [DEC-0018 - Nesta etapa: quitação com baixa da garantia, e renegociação](#dec-0018)
+  - 1.7.19 [DEC-0019 - Um sistema financeiro externo faz as contas](#dec-0019)
+  - 1.7.20 [DEC-0020 - Um sistema de cobrança externo cobra e informa o pagamento](#dec-0020)
+  - 1.7.21 [DEC-0021 - Inadimplente com 90 dias de atraso](#dec-0021)
+  - 1.7.22 [DEC-0022 - Na amortização, o devedor escolhe reduzir o prazo ou a parcela](#dec-0022)
+  - 1.7.23 [DEC-0023 - FGTS amortiza ou quita o imóvel residencial de pessoa física](#dec-0023)
+  - 1.7.24 [DEC-0024 - O devedor pede a renegociação; reenquadra, passa no bureau e o analista decide](#dec-0024)
+  - 1.7.25 [DEC-0025 - Renegociação por aditivo assinado e averbado](#dec-0025)
 - 1.8 [DOM-0001 - Originação](#dom-0001)
   - 1.8.1 [VIS-0001 - Visão do Domínio](#vis-0001)
   - 1.8.2 [AGR-0001 - Proposta](#agr-0001)
@@ -200,6 +230,9 @@
     - 1.11.4.4 [EVT-0024 - ContratoAssinado](#evt-0024)
     - 1.11.4.5 [EVT-0025 - ContratoCancelado](#evt-0025)
     - 1.11.4.6 [EVT-0026 - PrazoDaObraProrrogado](#evt-0026)
+    - 1.11.4.7 [EVT-0056 - ContratoQuitado](#evt-0056)
+    - 1.11.4.8 [EVT-0057 - CondicoesDoContratoAlteradas](#evt-0057)
+    - 1.11.4.9 [EVT-0058 - TermoDeQuitacaoEmitido](#evt-0058)
   - 1.11.5 [DOC-0010 - Regras de Negócio](#doc-0010)
     - 1.11.5.1 [RN-0025 - Seguros exigidos por tipo de bem](#rn-0025)
     - 1.11.5.2 [RN-0026 - Assinaturas exigidas](#rn-0026)
@@ -218,6 +251,10 @@
     - 1.12.2.3 [EVT-0029 - ExigenciaEmitida](#evt-0029)
     - 1.12.2.4 [EVT-0030 - ExigenciaCumprida](#evt-0030)
     - 1.12.2.5 [EVT-0031 - RegistroRecusado](#evt-0031)
+    - 1.12.2.6 [EVT-0059 - BaixaSolicitada](#evt-0059)
+    - 1.12.2.7 [EVT-0060 - GarantiaBaixada](#evt-0060)
+    - 1.12.2.8 [EVT-0061 - AverbacaoSolicitada](#evt-0061)
+    - 1.12.2.9 [EVT-0062 - AditivoAverbado](#evt-0062)
   - 1.12.3 [DOC-0011 - Regras de Negócio](#doc-0011)
     - 1.12.3.1 [RN-0028 - Órgão de registro por categoria](#rn-0028)
     - 1.12.3.2 [RN-0029 - Retorno de registro é fato, não pedido](#rn-0029)
@@ -225,6 +262,8 @@
     - 1.12.4.1 [UC-0018 - Registrar garantia](#uc-0018)
     - 1.12.4.2 [UC-0019 - Tratar registro recusado](#uc-0019)
     - 1.12.4.3 [UC-0020 - Cumprir exigência](#uc-0020)
+    - 1.12.4.4 [UC-0031 - Baixar garantia](#uc-0031)
+    - 1.12.4.5 [UC-0032 - Averbar aditivo](#uc-0032)
 - 1.13 [DOM-0006 - Desembolso](#dom-0006)
   - 1.13.1 [VIS-0006 - Visão do Domínio](#vis-0006)
   - 1.13.2 [S-0018 - Eventos](#s-0018)
@@ -253,6 +292,46 @@
     - 1.15.2.2 [EVT-0039 - DocumentoAceito](#evt-0039)
   - 1.15.3 [S-0021 - Casos de uso](#s-0021)
     - 1.15.3.1 [UC-0024 - Conferir documento](#uc-0024)
+- 1.16 [DOM-0009 - Carteira de contratos](#dom-0009)
+  - 1.16.1 [VIS-0009 - Visão do Domínio](#vis-0009)
+  - 1.16.2 [AGR-0003 - Quitação](#agr-0003)
+  - 1.16.3 [CV-0003 - Ciclo de vida da quitação](#cv-0003)
+  - 1.16.4 [AGR-0004 - Renegociação](#agr-0004)
+  - 1.16.5 [CV-0004 - Ciclo de vida da renegociação](#cv-0004)
+  - 1.16.6 [S-0023 - Eventos](#s-0023)
+    - 1.16.6.1 [EVT-0040 - QuitacaoSolicitada](#evt-0040)
+    - 1.16.6.2 [EVT-0041 - QuitacaoCalculada](#evt-0041)
+    - 1.16.6.3 [EVT-0042 - CobrancaEmitida](#evt-0042)
+    - 1.16.6.4 [EVT-0043 - FgtsDaQuitacaoSolicitado](#evt-0043)
+    - 1.16.6.5 [EVT-0044 - FgtsDaQuitacaoNegado](#evt-0044)
+    - 1.16.6.6 [EVT-0045 - QuitacaoPaga](#evt-0045)
+    - 1.16.6.7 [EVT-0046 - QuitacaoVencida](#evt-0046)
+    - 1.16.6.8 [EVT-0047 - QuitacaoCancelada](#evt-0047)
+    - 1.16.6.9 [EVT-0048 - QuitacaoConcluida](#evt-0048)
+    - 1.16.6.10 [EVT-0049 - RenegociacaoSolicitada](#evt-0049)
+    - 1.16.6.11 [EVT-0050 - RenegociacaoSimulada](#evt-0050)
+    - 1.16.6.12 [EVT-0051 - RenegociacaoAprovada](#evt-0051)
+    - 1.16.6.13 [EVT-0052 - RenegociacaoReprovada](#evt-0052)
+    - 1.16.6.14 [EVT-0053 - AditivoEmitido](#evt-0053)
+    - 1.16.6.15 [EVT-0054 - AditivoAssinado](#evt-0054)
+    - 1.16.6.16 [EVT-0055 - RenegociacaoCancelada](#evt-0055)
+  - 1.16.7 [DOC-0014 - Regras de Negócio](#doc-0014)
+    - 1.16.7.1 [RN-0034 - Uma quitação ou renegociação por vez, só no contrato formalizado](#rn-0034)
+    - 1.16.7.2 [RN-0035 - Quitação antecipada com desconto dos juros](#rn-0035)
+    - 1.16.7.3 [RN-0036 - Validade do valor de quitação](#rn-0036)
+    - 1.16.7.4 [RN-0037 - Efeito da amortização](#rn-0037)
+    - 1.16.7.5 [RN-0038 - FGTS na quitação e na amortização](#rn-0038)
+    - 1.16.7.6 [RN-0039 - Renegociação reenquadrada](#rn-0039)
+    - 1.16.7.7 [RN-0040 - Aditivo assinado e averbado](#rn-0040)
+    - 1.16.7.8 [RN-0041 - Termo de quitação e baixa da garantia](#rn-0041)
+    - 1.16.7.9 [RN-0042 - Inadimplência](#rn-0042)
+  - 1.16.8 [S-0024 - Casos de uso](#s-0024)
+    - 1.16.8.1 [UC-0025 - Pedir quitação ou amortização](#uc-0025)
+    - 1.16.8.2 [UC-0026 - Pagar quitação ou amortização](#uc-0026)
+    - 1.16.8.3 [UC-0027 - Quitar no fim do prazo](#uc-0027)
+    - 1.16.8.4 [UC-0028 - Pedir renegociação](#uc-0028)
+    - 1.16.8.5 [UC-0029 - Decidir renegociação](#uc-0029)
+    - 1.16.8.6 [UC-0030 - Assinar aditivo](#uc-0030)
 
 ---
 
@@ -261,7 +340,7 @@
 
 Modelo de domínio de um **sistema-modelo de financiamento de bens**, reaproveitável em vários projetos.
 Cobre a jornada da **proposta** até o **contrato formalizado**, com a garantia registrada e o dinheiro
-liberado ao vendedor. Esta etapa fica no **espaço do problema**: não há arquitetura, tecnologia nem banco.
+liberado ao vendedor, e a vida do contrato até a **quitação**, com a garantia baixada, passando pela **renegociação**. Esta etapa fica no **espaço do problema**: não há arquitetura, tecnologia nem banco.
 
 ## Bens financiados
 
@@ -305,6 +384,7 @@ flowchart LR
         DOM_0006["Desembolso<br/>suporte"]
         DOM_0007["Cadastro de pessoas<br/>genérico"]
         DOM_0008["Documentos<br/>genérico"]
+        DOM_0009["Carteira de contratos<br/>suporte"]
     end
     ATR_0007[("Avaliador")]
     ATR_0008[("Bureau de crédito")]
@@ -312,6 +392,8 @@ flowchart LR
     ATR_0010[("Órgão de trânsito")]
     ATR_0011[("Seguradora")]
     ATR_0012[("Sistema do FGTS")]
+    ATR_0013[("Sistema financeiro")]
+    ATR_0014[("Sistema de cobrança")]
     DOM_0001 -->|depende de| DOM_0002
     DOM_0001 -->|depende de| DOM_0003
     DOM_0001 -->|depende de| DOM_0007
@@ -326,6 +408,13 @@ flowchart LR
     DOM_0006 -.->|depende de| ATR_0012
     DOM_0006 -->|depende de| DOM_0003
     DOM_0006 -->|depende de| DOM_0005
+    DOM_0009 -.->|depende de| ATR_0012
+    DOM_0009 -.->|depende de| ATR_0013
+    DOM_0009 -.->|depende de| ATR_0014
+    DOM_0009 -->|depende de| DOM_0001
+    DOM_0009 -->|depende de| DOM_0002
+    DOM_0009 -->|depende de| DOM_0004
+    DOM_0009 -->|depende de| DOM_0005
     classDef principal stroke-width:3px,font-weight:bold
     classDef generico stroke-dasharray:4 3
     class DOM_0001 principal
@@ -337,8 +426,10 @@ externos são **assíncronos** e podem chegar repetidos ou fora de ordem.
 
 ## Fora de escopo nesta etapa
 
-- Vida do contrato depois de formalizado: cobrança, atraso, renegociação, quitação.
-- Cálculo financeiro (taxa, CET, PRICE/SAC) e cálculo de prêmio de seguro: a parcela é um dado da simulação.
+- Da vida do contrato depois de formalizado: cobrança das parcelas, atraso e retomada da garantia. A quitação e a
+  renegociação estão no modelo (domínio Carteira de contratos).
+- Cálculo financeiro (taxa, CET, PRICE/SAC, saldo devedor, desconto da quitação antecipada) e cálculo de prêmio de
+  seguro: a parcela é um dado da simulação, e o que depende de cálculo vem do sistema financeiro.
 - Subsídio habitacional, consórcio, leasing e refinanciamento.
 
 > Os números das regras são **valores de referência do modelo**, parametrizáveis: cada projeto que usar este modelo ajusta os seus.
@@ -552,6 +643,50 @@ Pagamento do valor financiado ao vendedor. Única no bem pronto; por medição n
 
 Extensão do prazo previsto da obra do imóvel na planta, registrada no contrato até um limite.
 
+### <a id="s-0022"></a>1.1.5 S-0022 - Vida do contrato
+
+O contrato depois de formalizado: quitação e renegociação.
+
+#### <a id="glo-0046"></a>1.1.5.1 GLO-0046 - Saldo devedor
+
+Quanto o devedor ainda deve numa data. Calculado pelo sistema financeiro.
+
+#### <a id="glo-0047"></a>1.1.5.2 GLO-0047 - Quitação
+
+Pagamento de toda a dívida: no fim do prazo, com a última parcela, ou antecipada, pelo valor de quitação. Quitado, o contrato tem o termo de quitação e a garantia baixada.
+
+#### <a id="glo-0048"></a>1.1.5.3 GLO-0048 - Valor de quitação
+
+Quanto o devedor paga para quitar antes do fim do prazo: o saldo devedor com o desconto proporcional dos juros. Vale até uma data.
+
+#### <a id="glo-0049"></a>1.1.5.4 GLO-0049 - Amortização
+
+Pagamento antecipado de parte da dívida. O devedor escolhe reduzir o prazo ou reduzir a parcela; o contrato ganha nova versão das condições.
+
+#### <a id="glo-0050"></a>1.1.5.5 GLO-0050 - Termo de quitação
+
+Documento do credor que declara a dívida paga. É o que permite baixar a garantia.
+
+#### <a id="glo-0051"></a>1.1.5.6 GLO-0051 - Baixa da garantia
+
+Cancelamento da alienação fiduciária: averbação do cancelamento na matrícula (imóvel e terreno) ou baixa do gravame (veículo). O bem passa a ser só do devedor.
+
+#### <a id="glo-0052"></a>1.1.5.7 GLO-0052 - Renegociação
+
+Mudança das condições de um contrato formalizado a pedido do devedor, em dia ou em atraso: novo prazo e nova parcela, reenquadrados e analisados como na proposta.
+
+#### <a id="glo-0053"></a>1.1.5.8 GLO-0053 - Aditivo
+
+Instrumento que altera o contrato com as condições renegociadas. Assinado pelos mesmos signatários do contrato.
+
+#### <a id="glo-0054"></a>1.1.5.9 GLO-0054 - Averbação do aditivo
+
+Anotação do aditivo na matrícula (imóvel e terreno) ou atualização do gravame (veículo), para a garantia refletir as novas condições.
+
+#### <a id="glo-0055"></a>1.1.5.10 GLO-0055 - Inadimplência
+
+Atraso de pagamento acima do limite (referência: 90 dias). Nesta etapa só é informado pelo sistema financeiro; não impede a renegociação.
+
 ## <a id="doc-0002"></a>1.2 DOC-0002 - Dimensões de variação
 
 O que faz as regras variarem. Uma regra que varia por uma dimensão traz uma tabela com um valor para cada item dela, conferida pelo episteme.
@@ -609,6 +744,10 @@ Regras do Fundo de Garantia do Tempo de Serviço, inclusive o uso do saldo na co
 ### <a id="f-0005"></a>1.3.5 F-0005 - Lei 13.709/2018 (LGPD)
 
 Lei Geral de Proteção de Dados Pessoais: os dados dos participantes só são tratados para a finalidade do financiamento.
+
+### <a id="f-0006"></a>1.3.6 F-0006 - Código de Defesa do Consumidor, art. 52, § 2º
+
+Garante ao consumidor a liquidação antecipada do débito, total ou parcial, com redução proporcional dos juros e demais acréscimos.
 
 ## <a id="doc-0004"></a>1.4 DOC-0004 - Requisitos não funcionais do sistema
 
@@ -669,6 +808,14 @@ Emite os seguros exigidos pelo tipo de bem.
 ### <a id="atr-0012"></a>1.5.12 ATR-0012 - Sistema do FGTS
 
 Decide a elegibilidade e libera o saldo de FGTS usado na entrada.
+
+### <a id="atr-0013"></a>1.5.13 ATR-0013 - Sistema financeiro
+
+Sistema externo que faz as contas do contrato: saldo devedor, valor de quitação válido até uma data (com o desconto proporcional dos juros), efeito de uma amortização ou de uma renegociação, dias em atraso e a liquidação no fim do prazo.
+
+### <a id="atr-0014"></a>1.5.14 ATR-0014 - Sistema de cobrança
+
+Sistema externo (banco ou arrecadador) que emite a cobrança (boleto, débito ou Pix) e informa o pagamento.
 
 ## <a id="doc-0006"></a>1.6 DOC-0006 - Questões em aberto
 
@@ -741,6 +888,38 @@ Sugestão inicial: laudo de imóvel e terreno 180 dias; tabela de referência do
 ### <a id="q-0017"></a>1.6.17 Q-0017 - Quais documentos são exigidos de participante pessoa jurídica?
 
 Contrato social, balanço, faturamento, procuração dos sócios?
+
+### <a id="q-0018"></a>1.6.18 Q-0018 - O que entra na vida do contrato nesta etapa?
+
+Cobrança das parcelas, atraso, quitação, renegociação, retomada da garantia.
+
+### <a id="q-0019"></a>1.6.19 Q-0019 - Quem calcula saldo devedor, valor de quitação e efeito de amortização e renegociação?
+
+O cálculo financeiro está fora do escopo do modelo.
+
+### <a id="q-0020"></a>1.6.20 Q-0020 - Quem emite a cobrança e informa os pagamentos?
+
+Boleto, débito ou Pix, e a confirmação do pagamento.
+
+### <a id="q-0021"></a>1.6.21 Q-0021 - Quando o atraso vira inadimplência?
+
+Número de dias e o que muda para o contrato.
+
+### <a id="q-0022"></a>1.6.22 Q-0022 - Na amortização, o que muda no contrato?
+
+Reduz o prazo, reduz a parcela, ou o devedor escolhe.
+
+### <a id="q-0023"></a>1.6.23 Q-0023 - O FGTS pode amortizar ou quitar o imóvel?
+
+A lei do FGTS permite no imóvel residencial, com intervalo mínimo entre usos.
+
+### <a id="q-0024"></a>1.6.24 Q-0024 - Renegociação: quem pede, quando, e passa por nova análise?
+
+Só em atraso ou a qualquer momento; reenquadra; consulta o bureau; quem decide.
+
+### <a id="q-0025"></a>1.6.25 Q-0025 - Como a renegociação é formalizada?
+
+Aditivo assinado; averbação no cartório ou atualização do gravame.
 
 ## <a id="doc-0007"></a>1.7 DOC-0007 - Decisões
 
@@ -847,6 +1026,54 @@ Veículo novo: 30 dias (nota fiscal). Veículo usado: o mês da consulta à tabe
 Responde [Q-0017](#q-0017).
 
 Contrato social e alterações, faturamento dos últimos 12 meses e documentos dos sócios, com procuração quando quem assina não é sócio. O faturamento é a [renda comprovada](#glo-0004) da [pessoa jurídica](#glo-0003).
+
+### <a id="dec-0018"></a>1.7.18 DEC-0018 - Nesta etapa: quitação com baixa da garantia, e renegociação
+
+Responde [Q-0018](#q-0018).
+
+Cobrança das parcelas, atraso e retomada da garantia ficam para outra etapa. A quitação vale antecipada (total ou parcial) e no fim do prazo.
+
+### <a id="dec-0019"></a>1.7.19 DEC-0019 - Um sistema financeiro externo faz as contas
+
+Responde [Q-0019](#q-0019).
+
+O [ATR-0013](#atr-0013) informa [saldo devedor](#glo-0046), [valor de quitação](#glo-0048) e o efeito de amortização e renegociação. O financiamento decide e conduz; o cálculo continua fora do escopo.
+
+### <a id="dec-0020"></a>1.7.20 DEC-0020 - Um sistema de cobrança externo cobra e informa o pagamento
+
+Responde [Q-0020](#q-0020).
+
+Nesta etapa, o [ATR-0014](#atr-0014) cobra só a quitação e a amortização.
+
+### <a id="dec-0021"></a>1.7.21 DEC-0021 - Inadimplente com 90 dias de atraso
+
+Responde [Q-0021](#q-0021).
+
+Valor de referência, parametrizável. Os dias em atraso vêm do sistema financeiro. Nesta etapa a inadimplência só informa: o contrato inadimplente também pode ser renegociado.
+
+### <a id="dec-0022"></a>1.7.22 DEC-0022 - Na amortização, o devedor escolhe reduzir o prazo ou a parcela
+
+Responde [Q-0022](#q-0022).
+
+O sistema financeiro calcula o efeito, e o contrato ganha nova versão das condições.
+
+### <a id="dec-0023"></a>1.7.23 DEC-0023 - FGTS amortiza ou quita o imóvel residencial de pessoa física
+
+Responde [Q-0023](#q-0023).
+
+Pedido ao [ATR-0012](#atr-0012), como na entrada, com intervalo mínimo de 2 anos entre usos ([F-0004](#f-0004)).
+
+### <a id="dec-0024"></a>1.7.24 DEC-0024 - O devedor pede a renegociação; reenquadra, passa no bureau e o analista decide
+
+Responde [Q-0024](#q-0024).
+
+Em dia ou em atraso, inadimplente incluído. As novas condições respeitam as regras do tipo de bem (prazo, idade do proponente, idade do veículo, comprometimento de renda), a análise de crédito é refeita, e o [ATR-0005](#atr-0005) decide.
+
+### <a id="dec-0025"></a>1.7.25 DEC-0025 - Renegociação por aditivo assinado e averbado
+
+Responde [Q-0025](#q-0025).
+
+Todos os signatários do contrato assinam o [aditivo](#glo-0053). No imóvel e no terreno ele é averbado no cartório; no veículo, o gravame é atualizado.
 
 ## <a id="dom-0001"></a>1.8 DOM-0001 - Originação
 
@@ -1600,6 +1827,14 @@ flowchart LR
         ATR_0005(["Analista"]):::ator
         EVT_0026["PrazoDaObraProrrogado"]:::evento
         UC_0017["Prorrogar prazo da obra"]:::comando
+        EVT_0056["ContratoQuitado"]:::evento
+        UC_0027["Quitar no fim do prazo"]:::comando
+        ATR_0013(["Sistema financeiro"]):::ator
+        UC_0031["Baixar garantia"]:::comando
+        EVT_0057["CondicoesDoContratoAlteradas"]:::evento
+        EVT_0058["TermoDeQuitacaoEmitido"]:::evento
+        ATR_0009(["Cartório de Registro de Imóveis"]):::ator
+        ATR_0010(["Órgão de trânsito"]):::ator
     end
     AGR_0002 -.- EVT_0021
     UC_0014 --> EVT_0021
@@ -1627,7 +1862,19 @@ flowchart LR
     UC_0017 --> EVT_0026
     ATR_0003 --- UC_0017
     ATR_0005 --- UC_0017
+    EVT_0026 ~~~ EVT_0056
+    AGR_0002 -.- EVT_0056
+    UC_0027 --> EVT_0056
+    ATR_0013 --- UC_0027
+    EVT_0056 ~~~ EVT_0057
+    AGR_0002 -.- EVT_0057
+    EVT_0057 ~~~ EVT_0058
+    AGR_0002 -.- EVT_0058
+    UC_0031 --> EVT_0058
+    ATR_0009 --- UC_0031
+    ATR_0010 --- UC_0031
     EVT_0024 -.->|sempre que| UC_0018
+    EVT_0056 -.->|sempre que| UC_0031
     classDef evento fill:#fdba74,stroke:#c2410c,color:#1c1917
     classDef comando fill:#93c5fd,stroke:#1d4ed8,color:#0c0a09
     classDef ator fill:#fde047,stroke:#a16207,color:#1c1917
@@ -1660,8 +1907,11 @@ pelo identificador, sem alterá-la.
 4. Retorno de registro só vale se a identificação registrada for a do contrato ([RN-0029](#rn-0029)).
 5. Nenhuma liberação sem garantia constituída ([RN-0030](#rn-0030)); soma liberada ≤ valor financiado ([RN-0031](#rn-0031)).
 6. Prorrogações da obra até o limite ([RN-0027](#rn-0027)).
+7. Só o contrato formalizado tem quitação ou renegociação, uma de cada vez ([RN-0034](#rn-0034)).
+8. As condições mudam depois de formalizado só por amortização ou por aditivo vigente: cada mudança é uma nova versão, e as anteriores ficam guardadas.
+9. Quitado, o contrato tem o termo de quitação emitido e a garantia baixada ([RN-0041](#rn-0041)).
 
-**Emite:** [EVT-0021](#evt-0021), [EVT-0022](#evt-0022), [EVT-0023](#evt-0023), [EVT-0024](#evt-0024), [EVT-0026](#evt-0026), [EVT-0025](#evt-0025).
+**Emite:** [EVT-0021](#evt-0021), [EVT-0022](#evt-0022), [EVT-0023](#evt-0023), [EVT-0024](#evt-0024), [EVT-0026](#evt-0026), [EVT-0025](#evt-0025), [EVT-0056](#evt-0056), [EVT-0057](#evt-0057), [EVT-0058](#evt-0058).
 
 ### <a id="cv-0002"></a>1.11.3 CV-0002 - Ciclo de vida do contrato
 
@@ -1684,7 +1934,10 @@ stateDiagram-v2
     EmObra --> EmObra: MedicaoRealizada / PrazoDaObraProrrogado
     EmObra --> EmObra: ParcelaDaObraLiberada (intermediária)
     EmObra --> Formalizado: ParcelaDaObraLiberada (última)
-    Formalizado --> [*]
+    Formalizado --> Formalizado: CondicoesDoContratoAlteradas
+    Formalizado --> Quitado: ContratoQuitado
+    Quitado --> Encerrado: GarantiaBaixada
+    Encerrado --> [*]
     Cancelado --> [*]
 ```
 
@@ -1696,6 +1949,9 @@ stateDiagram-v2
 | Liberação | [EVT-0033](#evt-0033), [EVT-0034](#evt-0034) | [RN-0030](#rn-0030) |
 | Prorrogação | [EVT-0026](#evt-0026) | [RN-0027](#rn-0027) |
 | Cancelamento | [EVT-0025](#evt-0025) | — |
+| Nova versão das condições (amortização ou aditivo) | [EVT-0057](#evt-0057) | [RN-0037](#rn-0037), [RN-0040](#rn-0040) |
+| Quitação | [EVT-0056](#evt-0056) | [RN-0035](#rn-0035) |
+| Encerramento | [EVT-0060](#evt-0060) | [RN-0041](#rn-0041) |
 
 ### <a id="s-0014"></a>1.11.4 S-0014 - Eventos
 
@@ -1724,6 +1980,18 @@ O contrato foi desfeito antes de formalizado: desistência antes de assinar ou r
 #### <a id="evt-0026"></a>1.11.4.6 EVT-0026 - PrazoDaObraProrrogado
 
 O prazo previsto da obra foi estendido dentro do limite ([RN-0027](#rn-0027)).
+
+#### <a id="evt-0056"></a>1.11.4.7 EVT-0056 - ContratoQuitado
+
+A dívida foi toda paga: quitação antecipada concluída ou liquidação no fim do prazo. Dispara [UC-0031](#uc-0031).
+
+#### <a id="evt-0057"></a>1.11.4.8 EVT-0057 - CondicoesDoContratoAlteradas
+
+O contrato formalizado ganhou nova versão das condições: amortização aplicada ou aditivo vigente.
+
+#### <a id="evt-0058"></a>1.11.4.9 EVT-0058 - TermoDeQuitacaoEmitido
+
+O credor emitiu o termo de quitação do contrato ([RN-0041](#rn-0041)).
 
 ### <a id="doc-0010"></a>1.11.5 DOC-0010 - Regras de Negócio
 
@@ -1800,8 +2068,9 @@ Constitui e acompanha a alienação fiduciária no cartório (imóvel e terreno)
 
 #### Propósito e fronteiras
 
-Registra a [alienação fiduciária](#glo-0041): averbação na matrícula ou [gravame](#glo-0042) do veículo. Trata
-[exigências](#glo-0039) e retornos assíncronos, que podem chegar repetidos ou fora de ordem.
+Registra a [alienação fiduciária](#glo-0041): averbação na matrícula ou [gravame](#glo-0042) do veículo. Na vida
+do contrato, averba o [aditivo](#glo-0053) da renegociação e, quitado o contrato, faz a [baixa da garantia](#glo-0051).
+Trata [exigências](#glo-0039) e retornos assíncronos, que podem chegar repetidos ou fora de ordem.
 
 **Depende de:** [Contratação](#dom-0004), [ATR-0009](#atr-0009) e [ATR-0010](#atr-0010). **Atores:** [ATR-0009](#atr-0009), [ATR-0010](#atr-0010), [ATR-0005](#atr-0005).
 
@@ -1825,6 +2094,13 @@ flowchart LR
         ATR_0005(["Analista"]):::ator
         EVT_0031["RegistroRecusado"]:::evento
         UC_0019["Tratar registro recusado"]:::comando
+        EVT_0059["BaixaSolicitada"]:::evento
+        UC_0031["Baixar garantia"]:::comando
+        EVT_0060["GarantiaBaixada"]:::evento
+        EVT_0061["AverbacaoSolicitada"]:::evento
+        UC_0032["Averbar aditivo"]:::comando
+        EVT_0062["AditivoAverbado"]:::evento
+        EVT_0057["CondicoesDoContratoAlteradas"]:::evento
     end
     UC_0018 --> EVT_0027
     ATR_0009 --- UC_0018
@@ -1838,10 +2114,23 @@ flowchart LR
     ATR_0005 --- UC_0020
     EVT_0030 ~~~ EVT_0031
     UC_0018 --> EVT_0031
+    EVT_0031 ~~~ EVT_0059
+    UC_0031 --> EVT_0059
+    ATR_0009 --- UC_0031
+    ATR_0010 --- UC_0031
+    EVT_0059 ~~~ EVT_0060
+    UC_0031 --> EVT_0060
+    EVT_0060 ~~~ EVT_0061
+    UC_0032 --> EVT_0061
+    ATR_0009 --- UC_0032
+    ATR_0010 --- UC_0032
+    EVT_0061 ~~~ EVT_0062
+    UC_0032 --> EVT_0062
     EVT_0028 -.->|sempre que| UC_0021
     EVT_0029 -.->|sempre que| UC_0020
     EVT_0030 -.->|sempre que| UC_0018
     EVT_0031 -.->|sempre que| UC_0019
+    EVT_0062 -.->|sempre que| EVT_0057
     classDef evento fill:#fdba74,stroke:#c2410c,color:#1c1917
     classDef comando fill:#93c5fd,stroke:#1d4ed8,color:#0c0a09
     classDef ator fill:#fde047,stroke:#a16207,color:#1c1917
@@ -1872,6 +2161,22 @@ O [ATR-0005](#atr-0005) cumpriu a exigência. Dispara [UC-0018](#uc-0018) (reenv
 #### <a id="evt-0031"></a>1.12.2.5 EVT-0031 - RegistroRecusado
 
 O órgão recusou o registro. Dispara [UC-0019](#uc-0019).
+
+#### <a id="evt-0059"></a>1.12.2.6 EVT-0059 - BaixaSolicitada
+
+O pedido de baixa da garantia do contrato quitado foi enviado ao órgão de registro, com um protocolo nosso.
+
+#### <a id="evt-0060"></a>1.12.2.7 EVT-0060 - GarantiaBaixada
+
+O órgão confirmou a baixa. O contrato está encerrado.
+
+#### <a id="evt-0061"></a>1.12.2.8 EVT-0061 - AverbacaoSolicitada
+
+O aditivo assinado foi enviado ao órgão de registro, com um protocolo nosso.
+
+#### <a id="evt-0062"></a>1.12.2.9 EVT-0062 - AditivoAverbado
+
+O órgão averbou o aditivo (ou atualizou o gravame). O aditivo está vigente: dispara [EVT-0057](#evt-0057).
 
 ### <a id="doc-0011"></a>1.12.3 DOC-0011 - Regras de Negócio
 
@@ -1912,6 +2217,31 @@ Casos de uso da garantia.
 **Ator:** [ATR-0005](#atr-0005).
 
 **Fluxo principal:** o analista providencia o que o cartório pediu e reenvia. Emite [EVT-0030](#evt-0030).
+
+#### <a id="uc-0031"></a>1.12.4.4 UC-0031 - Baixar garantia
+
+**Atores:** [ATR-0009](#atr-0009) ou [ATR-0010](#atr-0010).
+
+**Pré-condição:** contrato quitado.
+
+**Fluxo principal**
+1. O credor emite o termo de quitação ([RN-0041](#rn-0041)). Emite [EVT-0058](#evt-0058).
+2. O sistema pede a baixa ao órgão da categoria ([RN-0028](#rn-0028)). Emite [EVT-0059](#evt-0059).
+3. O órgão confirma; o sistema classifica o retorno ([RN-0029](#rn-0029)). Emite [EVT-0060](#evt-0060): o contrato está encerrado.
+
+**Fluxo alternativo:** exigência → [UC-0020](#uc-0020).
+
+#### <a id="uc-0032"></a>1.12.4.5 UC-0032 - Averbar aditivo
+
+**Atores:** [ATR-0009](#atr-0009) ou [ATR-0010](#atr-0010).
+
+**Pré-condição:** aditivo assinado por todos.
+
+**Fluxo principal**
+1. O sistema envia o aditivo ao órgão da categoria ([RN-0040](#rn-0040), [RN-0028](#rn-0028)). Emite [EVT-0061](#evt-0061).
+2. O órgão averba (ou atualiza o gravame). Emite [EVT-0062](#evt-0062): o aditivo está vigente e o contrato ganha nova versão das condições.
+
+**Fluxo alternativo:** exigência → [UC-0020](#uc-0020).
 
 ## <a id="dom-0006"></a>1.13 DOM-0006 - Desembolso
 
@@ -2130,3 +2460,425 @@ Casos de uso de documentos.
 **Fluxo principal:** o analista confere o documento enviado contra o que é exigido ([RN-0009](#rn-0009)) e o aceita. Emite [EVT-0039](#evt-0039).
 
 **Fluxo alternativo:** ilegível, vencido ou divergente → recusa. Emite [EVT-0038](#evt-0038). O proponente reenvia o documento com a proposta com [pendência](#glo-0038), que então é resolvida.
+
+## <a id="dom-0009"></a>1.16 DOM-0009 - Carteira de contratos
+
+**Classificação:** Suporte
+
+Acompanha o contrato formalizado até a quitação: quitação antecipada ou no fim do prazo, amortização e renegociação.
+
+### <a id="vis-0009"></a>1.16.1 VIS-0009 - Visão do Domínio
+
+#### Propósito e fronteiras
+
+Cuida do [contrato](#glo-0040) depois de formalizado: [quitação](#glo-0047) (total ou parcial, antecipada ou no
+fim do prazo) e [renegociação](#glo-0052). Não faz contas: o [ATR-0013](#atr-0013) calcula, o [ATR-0014](#atr-0014) cobra.
+Quitado, pede à Garantia a baixa; renegociado, a averbação do aditivo.
+
+**Depende de:** [Contratação](#dom-0004), [Garantia](#dom-0005), [Crédito](#dom-0002) (renegociação),
+[Originação](#dom-0001) (regras de enquadramento), [ATR-0013](#atr-0013), [ATR-0014](#atr-0014) e [ATR-0012](#atr-0012).
+
+**Guarda:** os agregados [AGR-0003](#agr-0003) e [AGR-0004](#agr-0004), com o [CV-0003](#cv-0003) e o [CV-0004](#cv-0004).
+
+**Atores:** [ATR-0001](#atr-0001), [ATR-0002](#atr-0002), [ATR-0005](#atr-0005), [ATR-0013](#atr-0013), [ATR-0014](#atr-0014), [ATR-0012](#atr-0012).
+
+#### Jornada em eventos
+
+Gerada pelo episteme (event storming): eventos em ordem, quem os provoca e o que disparam.
+
+```mermaid
+flowchart LR
+    subgraph DOM_0009_es["Carteira de contratos"]
+        direction LR
+        EVT_0040["QuitacaoSolicitada"]:::evento
+        AGR_0003{{"Quitação"}}:::agregado
+        UC_0025["Pedir quitação ou amortização"]:::comando
+        ATR_0001(["Proponente"]):::ator
+        ATR_0013(["Sistema financeiro"]):::ator
+        EVT_0041["QuitacaoCalculada"]:::evento
+        EVT_0042["CobrancaEmitida"]:::evento
+        UC_0026["Pagar quitação ou amortização"]:::comando
+        ATR_0012(["Sistema do FGTS"]):::ator
+        ATR_0014(["Sistema de cobrança"]):::ator
+        EVT_0043["FgtsDaQuitacaoSolicitado"]:::evento
+        EVT_0044["FgtsDaQuitacaoNegado"]:::evento
+        EVT_0045["QuitacaoPaga"]:::evento
+        EVT_0046["QuitacaoVencida"]:::evento
+        EVT_0047["QuitacaoCancelada"]:::evento
+        EVT_0048["QuitacaoConcluida"]:::evento
+        EVT_0056["ContratoQuitado"]:::evento
+        EVT_0057["CondicoesDoContratoAlteradas"]:::evento
+        EVT_0049["RenegociacaoSolicitada"]:::evento
+        AGR_0004{{"Renegociação"}}:::agregado
+        UC_0028["Pedir renegociação"]:::comando
+        EVT_0050["RenegociacaoSimulada"]:::evento
+        UC_0011["Analisar crédito"]:::comando
+        EVT_0051["RenegociacaoAprovada"]:::evento
+        UC_0029["Decidir renegociação"]:::comando
+        ATR_0005(["Analista"]):::ator
+        EVT_0052["RenegociacaoReprovada"]:::evento
+        EVT_0053["AditivoEmitido"]:::evento
+        EVT_0054["AditivoAssinado"]:::evento
+        UC_0030["Assinar aditivo"]:::comando
+        ATR_0002(["Coobrigado"]):::ator
+        ATR_0003(["Vendedor"]):::ator
+        UC_0032["Averbar aditivo"]:::comando
+        EVT_0055["RenegociacaoCancelada"]:::evento
+    end
+    AGR_0003 -.- EVT_0040
+    UC_0025 --> EVT_0040
+    ATR_0001 --- UC_0025
+    ATR_0013 --- UC_0025
+    EVT_0040 ~~~ EVT_0041
+    AGR_0003 -.- EVT_0041
+    UC_0025 --> EVT_0041
+    EVT_0041 ~~~ EVT_0042
+    AGR_0003 -.- EVT_0042
+    UC_0026 --> EVT_0042
+    ATR_0012 --- UC_0026
+    ATR_0014 --- UC_0026
+    EVT_0042 ~~~ EVT_0043
+    AGR_0003 -.- EVT_0043
+    UC_0026 --> EVT_0043
+    EVT_0043 ~~~ EVT_0044
+    AGR_0003 -.- EVT_0044
+    UC_0026 --> EVT_0044
+    EVT_0044 ~~~ EVT_0045
+    AGR_0003 -.- EVT_0045
+    UC_0026 --> EVT_0045
+    EVT_0045 ~~~ EVT_0046
+    AGR_0003 -.- EVT_0046
+    UC_0026 --> EVT_0046
+    EVT_0046 ~~~ EVT_0047
+    AGR_0003 -.- EVT_0047
+    UC_0025 --> EVT_0047
+    EVT_0047 ~~~ EVT_0048
+    AGR_0003 -.- EVT_0048
+    UC_0026 --> EVT_0048
+    EVT_0048 ~~~ EVT_0049
+    AGR_0004 -.- EVT_0049
+    UC_0028 --> EVT_0049
+    ATR_0001 --- UC_0028
+    ATR_0013 --- UC_0028
+    EVT_0049 ~~~ EVT_0050
+    AGR_0004 -.- EVT_0050
+    UC_0028 --> EVT_0050
+    EVT_0050 ~~~ EVT_0051
+    AGR_0004 -.- EVT_0051
+    UC_0029 --> EVT_0051
+    ATR_0005 --- UC_0029
+    EVT_0051 ~~~ EVT_0052
+    AGR_0004 -.- EVT_0052
+    UC_0028 --> EVT_0052
+    UC_0029 --> EVT_0052
+    EVT_0052 ~~~ EVT_0053
+    AGR_0004 -.- EVT_0053
+    UC_0029 --> EVT_0053
+    EVT_0053 ~~~ EVT_0054
+    AGR_0004 -.- EVT_0054
+    UC_0030 --> EVT_0054
+    ATR_0001 --- UC_0030
+    ATR_0002 --- UC_0030
+    ATR_0003 --- UC_0030
+    EVT_0054 ~~~ EVT_0055
+    AGR_0004 -.- EVT_0055
+    UC_0030 --> EVT_0055
+    EVT_0048 -.->|sempre que| EVT_0056
+    EVT_0048 -.->|sempre que| EVT_0057
+    EVT_0050 -.->|sempre que| UC_0011
+    EVT_0054 -.->|sempre que| UC_0032
+    classDef evento fill:#fdba74,stroke:#c2410c,color:#1c1917
+    classDef comando fill:#93c5fd,stroke:#1d4ed8,color:#0c0a09
+    classDef ator fill:#fde047,stroke:#a16207,color:#1c1917
+    classDef agregado fill:#fef3c7,stroke:#b45309,color:#1c1917
+    classDef semOrigem stroke-dasharray:5 4,stroke-width:2px
+```
+
+### <a id="agr-0003"></a>1.16.2 AGR-0003 - Quitação
+
+Fronteira de consistência de um pedido de quitação ou amortização de um [contrato](#agr-0002): o que foi pedido,
+o valor calculado e a sua validade, a cobrança e o pagamento. Referencia o contrato pelo identificador.
+
+#### Composição
+
+| Elemento | Natureza | Observação |
+|---|---|---|
+| Tipo | objeto de valor | total, ou parcial com efeito em prazo ou em parcela |
+| Recurso | objeto de valor | próprio, ou FGTS no imóvel residencial de pessoa física |
+| Valor calculado | objeto de valor | valor e data de validade, do sistema financeiro |
+| Cobrança | entidade | uma por pedido, do sistema de cobrança |
+
+#### Invariantes
+
+1. Só para contrato formalizado, sem outra quitação ou renegociação em andamento ([RN-0034](#rn-0034)).
+2. O valor vale até a data informada; vencido, o pedido acaba sem efeito ([RN-0036](#rn-0036)).
+3. O FGTS só no imóvel residencial de pessoa física, respeitado o intervalo entre usos ([RN-0038](#rn-0038)).
+4. Pago, aplica-se uma única vez: quita o contrato (total) ou gera a nova versão das condições (parcial, [RN-0037](#rn-0037)).
+
+**Emite:** [EVT-0040](#evt-0040), [EVT-0041](#evt-0041), [EVT-0042](#evt-0042), [EVT-0043](#evt-0043), [EVT-0044](#evt-0044), [EVT-0045](#evt-0045), [EVT-0046](#evt-0046), [EVT-0047](#evt-0047), [EVT-0048](#evt-0048).
+
+### <a id="cv-0003"></a>1.16.3 CV-0003 - Ciclo de vida da quitação
+
+Estados de um pedido de [quitação](#agr-0003) (total ou parcial).
+
+```mermaid
+stateDiagram-v2
+    [*] --> Solicitada: QuitacaoSolicitada
+    Solicitada --> Calculada: QuitacaoCalculada
+    Solicitada --> Cancelada: QuitacaoCancelada
+    Calculada --> Cobrada: CobrancaEmitida (recurso próprio)
+    Calculada --> AguardandoFgts: FgtsDaQuitacaoSolicitado (FGTS)
+    Calculada --> Vencida: QuitacaoVencida
+    Calculada --> Cancelada: QuitacaoCancelada
+    Cobrada --> Paga: QuitacaoPaga
+    Cobrada --> Vencida: QuitacaoVencida
+    AguardandoFgts --> Paga: QuitacaoPaga
+    AguardandoFgts --> Cancelada: FgtsDaQuitacaoNegado
+    Paga --> Concluida: QuitacaoConcluida
+    Concluida --> [*]
+    Vencida --> [*]
+    Cancelada --> [*]
+```
+
+| Transição | Evento | Regra |
+|---|---|---|
+| Pedido | [EVT-0040](#evt-0040) | [RN-0034](#rn-0034), [RN-0035](#rn-0035) |
+| Cálculo | [EVT-0041](#evt-0041) | [RN-0036](#rn-0036) |
+| FGTS | [EVT-0043](#evt-0043), [EVT-0044](#evt-0044) | [RN-0038](#rn-0038) |
+| Pagamento | [EVT-0045](#evt-0045) | — |
+| Conclusão | [EVT-0048](#evt-0048) | [RN-0037](#rn-0037) |
+| Vencimento | [EVT-0046](#evt-0046) | [RN-0036](#rn-0036) |
+
+### <a id="agr-0004"></a>1.16.4 AGR-0004 - Renegociação
+
+Fronteira de consistência de uma [renegociação](#glo-0052): as condições pedidas, as calculadas pelo sistema
+financeiro, o reenquadramento, a decisão e o [aditivo](#glo-0053) com as suas assinaturas. Referencia o contrato pelo identificador.
+
+#### Composição
+
+| Elemento | Natureza | Observação |
+|---|---|---|
+| Condições pedidas | objeto de valor | novo prazo |
+| Condições calculadas | objeto de valor | novo saldo e nova parcela, com as parcelas em atraso incorporadas |
+| Decisão | objeto de valor | aprovada ou reprovada, com o motivo |
+| Aditivo | entidade | as novas condições e uma assinatura por signatário |
+
+#### Invariantes
+
+1. Só para contrato formalizado, sem outra quitação ou renegociação em andamento ([RN-0034](#rn-0034)).
+2. As condições calculadas respeitam as regras do tipo de bem ([RN-0039](#rn-0039)).
+3. O aditivo só vale depois de assinado por todos e averbado ([RN-0040](#rn-0040)).
+
+**Emite:** [EVT-0049](#evt-0049), [EVT-0050](#evt-0050), [EVT-0051](#evt-0051), [EVT-0052](#evt-0052), [EVT-0053](#evt-0053), [EVT-0054](#evt-0054), [EVT-0055](#evt-0055).
+
+### <a id="cv-0004"></a>1.16.5 CV-0004 - Ciclo de vida da renegociação
+
+Estados de uma [renegociação](#agr-0004).
+
+```mermaid
+stateDiagram-v2
+    [*] --> Solicitada: RenegociacaoSolicitada
+    Solicitada --> Simulada: RenegociacaoSimulada
+    Solicitada --> Cancelada: RenegociacaoCancelada
+    Simulada --> EmAnalise: AnaliseCreditoSolicitada
+    Simulada --> Reprovada: RenegociacaoReprovada (fora do enquadramento)
+    Simulada --> Cancelada: RenegociacaoCancelada
+    EmAnalise --> Aprovada: RenegociacaoAprovada
+    EmAnalise --> Reprovada: RenegociacaoReprovada
+    Aprovada --> AditivoEmitido: AditivoEmitido
+    AditivoEmitido --> AditivoAssinado: AditivoAssinado
+    AditivoEmitido --> Cancelada: RenegociacaoCancelada
+    AditivoAssinado --> EmAverbacao: AverbacaoSolicitada
+    EmAverbacao --> Vigente: AditivoAverbado
+    Vigente --> [*]
+    Reprovada --> [*]
+    Cancelada --> [*]
+```
+
+| Transição | Evento | Regra |
+|---|---|---|
+| Pedido | [EVT-0049](#evt-0049) | [RN-0034](#rn-0034) |
+| Cálculo e reenquadramento | [EVT-0050](#evt-0050) | [RN-0039](#rn-0039) |
+| Decisão | [EVT-0051](#evt-0051), [EVT-0052](#evt-0052) | [RN-0039](#rn-0039) |
+| Aditivo | [EVT-0053](#evt-0053), [EVT-0054](#evt-0054) | [RN-0040](#rn-0040) |
+| Averbação | [EVT-0061](#evt-0061), [EVT-0062](#evt-0062) | [RN-0040](#rn-0040), [RN-0028](#rn-0028) |
+
+### <a id="s-0023"></a>1.16.6 S-0023 - Eventos
+
+Fatos do domínio da carteira de contratos.
+
+#### <a id="evt-0040"></a>1.16.6.1 EVT-0040 - QuitacaoSolicitada
+
+O [ATR-0001](#atr-0001) pediu a quitação ou a amortização do contrato: tipo, efeito e recurso.
+
+#### <a id="evt-0041"></a>1.16.6.2 EVT-0041 - QuitacaoCalculada
+
+O [ATR-0013](#atr-0013) informou o valor e até quando ele vale ([RN-0036](#rn-0036)).
+
+#### <a id="evt-0042"></a>1.16.6.3 EVT-0042 - CobrancaEmitida
+
+O [ATR-0014](#atr-0014) emitiu a cobrança do valor calculado.
+
+#### <a id="evt-0043"></a>1.16.6.4 EVT-0043 - FgtsDaQuitacaoSolicitado
+
+O uso do FGTS na quitação ou amortização foi pedido ao [ATR-0012](#atr-0012) ([RN-0038](#rn-0038)).
+
+#### <a id="evt-0044"></a>1.16.6.5 EVT-0044 - FgtsDaQuitacaoNegado
+
+O [ATR-0012](#atr-0012) negou o uso. O pedido acaba; o devedor pode pedir de novo com recurso próprio.
+
+#### <a id="evt-0045"></a>1.16.6.6 EVT-0045 - QuitacaoPaga
+
+O valor foi pago, pela cobrança ou pelo FGTS.
+
+#### <a id="evt-0046"></a>1.16.6.7 EVT-0046 - QuitacaoVencida
+
+Passou a validade do valor sem pagamento. O pedido acaba sem efeito.
+
+#### <a id="evt-0047"></a>1.16.6.8 EVT-0047 - QuitacaoCancelada
+
+O devedor desistiu do pedido antes de pagar.
+
+#### <a id="evt-0048"></a>1.16.6.9 EVT-0048 - QuitacaoConcluida
+
+O pagamento foi aplicado ao contrato. Total: dispara [EVT-0056](#evt-0056). Parcial: dispara [EVT-0057](#evt-0057).
+
+#### <a id="evt-0049"></a>1.16.6.10 EVT-0049 - RenegociacaoSolicitada
+
+O [ATR-0001](#atr-0001) pediu a renegociação do contrato, com o novo prazo.
+
+#### <a id="evt-0050"></a>1.16.6.11 EVT-0050 - RenegociacaoSimulada
+
+O [ATR-0013](#atr-0013) calculou o novo saldo e a nova parcela, com as parcelas em atraso incorporadas. Enquadrada, dispara [UC-0011](#uc-0011).
+
+#### <a id="evt-0051"></a>1.16.6.12 EVT-0051 - RenegociacaoAprovada
+
+O [ATR-0005](#atr-0005) aprovou a renegociação, com o crédito analisado.
+
+#### <a id="evt-0052"></a>1.16.6.13 EVT-0052 - RenegociacaoReprovada
+
+A renegociação foi reprovada: fora do enquadramento ou pelo analista.
+
+#### <a id="evt-0053"></a>1.16.6.14 EVT-0053 - AditivoEmitido
+
+O aditivo com as condições renegociadas foi emitido para assinatura.
+
+#### <a id="evt-0054"></a>1.16.6.15 EVT-0054 - AditivoAssinado
+
+Todos os signatários assinaram o aditivo. Dispara [UC-0032](#uc-0032).
+
+#### <a id="evt-0055"></a>1.16.6.16 EVT-0055 - RenegociacaoCancelada
+
+O devedor desistiu da renegociação antes de assinar.
+
+### <a id="doc-0014"></a>1.16.7 DOC-0014 - Regras de Negócio
+
+Regras da carteira de contratos.
+
+#### <a id="rn-0034"></a>1.16.7.1 RN-0034 - Uma quitação ou renegociação por vez, só no contrato formalizado
+
+Quitação, amortização e renegociação só existem para o contrato formalizado (bem pronto liberado ou obra concluída). Enquanto uma está em andamento, outra não começa. Decisão: [DEC-0018](#dec-0018).
+
+#### <a id="rn-0035"></a>1.16.7.2 RN-0035 - Quitação antecipada com desconto dos juros
+
+O devedor pode quitar ou amortizar antes do prazo, a qualquer tempo, com a redução proporcional dos juros e demais acréscimos ([F-0006](#f-0006)). O valor é calculado pelo [ATR-0013](#atr-0013). Decisões: [DEC-0019](#dec-0019), [DEC-0022](#dec-0022).
+
+#### <a id="rn-0036"></a>1.16.7.3 RN-0036 - Validade do valor de quitação
+
+O [valor de quitação](#glo-0048) (ou de amortização) vale até a data informada pelo sistema financeiro. Sem pagamento até lá, o pedido vence sem efeito, e um novo pedido recalcula.
+
+**Detalhes/Exemplo:**
+Valor de R$ 12.300,00 válido até 15/03. Pago em 16/03 → o pedido já venceu; o devedor pede de novo e recebe um novo valor.
+
+#### <a id="rn-0037"></a>1.16.7.4 RN-0037 - Efeito da amortização
+
+Na [amortização](#glo-0049), o devedor escolhe reduzir o prazo (a parcela fica igual) ou reduzir a parcela (o prazo fica igual). O contrato ganha nova versão das condições, calculada pelo sistema financeiro. Decisão: [DEC-0022](#dec-0022).
+
+#### <a id="rn-0038"></a>1.16.7.5 RN-0038 - FGTS na quitação e na amortização
+
+Só no imóvel residencial de [pessoa física](#glo-0002), com o FGTS de um participante do contrato e no mínimo 2 anos desde o último uso do FGTS no mesmo contrato (inclusive na entrada). Decide o [ATR-0012](#atr-0012) ([F-0004](#f-0004)). Decisão: [DEC-0023](#dec-0023).
+
+**Detalhes/Exemplo:**
+Entrada com FGTS em 2026; amortização com FGTS pedida em 2027 → recusada (menos de 2 anos). Em 2028 → pedida ao sistema do FGTS.
+
+#### <a id="rn-0039"></a>1.16.7.6 RN-0039 - Renegociação reenquadrada
+
+As condições renegociadas respeitam as regras do tipo de bem como na proposta: [RN-0007](#rn-0007), [RN-0012](#rn-0012), [RN-0011](#rn-0011) e [RN-0008](#rn-0008). Fora delas, a renegociação é reprovada sem ir ao bureau. Decisão: [DEC-0024](#dec-0024).
+
+#### <a id="rn-0040"></a>1.16.7.7 RN-0040 - Aditivo assinado e averbado
+
+O [aditivo](#glo-0053) é assinado pelos mesmos signatários do contrato ([RN-0026](#rn-0026)) e só vale depois de averbado no órgão da categoria ([RN-0028](#rn-0028)): averbação na matrícula (imóvel e terreno) ou atualização do gravame (veículo). Decisão: [DEC-0025](#dec-0025).
+
+#### <a id="rn-0041"></a>1.16.7.8 RN-0041 - Termo de quitação e baixa da garantia
+
+Quitado o contrato, o credor emite o [termo de quitação](#glo-0050) em até 30 dias ([F-0001](#f-0001), art. 25) e pede a [baixa da garantia](#glo-0051) ao órgão da categoria ([RN-0028](#rn-0028)). O retorno do órgão é fato, como no registro ([RN-0029](#rn-0029)).
+
+#### <a id="rn-0042"></a>1.16.7.9 RN-0042 - Inadimplência
+
+O contrato com 90 dias ou mais de atraso, informados pelo [ATR-0013](#atr-0013), está [inadimplente](#glo-0055) (valor de referência). Nesta etapa isso só informa: o inadimplente também pode renegociar. Decisão: [DEC-0021](#dec-0021).
+
+### <a id="s-0024"></a>1.16.8 S-0024 - Casos de uso
+
+Casos de uso da carteira de contratos.
+
+#### <a id="uc-0025"></a>1.16.8.1 UC-0025 - Pedir quitação ou amortização
+
+**Atores:** [ATR-0001](#atr-0001), [ATR-0013](#atr-0013).
+
+**Pré-condição:** contrato formalizado, sem outra operação em andamento ([RN-0034](#rn-0034)).
+
+**Fluxo principal**
+1. O proponente escolhe: quitação total, ou amortização de um valor com efeito em prazo ou em parcela ([RN-0037](#rn-0037)); e o recurso, próprio ou FGTS ([RN-0038](#rn-0038)). Emite [EVT-0040](#evt-0040).
+2. O sistema financeiro calcula o valor, com o desconto dos juros, e a validade ([RN-0035](#rn-0035), [RN-0036](#rn-0036)). Emite [EVT-0041](#evt-0041).
+3. Segue em [UC-0026](#uc-0026).
+
+**Fluxo alternativo:** o proponente desiste antes de pagar. Emite [EVT-0047](#evt-0047).
+
+#### <a id="uc-0026"></a>1.16.8.2 UC-0026 - Pagar quitação ou amortização
+
+**Atores:** [ATR-0014](#atr-0014) (recurso próprio) ou [ATR-0012](#atr-0012).
+
+**Fluxo principal**
+1. Recurso próprio: o sistema de cobrança emite a cobrança ([EVT-0042](#evt-0042)) e informa o pagamento. Emite [EVT-0045](#evt-0045).
+2. O sistema aplica o pagamento. Emite [EVT-0048](#evt-0048): o contrato é quitado (total) ou ganha nova versão das condições (parcial).
+
+**Fluxos alternativos**
+- FGTS: o pedido vai ao sistema do FGTS ([EVT-0043](#evt-0043)); liberado, segue como pago; negado, o pedido acaba ([EVT-0044](#evt-0044)).
+- Sem pagamento até a validade: o pedido vence ([EVT-0046](#evt-0046)).
+
+#### <a id="uc-0027"></a>1.16.8.3 UC-0027 - Quitar no fim do prazo
+
+**Ator:** [ATR-0013](#atr-0013).
+
+**Fluxo principal:** o sistema financeiro informa que a última parcela foi paga e a dívida está liquidada. O contrato é quitado: emite [EVT-0056](#evt-0056), e a garantia é baixada em [UC-0031](#uc-0031).
+
+#### <a id="uc-0028"></a>1.16.8.4 UC-0028 - Pedir renegociação
+
+**Atores:** [ATR-0001](#atr-0001), [ATR-0013](#atr-0013). Decisão: [DEC-0024](#dec-0024).
+
+**Pré-condição:** contrato formalizado, em dia ou em atraso ([RN-0042](#rn-0042)), sem outra operação em andamento ([RN-0034](#rn-0034)).
+
+**Fluxo principal**
+1. O proponente pede um novo prazo. Emite [EVT-0049](#evt-0049).
+2. O sistema financeiro calcula o novo saldo e a nova parcela. Emite [EVT-0050](#evt-0050).
+3. O sistema reenquadra as novas condições ([RN-0039](#rn-0039)) e pede a análise de crédito ([UC-0011](#uc-0011)).
+
+**Fluxo alternativo:** fora do enquadramento → reprovada, sem ir ao bureau. Emite [EVT-0052](#evt-0052).
+
+#### <a id="uc-0029"></a>1.16.8.5 UC-0029 - Decidir renegociação
+
+**Ator:** [ATR-0005](#atr-0005).
+
+**Pré-condição:** renegociação enquadrada, com a análise de crédito concluída.
+
+**Fluxo principal:** o analista aprova, com o resultado do crédito à vista. Emite [EVT-0051](#evt-0051) e o aditivo é emitido para assinatura ([EVT-0053](#evt-0053)).
+
+**Fluxo alternativo:** o analista reprova, com o motivo. Emite [EVT-0052](#evt-0052).
+
+#### <a id="uc-0030"></a>1.16.8.6 UC-0030 - Assinar aditivo
+
+**Atores:** [ATR-0001](#atr-0001), [ATR-0002](#atr-0002), [ATR-0003](#atr-0003) (imóvel e terreno).
+
+**Fluxo principal:** cada signatário do contrato assina o aditivo ([RN-0040](#rn-0040)); com a última assinatura, emite [EVT-0054](#evt-0054).
+
+**Fluxo alternativo:** o proponente desiste antes de assinar. Emite [EVT-0055](#evt-0055).

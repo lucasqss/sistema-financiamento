@@ -243,3 +243,84 @@ Com isso, **não há questão em aberto** no modelo.
 ## Próximo passo
 
 Feito: o modelo foi refeito no episteme (`docs/dominio/`) e as decisões viraram artefatos `DEC` que respondem às questões `Q`.
+
+---
+
+# Entrevista: vida do contrato (2026-11-07)
+
+- **Objetivo:** levar o modelo além do contrato formalizado, que estava fora de escopo. Antes, a etapa seguinte
+  do processo foi escolhida entre vida do contrato, lacunas da jornada atual, produção e cálculo financeiro: **vida do contrato**.
+- **Formato:** 2 rodadas. As questões e decisões entram no modelo como Q-0018 a Q-0025 e DEC-0018 a DEC-0025, **em revisão**.
+
+## Rodada 7: escopo e quem faz as contas
+
+### Q-0018. O que entra nesta etapa da vida do contrato?
+Opções (múltipla escolha): cobrança e atraso; quitação e baixa da garantia; renegociação; retomada da garantia
+(consolidação da propriedade do imóvel, busca e apreensão do veículo).
+
+**➜ Quitação e baixa da garantia, e renegociação.** Cobrança das parcelas, atraso e retomada ficam para outra etapa.
+
+### Q-0019. Saldo devedor, valor de quitação antecipada (com o desconto proporcional dos juros) e encargos exigem cálculo financeiro, fora de escopo. Quem calcula?
+- Um sistema financeiro externo (sugerida)
+- Trazer o cálculo para o escopo (taxa, CET, PRICE/SAC)
+- Simplificar: parcelas fixas sem juros, quitação = soma das restantes
+
+**➜ Um sistema financeiro externo.** O financiamento decide e conduz; o cálculo continua fora do escopo.
+
+### Q-0020. Quem emite a cobrança (boleto, débito, Pix) e informa os pagamentos?
+- Um sistema de cobrança externo (sugerida)
+- O próprio sistema de financiamento
+
+**➜ Um sistema de cobrança externo.** Nesta etapa, ele cobra só a quitação e a amortização.
+
+### Q-0021. Quando o atraso vira inadimplência, e o que acontece?
+- 90 dias (sugerida)
+- Prazo por tipo de bem
+- Só registra o atraso
+
+**➜ 90 dias**, valor de referência. Como a cobrança e a retomada ficaram fora, nesta etapa a inadimplência só informa:
+o contrato inadimplente também pode ser renegociado.
+
+## Rodada 8: quitação parcial, FGTS e renegociação
+
+### Q-0022. Na amortização (quitação parcial), o que muda no contrato?
+- O devedor escolhe reduzir o prazo ou a parcela (sugerida)
+- Só reduz o prazo
+- Sem amortização parcial
+
+**➜ O devedor escolhe.** O sistema financeiro calcula o efeito, e o contrato ganha nova versão das condições.
+
+### Q-0023. O FGTS pode amortizar ou quitar o imóvel residencial?
+- Sim, no residencial de pessoa física, com 2 anos entre usos (sugerida)
+- Não nesta etapa
+
+**➜ Sim.** Pedido ao sistema do FGTS, como na entrada.
+
+### Q-0024. Renegociação: quem pede, quando, e passa por nova análise?
+- O devedor pede, em dia ou em atraso; reenquadra, passa no bureau e o analista decide (sugerida)
+- Só em atraso, incorporando as vencidas, sem bureau
+- O credor oferece e o devedor aceita ou recusa
+
+**➜ O devedor pede, a qualquer momento (inadimplente incluído).** As novas condições respeitam as regras do tipo de bem,
+a análise de crédito é refeita e o analista decide.
+
+### Q-0025. Como a renegociação é formalizada?
+- Aditivo assinado por todos e averbado (cartório) ou gravame atualizado (veículo) (sugerida)
+- Só o aditivo assinado
+
+**➜ Aditivo assinado e averbado.**
+
+### Decisões das rodadas 7 e 8
+
+| # | Questão | Decisão | Impacto no modelo |
+|---|---|---|---|
+| D18 | Q-0018 | Quitação com baixa da garantia, e renegociação | Domínio novo Carteira de contratos; o contrato ganha Quitado e Encerrado |
+| D19 | Q-0019 | Sistema financeiro externo faz as contas | Ator novo; quitação e renegociação esperam o cálculo dele |
+| D20 | Q-0020 | Sistema de cobrança externo | Ator novo; cobra a quitação e a amortização |
+| D21 | Q-0021 | Inadimplente com 90 dias de atraso, só informativo nesta etapa | Regra de inadimplência; não impede a renegociação |
+| D22 | Q-0022 | Amortização reduz prazo ou parcela, à escolha | Regra da amortização; nova versão das condições do contrato |
+| D23 | Q-0023 | FGTS na quitação e na amortização do residencial de PF, 2 anos entre usos | Regra do FGTS na amortização |
+| D24 | Q-0024 | Renegociação a pedido, reenquadrada, com bureau e decisão do analista | Agregado e ciclo de vida da renegociação; reuso das regras de enquadramento |
+| D25 | Q-0025 | Aditivo assinado e averbado | Garantia ganha a averbação do aditivo e a baixa |
+
+Próximo passo: validar o modelo (situação "Em revisão" no episteme) e então implementar.
