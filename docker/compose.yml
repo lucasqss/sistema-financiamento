@@ -52,7 +52,8 @@ services:
       - documentos:/dados/documentos
     ports: ["8080:8080"]
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && printf 'GET /q/health/ready HTTP/1.0\\r\\n\\r\\n' >&3 && grep -q '200 OK' <&3"]
+      # Sem curl na imagem: o próprio bash abre a conexão (/dev/tcp é do bash, não do sh).
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/8080 && printf 'GET /q/health/ready HTTP/1.0\\r\\n\\r\\n' >&3 && grep -q ' 200 ' <&3"]
       interval: 5s
       retries: 30
 
